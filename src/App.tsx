@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CalendarDays, Home, MapPinned, Receipt, Upload } from 'lucide-react'
+import { CalendarDays, FerrisWheel, Home, MapPinned, Receipt, Upload } from 'lucide-react'
 import type { TabId } from './types'
 import { useAuth } from './hooks/useAuth'
 import { useTrip } from './hooks/useTrip'
@@ -13,6 +13,7 @@ import { TodayView } from './views/TodayView'
 import { ItineraryView } from './views/ItineraryView'
 import { ExpensesView } from './views/ExpensesView'
 import { LocationsView } from './views/LocationsView'
+import { ParksView } from './views/ParksView'
 import { ImportView } from './views/ImportView'
 import './App.css'
 
@@ -21,6 +22,7 @@ const TABS: { id: TabId; label: string; icon: typeof Home }[] = [
   { id: 'roteiro', label: 'Roteiro', icon: CalendarDays },
   { id: 'gastos', label: 'Gastos', icon: Receipt },
   { id: 'locais', label: 'Locais', icon: MapPinned },
+  { id: 'parques', label: 'Parques', icon: FerrisWheel },
   { id: 'importar', label: 'Excel', icon: Upload },
 ]
 
@@ -123,6 +125,7 @@ export default function App() {
           />
         ) : null}
         {tab === 'locais' ? <LocationsView trip={trip} /> : null}
+        {tab === 'parques' ? <ParksView trip={trip} /> : null}
         {tab === 'importar' ? (
           <ImportView
             trip={trip}

@@ -86,7 +86,7 @@ export type Trip = {
   budgetLimits?: Partial<Record<BudgetId, number>>
 }
 
-export type TabId = 'hoje' | 'roteiro' | 'gastos' | 'locais' | 'importar'
+export type TabId = 'hoje' | 'roteiro' | 'gastos' | 'locais' | 'parques' | 'importar'
 
 /** Compat: labels antigos de categoria → orçamento */
 export const CATEGORY_LABELS = BUDGET_LABELS

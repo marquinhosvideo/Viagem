@@ -1,4 +1,10 @@
 {
+  "rewrites": [
+    {
+      "source": "/api/queue-times/parks/:id/queue_times.json",
+      "destination": "https://queue-times.com/parks/:id/queue_times.json"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
