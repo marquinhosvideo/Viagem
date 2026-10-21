@@ -110,7 +110,7 @@ export function sortRidesByWait(rides: RideWait[]): RideWait[] {
 }
 
 export async function fetchRideWaits(parkId: number, signal?: AbortSignal): Promise<RideWait[]> {
-  const response = await fetch(`/api/queue-times/parks/${parkId}/queue_times.json`, { signal })
+  const response = await fetch(`/api/queue-times/parks/${parkId}`, { signal })
   if (!response.ok) throw new Error('As filas deste parque não carregaram.')
   const payload = (await response.json()) as QueuePayload
   const rides = [
