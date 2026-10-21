@@ -1058,6 +1058,18 @@ html[data-device='mobile'][data-aspect='landscape'] .day-hero__progress-row,
   font-size: 14px;
 }
 
+.park-notice {
+  margin: 14px 0 0;
+  color: var(--color-ink-muted-48);
+  font-size: 14px;
+}
+
+.park-notice a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .ride-list {
   display: grid;
   gap: 0;
@@ -1084,6 +1096,18 @@ html[data-device='mobile'][data-aspect='landscape'] .day-hero__progress-row,
   margin: 0;
   font-size: 16px;
   font-weight: 600;
+}
+
+.ride-row__link {
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.ride-row__link:hover {
+  color: var(--color-ink-muted-48);
 }
 
 .ride-row__text p {
