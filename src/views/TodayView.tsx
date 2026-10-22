@@ -5,6 +5,7 @@ import { AddressCopyList } from '../components/AddressCopyList'
 import { BudgetWidgets } from '../components/BudgetWidgets'
 import { DayHero } from '../components/DayHero'
 import { DayInfo } from '../components/DayInfo'
+import { FxRatesBand } from '../components/FxRatesBand'
 import { parseDayMeta } from '../lib/dayMeta'
 import { formatMoneyPair } from '../lib/format'
 import { spentByBudget } from '../lib/budgets'
@@ -30,6 +31,8 @@ export function TodayView({ trip, day, onToggle }: Props) {
   return (
     <section className="view today-view">
       <DayHero day={day} dayIndex={dayIndex} dayCount={trip.days.length} />
+
+      <FxRatesBand />
 
       <BudgetWidgets trip={trip} />
 

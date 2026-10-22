@@ -316,11 +316,47 @@ html[data-device='mobile'][data-aspect='landscape'] .day-hero__progress-row,
 }
 
 /* Budgets / utility cards */
+.fx-rates__head,
 .budget-widgets__head {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   gap: 12px;
+}
+
+.fx-rates__list {
+  margin: 18px 0 0;
+  display: grid;
+  gap: 12px;
+}
+
+.fx-rates__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.fx-rates__row:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.fx-rates__row dt {
+  margin: 0;
+  font-size: 16px;
+  color: var(--color-ink-muted-80);
+}
+
+.fx-rates__row dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  text-align: right;
 }
 
 .budget-widgets__grid {
