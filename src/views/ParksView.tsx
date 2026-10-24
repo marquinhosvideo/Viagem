@@ -1,12 +1,14 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { ChevronLeft, FerrisWheel, RefreshCw } from 'lucide-react'
 import type { Trip } from '../types'
 import { formatShortDate } from '../lib/format'
 import {
   fetchRideWaits,
   latestUpdate,
+  officialRideUrl,
   parksInTrip,
   type PlanPark,
+  type RideSnapshot,
   type RideWait,
 } from '../lib/queueTimes'
 import { sampleTrip } from '../data/sampleTrip'
@@ -87,25 +89,50 @@ function parkMeta(park: PlanPark): string {
 
 function ParkWaits({ park, onBack }: { park: PlanPark; onBack: () => void }) {
   const [rides, setRides] = useState<RideWait[] | null>(null)
+  const [source, setSource] = useState<RideSnapshot['source'] | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [notice, setNotice] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [reloadKey, setReloadKey] = useState(0)
+  const lastGood = useRef<RideSnapshot | null>(null)
 
   useEffect(() => {
     const controller = new AbortController()
-    fetchRideWaits(park.id, controller.signal)
-      .then((next) => {
+    const fresh = reloadKey > 0
+    fetchRideWaits(park.id, { signal: controller.signal, fresh })
+      .then((snapshot) => {
         if (controller.signal.aborted) return
-        setRides(next)
-        setError(null)
+        if (snapshot.rides.length) {
+          lastGood.current = snapshot
+          setRides(snapshot.rides)
+          setSource(snapshot.source)
+          setNotice(null)
+          setError(null)
+        } else if (lastGood.current) {
+          setRides(lastGood.current.rides)
+          setSource(lastGood.current.source)
+          setNotice('A consulta voltou vazia. Mostrando a última lista.')
+          setError(null)
+        } else {
+          setRides([])
+          setSource(snapshot.source)
+          setNotice(null)
+          setError(null)
+        }
         setLoading(false)
       })
       .catch((cause: unknown) => {
         if (controller.signal.aborted || (cause instanceof Error && cause.name === 'AbortError')) {
           return
         }
-        setRides(null)
-        setError('Não foi possível consultar as filas agora.')
+        if (lastGood.current) {
+          setRides(lastGood.current.rides)
+          setSource(lastGood.current.source)
+          setNotice('Não atualizou agora. Mostrando a última consulta.')
+          setError(null)
+        } else {
+          setError('Não foi possível consultar as filas agora.')
+        }
         setLoading(false)
       })
     return () => controller.abort()
@@ -128,6 +155,7 @@ function ParkWaits({ park, onBack }: { park: PlanPark; onBack: () => void }) {
             onClick={() => {
               setLoading(true)
               setError(null)
+              setNotice(null)
               setReloadKey((key) => key + 1)
             }}
             disabled={loading}
@@ -149,6 +177,20 @@ function ParkWaits({ park, onBack }: { park: PlanPark; onBack: () => void }) {
             {error}
           </p>
         ) : null}
+        {notice ? (
+          <p className="park-notice" role="status">
+            {notice}
+          </p>
+        ) : null}
+        {source === 'themeparks' && rides?.length ? (
+          <p className="park-notice">
+            Os tempos desta lista vieram do{' '}
+            <a href="https://themeparks.wiki/" target="_blank" rel="noopener noreferrer">
+              ThemeParks.wiki
+            </a>
+            .
+          </p>
+        ) : null}
         {rides && !rides.length ? (
           <p className="empty-hint">Nenhuma atração encontrada neste parque.</p>
         ) : null}
@@ -157,7 +199,16 @@ function ParkWaits({ park, onBack }: { park: PlanPark; onBack: () => void }) {
             {rides.map((ride) => (
               <li className="ride-row" key={ride.id}>
                 <div className="ride-row__text">
-                  <h3>{ride.name}</h3>
+                  <h3>
+                    <a
+                      className="ride-row__link"
+                      href={officialRideUrl(park, ride.name)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {ride.name}
+                    </a>
+                  </h3>
                   {ride.land ? <p>{ride.land}</p> : null}
                 </div>
                 <span className={ride.isOpen ? 'ride-wait' : 'ride-wait ride-wait--closed'}>

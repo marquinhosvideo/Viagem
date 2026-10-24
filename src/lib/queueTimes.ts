@@ -5,22 +5,43 @@ export type QueuePark = {
   name: string
   operator: string
   aliases: string[]
+  officialSearch: (rideName: string) => string
+}
+
+function disneySearch(rideName: string): string {
+  return `https://disneyworld.disney.go.com/search/?searchQuery=${encodeURIComponent(rideName)}`
+}
+
+function universalSearch(rideName: string): string {
+  return `https://www.universalorlando.com/web/en/us/search-results?searchQuery=${encodeURIComponent(rideName)}`
+}
+
+function peppaSearch(rideName: string): string {
+  return `https://www.peppapigthemepark.com/florida/things-to-do/?q=${encodeURIComponent(rideName)}`
+}
+
+function legolandSearch(rideName: string): string {
+  return `https://www.legoland.com/florida/things-to-do/?q=${encodeURIComponent(rideName)}`
+}
+
+function seaworldSearch(rideName: string): string {
+  return `https://seaworld.com/orlando/rides/?q=${encodeURIComponent(rideName)}`
 }
 
 /** Parques com fila ao vivo no Queue Times e que cabem neste roteiro. */
 const QUEUE_PARKS: QueuePark[] = [
-  { id: 6, name: 'Magic Kingdom', operator: 'Disney', aliases: ['magic kingdom'] },
-  { id: 8, name: 'Animal Kingdom', operator: 'Disney', aliases: ['animal kingdom'] },
-  { id: 7, name: 'Hollywood Studios', operator: 'Disney', aliases: ['hollywood studios'] },
-  { id: 5, name: 'Epcot', operator: 'Disney', aliases: ['epcot'] },
-  { id: 334, name: 'Epic Universe', operator: 'Universal', aliases: ['epic universe'] },
-  { id: 64, name: 'Islands of Adventure', operator: 'Universal', aliases: ['islands of adventure'] },
-  { id: 65, name: 'Universal Studios', operator: 'Universal', aliases: ['universal studios'] },
-  { id: 67, name: 'Volcano Bay', operator: 'Universal', aliases: ['volcano bay'] },
-  { id: 316, name: 'Peppa Pig Theme Park', operator: 'Merlin', aliases: ['peppa pig'] },
-  { id: 280, name: 'Legoland Florida', operator: 'Merlin', aliases: ['legoland'] },
-  { id: 21, name: 'SeaWorld Orlando', operator: 'SeaWorld', aliases: ['seaworld', 'sea world'] },
-  { id: 94, name: 'Aquatica Orlando', operator: 'SeaWorld', aliases: ['aquatica'] },
+  { id: 6, name: 'Magic Kingdom', operator: 'Disney', aliases: ['magic kingdom'], officialSearch: disneySearch },
+  { id: 8, name: 'Animal Kingdom', operator: 'Disney', aliases: ['animal kingdom'], officialSearch: disneySearch },
+  { id: 7, name: 'Hollywood Studios', operator: 'Disney', aliases: ['hollywood studios'], officialSearch: disneySearch },
+  { id: 5, name: 'Epcot', operator: 'Disney', aliases: ['epcot'], officialSearch: disneySearch },
+  { id: 334, name: 'Epic Universe', operator: 'Universal', aliases: ['epic universe'], officialSearch: universalSearch },
+  { id: 64, name: 'Islands of Adventure', operator: 'Universal', aliases: ['islands of adventure'], officialSearch: universalSearch },
+  { id: 65, name: 'Universal Studios', operator: 'Universal', aliases: ['universal studios'], officialSearch: universalSearch },
+  { id: 67, name: 'Volcano Bay', operator: 'Universal', aliases: ['volcano bay'], officialSearch: universalSearch },
+  { id: 316, name: 'Peppa Pig Theme Park', operator: 'Merlin', aliases: ['peppa pig'], officialSearch: peppaSearch },
+  { id: 280, name: 'Legoland Florida', operator: 'Merlin', aliases: ['legoland'], officialSearch: legolandSearch },
+  { id: 21, name: 'SeaWorld Orlando', operator: 'SeaWorld', aliases: ['seaworld', 'sea world'], officialSearch: seaworldSearch },
+  { id: 94, name: 'Aquatica Orlando', operator: 'SeaWorld', aliases: ['aquatica'], officialSearch: seaworldSearch },
 ]
 
 export type PlanPark = QueuePark & {
@@ -29,7 +50,7 @@ export type PlanPark = QueuePark & {
 }
 
 export type RideWait = {
-  id: number
+  id: string
   name: string
   land: string
   isOpen: boolean
@@ -37,8 +58,13 @@ export type RideWait = {
   updatedAt: string
 }
 
+export type RideSnapshot = {
+  rides: RideWait[]
+  source: 'queue-times' | 'themeparks'
+}
+
 type QueueRide = {
-  id: number
+  id: number | string
   name: string
   is_open: boolean
   wait_time: number
@@ -46,6 +72,7 @@ type QueueRide = {
 }
 
 type QueuePayload = {
+  source?: RideSnapshot['source']
   lands?: Array<{ name?: string; rides?: QueueRide[] }>
   rides?: QueueRide[]
 }
@@ -92,13 +119,40 @@ export function parksInTrip(trip: Trip): PlanPark[] {
 
 function mapRide(ride: QueueRide, land: string): RideWait {
   return {
-    id: ride.id,
+    id: String(ride.id),
     name: ride.name,
     land,
     isOpen: Boolean(ride.is_open),
     waitTime: Number.isFinite(ride.wait_time) ? ride.wait_time : 0,
     updatedAt: ride.last_updated ?? '',
   }
+}
+
+export function officialRideUrl(park: QueuePark, rideName: string): string {
+  return park.officialSearch(rideName)
+}
+
+function snapshotFromPayload(payload: QueuePayload): RideWait[] {
+  return sortRidesByWait([
+    ...(payload.lands ?? []).flatMap((land) =>
+      (land.rides ?? []).map((ride) => mapRide(ride, land.name ?? '')),
+    ),
+    ...(payload.rides ?? []).map((ride) => mapRide(ride, '')),
+  ])
+}
+
+function wait(ms: number, signal?: AbortSignal): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(resolve, ms)
+    signal?.addEventListener(
+      'abort',
+      () => {
+        clearTimeout(timer)
+        reject(new DOMException('Aborted', 'AbortError'))
+      },
+      { once: true },
+    )
+  })
 }
 
 export function sortRidesByWait(rides: RideWait[]): RideWait[] {
@@ -109,17 +163,38 @@ export function sortRidesByWait(rides: RideWait[]): RideWait[] {
   })
 }
 
-export async function fetchRideWaits(parkId: number, signal?: AbortSignal): Promise<RideWait[]> {
-  const response = await fetch(`/api/queue-times/parks/${parkId}`, { signal })
+async function requestRideWaits(parkId: number, fresh: boolean, signal?: AbortSignal): Promise<RideSnapshot> {
+  const query = fresh ? `?fresh=${Date.now()}` : ''
+  const response = await fetch(`/api/queue-times/parks/${parkId}${query}`, {
+    signal,
+    cache: 'no-store',
+  })
   if (!response.ok) throw new Error('As filas deste parque não carregaram.')
   const payload = (await response.json()) as QueuePayload
-  const rides = [
-    ...(payload.lands ?? []).flatMap((land) =>
-      (land.rides ?? []).map((ride) => mapRide(ride, land.name ?? '')),
-    ),
-    ...(payload.rides ?? []).map((ride) => mapRide(ride, '')),
-  ]
-  return sortRidesByWait(rides)
+  return {
+    rides: snapshotFromPayload(payload),
+    source: payload.source === 'themeparks' ? 'themeparks' : 'queue-times',
+  }
+}
+
+export async function fetchRideWaits(
+  parkId: number,
+  options: { signal?: AbortSignal; fresh?: boolean } = {},
+): Promise<RideSnapshot> {
+  const attempts = options.fresh ? 2 : 1
+  let lastError: unknown
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      const snapshot = await requestRideWaits(parkId, Boolean(options.fresh), options.signal)
+      if (snapshot.rides.length || attempt === attempts - 1) return snapshot
+      await wait(400, options.signal)
+    } catch (error) {
+      if (options.signal?.aborted || (error instanceof Error && error.name === 'AbortError')) throw error
+      lastError = error
+      if (attempt < attempts - 1) await wait(400, options.signal)
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error('As filas deste parque não carregaram.')
 }
 
 export function latestUpdate(rides: RideWait[]): string | null {
