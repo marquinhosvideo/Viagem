@@ -1,8 +1,9 @@
+import { RefreshCw } from 'lucide-react'
 import { useFxRates } from '../hooks/useFxRates'
 import { formatFxAsOf, formatFxRate } from '../lib/fxRates'
 
 export function FxRatesBand() {
-  const { rates, error, loading } = useFxRates()
+  const { rates, error, loading, refresh } = useFxRates()
 
   const comercial = rates?.comercial
   const wise = rates?.wise
@@ -13,9 +14,21 @@ export function FxRatesBand() {
       <div className="band__inner">
         <div className="fx-rates__head">
           <h2 className="section-title">Câmbio.</h2>
-          {asOf ? (
-            <p className="section-sub">Atualizado {formatFxAsOf(asOf)}</p>
-          ) : null}
+          <div className="fx-rates__meta">
+            {asOf ? (
+              <p className="section-sub">Atualizado {formatFxAsOf(asOf)}</p>
+            ) : null}
+            <button
+              type="button"
+              className="fx-rates__sync"
+              onClick={() => void refresh()}
+              disabled={loading}
+              aria-label="Sincronizar câmbio"
+              title="Sincronizar"
+            >
+              <RefreshCw size={16} aria-hidden className={loading ? 'spin' : undefined} />
+            </button>
+          </div>
         </div>
 
         {loading && !rates ? (

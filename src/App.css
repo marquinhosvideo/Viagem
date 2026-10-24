@@ -324,6 +324,46 @@ html[data-device='mobile'][data-aspect='landscape'] .day-hero__progress-row,
   gap: 12px;
 }
 
+.fx-rates__head {
+  align-items: center;
+}
+
+.fx-rates__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.fx-rates__meta .section-sub {
+  margin: 0;
+}
+
+.fx-rates__sync {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--color-hairline);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-ink-muted-80);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.fx-rates__sync:hover {
+  color: var(--color-ink);
+  background: var(--color-canvas-parchment);
+}
+
+.fx-rates__sync:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
 .fx-rates__list {
   margin: 18px 0 0;
   display: grid;

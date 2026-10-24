@@ -35,5 +35,18 @@ export function useFxRates() {
     }
   }, [])
 
-  return { rates, error, loading }
+  async function refresh() {
+    setLoading(true)
+    try {
+      const next = await loadFxRates({ force: true })
+      setRates(next)
+      setError(false)
+    } catch {
+      setError(true)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return { rates, error, loading, refresh }
 }

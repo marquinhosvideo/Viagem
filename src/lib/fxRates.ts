@@ -31,9 +31,11 @@ function writeCache(rates: FxRates) {
   }
 }
 
-export async function loadFxRates(): Promise<FxRates> {
-  const cached = readCache()
-  if (cached) return cached
+export async function loadFxRates(options?: { force?: boolean }): Promise<FxRates> {
+  if (!options?.force) {
+    const cached = readCache()
+    if (cached) return cached
+  }
 
   const res = await fetch('/api/fx', { headers: { Accept: 'application/json' } })
   if (!res.ok) throw new Error(`fx_${res.status}`)
