@@ -101,10 +101,16 @@ function mapRide(ride: QueueRide, land: string): RideWait {
   }
 }
 
-export function sortRidesByWait(rides: RideWait[]): RideWait[] {
+export function sortRidesByWait(
+  rides: RideWait[],
+  favoriteIds: ReadonlySet<number> = new Set(),
+): RideWait[] {
   return [...rides].sort((a, b) => {
+    const aFav = favoriteIds.has(a.id)
+    const bFav = favoriteIds.has(b.id)
+    if (aFav !== bFav) return aFav ? -1 : 1
     if (a.isOpen !== b.isOpen) return a.isOpen ? -1 : 1
-    if (a.isOpen && a.waitTime !== b.waitTime) return b.waitTime - a.waitTime
+    if (a.isOpen && a.waitTime !== b.waitTime) return a.waitTime - b.waitTime
     return a.name.localeCompare(b.name, 'pt-BR')
   })
 }
@@ -113,13 +119,12 @@ export async function fetchRideWaits(parkId: number, signal?: AbortSignal): Prom
   const response = await fetch(`/api/queue-times/parks/${parkId}`, { signal })
   if (!response.ok) throw new Error('As filas deste parque não carregaram.')
   const payload = (await response.json()) as QueuePayload
-  const rides = [
+  return [
     ...(payload.lands ?? []).flatMap((land) =>
       (land.rides ?? []).map((ride) => mapRide(ride, land.name ?? '')),
     ),
     ...(payload.rides ?? []).map((ride) => mapRide(ride, '')),
   ]
-  return sortRidesByWait(rides)
 }
 
 export function latestUpdate(rides: RideWait[]): string | null {

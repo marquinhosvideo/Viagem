@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ChevronLeft, FerrisWheel, RefreshCw } from 'lucide-react'
+import { ChevronLeft, FerrisWheel, RefreshCw, Star } from 'lucide-react'
 import type { Trip } from '../types'
 import { formatShortDate } from '../lib/format'
 import {
   fetchRideWaits,
   latestUpdate,
   parksInTrip,
+  sortRidesByWait,
   type PlanPark,
   type RideWait,
 } from '../lib/queueTimes'
+import { loadFavoriteRideIds, toggleFavoriteRideId } from '../lib/rideFavorites'
 import { sampleTrip } from '../data/sampleTrip'
 
 type Props = {
@@ -37,7 +39,7 @@ export function ParksView({ trip }: Props) {
           <h1 className="display-lg">Filas agora.</h1>
           <p className="lede">
             {selected
-              ? `${selected.name}, com as atrações ordenadas pelo tempo de espera.`
+              ? `${selected.name}: favoritos no topo, depois a menor fila.`
               : parks.length
                 ? `${parks.length} parques do planejamento, com a fila ao vivo.`
                 : 'Nenhum parque do planejamento tem fila ao vivo.'}
@@ -90,6 +92,7 @@ function ParkWaits({ park, onBack }: { park: PlanPark; onBack: () => void }) {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [reloadKey, setReloadKey] = useState(0)
+  const [favoriteIds, setFavoriteIds] = useState(() => loadFavoriteRideIds())
 
   useEffect(() => {
     const controller = new AbortController()
@@ -111,8 +114,16 @@ function ParkWaits({ park, onBack }: { park: PlanPark; onBack: () => void }) {
     return () => controller.abort()
   }, [park.id, reloadKey])
 
-  const openCount = rides?.filter((ride) => ride.isOpen).length ?? 0
-  const updated = rides ? latestUpdate(rides) : null
+  const sortedRides = useMemo(
+    () => (rides ? sortRidesByWait(rides, favoriteIds) : null),
+    [rides, favoriteIds],
+  )
+  const openCount = sortedRides?.filter((ride) => ride.isOpen).length ?? 0
+  const updated = sortedRides ? latestUpdate(sortedRides) : null
+
+  function toggleFavorite(rideId: number) {
+    setFavoriteIds(toggleFavoriteRideId(rideId))
+  }
 
   return (
     <section className="band">
@@ -140,31 +151,48 @@ function ParkWaits({ park, onBack }: { park: PlanPark; onBack: () => void }) {
         <p className="park-detail__meta">
           {parkMeta(park)}
           {updated ? ` · atualizado ${formatOrlandoTime(updated)}` : ''}
-          {rides ? ` · ${openCount} abertas` : ''}
+          {sortedRides ? ` · ${openCount} abertas` : ''}
         </p>
 
-        {loading && !rides ? <p className="empty-hint">Buscando filas…</p> : null}
+        {loading && !sortedRides ? <p className="empty-hint">Buscando filas…</p> : null}
         {error ? (
           <p className="empty-hint" role="alert">
             {error}
           </p>
         ) : null}
-        {rides && !rides.length ? (
+        {sortedRides && !sortedRides.length ? (
           <p className="empty-hint">Nenhuma atração encontrada neste parque.</p>
         ) : null}
-        {rides?.length ? (
+        {sortedRides?.length ? (
           <ul className="ride-list">
-            {rides.map((ride) => (
-              <li className="ride-row" key={ride.id}>
-                <div className="ride-row__text">
-                  <h3>{ride.name}</h3>
-                  {ride.land ? <p>{ride.land}</p> : null}
-                </div>
-                <span className={ride.isOpen ? 'ride-wait' : 'ride-wait ride-wait--closed'}>
-                  {ride.isOpen ? waitLabel(ride.waitTime) : 'Fechada'}
-                </span>
-              </li>
-            ))}
+            {sortedRides.map((ride) => {
+              const favorited = favoriteIds.has(ride.id)
+              return (
+                <li className="ride-row" key={ride.id}>
+                  <button
+                    type="button"
+                    className={`ride-fav${favorited ? ' ride-fav--on' : ''}`}
+                    onClick={() => toggleFavorite(ride.id)}
+                    aria-label={
+                      favorited
+                        ? `Remover ${ride.name} dos favoritos`
+                        : `Favoritar ${ride.name}`
+                    }
+                    aria-pressed={favorited}
+                    title={favorited ? 'Remover dos favoritos' : 'Favoritar'}
+                  >
+                    <Star size={18} aria-hidden fill={favorited ? 'currentColor' : 'none'} />
+                  </button>
+                  <div className="ride-row__text">
+                    <h3>{ride.name}</h3>
+                    {ride.land ? <p>{ride.land}</p> : null}
+                  </div>
+                  <span className={ride.isOpen ? 'ride-wait' : 'ride-wait ride-wait--closed'}>
+                    {ride.isOpen ? waitLabel(ride.waitTime) : 'Fechada'}
+                  </span>
+                </li>
+              )
+            })}
           </ul>
         ) : null}
       </div>
