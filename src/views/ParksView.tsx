@@ -10,7 +10,11 @@ import {
   type PlanPark,
   type RideWait,
 } from '../lib/queueTimes'
-import { loadFavoriteRideIds, toggleFavoriteRideId } from '../lib/rideFavorites'
+import {
+  ensureDefaultFavorites,
+  loadFavoriteRideIds,
+  toggleFavoriteRideId,
+} from '../lib/rideFavorites'
 import { sampleTrip } from '../data/sampleTrip'
 
 type Props = {
@@ -99,6 +103,7 @@ function ParkWaits({ park, onBack }: { park: PlanPark; onBack: () => void }) {
     fetchRideWaits(park.id, controller.signal)
       .then((next) => {
         if (controller.signal.aborted) return
+        setFavoriteIds(ensureDefaultFavorites(next))
         setRides(next)
         setError(null)
         setLoading(false)
@@ -121,8 +126,8 @@ function ParkWaits({ park, onBack }: { park: PlanPark; onBack: () => void }) {
   const openCount = sortedRides?.filter((ride) => ride.isOpen).length ?? 0
   const updated = sortedRides ? latestUpdate(sortedRides) : null
 
-  function toggleFavorite(rideId: number) {
-    setFavoriteIds(toggleFavoriteRideId(rideId))
+  function toggleFavorite(ride: RideWait) {
+    setFavoriteIds(toggleFavoriteRideId(ride.id, ride.name))
   }
 
   return (
@@ -172,7 +177,7 @@ function ParkWaits({ park, onBack }: { park: PlanPark; onBack: () => void }) {
                   <button
                     type="button"
                     className={`ride-fav${favorited ? ' ride-fav--on' : ''}`}
-                    onClick={() => toggleFavorite(ride.id)}
+                    onClick={() => toggleFavorite(ride)}
                     aria-label={
                       favorited
                         ? `Remover ${ride.name} dos favoritos`
