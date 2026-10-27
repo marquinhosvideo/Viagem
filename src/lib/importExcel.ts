@@ -1,8 +1,9 @@
 import type { WorkSheet } from 'xlsx'
-import type { Activity, BudgetId, Day, Expense, SavedPlace, Tip, Trip } from '../types'
-import { usdToBrl } from './currency'
-import { parseAmount, uid } from './format'
+import { BUDGET_LABELS, type Activity, type BudgetId, type Day, type Expense, type SavedPlace, type Tip, type Trip } from '../types'
+import { brlToUsd, usdToBrl } from './currency'
+import { formatShortDate, formatWeekdayShort, parseAmount, uid } from './format'
 import { normalizeBudgetId } from './budgets'
+import { periodFromActivityId } from './display'
 import { collectTripLocations, inferPlaceCategory, normalizePlace } from './locations'
 import { parseDayMeta } from './dayMeta'
 
@@ -359,6 +360,7 @@ export async function importTripFromFile(
   const metaName = sheetNames.find((n) => /viagem|trip|info|geral/i.test(n))
   const childPlacesName = sheetNames.find((n) => /lugares.*crian/i.test(n))
   const shoppingName = sheetNames.find((n) => /compras.*extra/i.test(n))
+  const locaisName = sheetNames.find((n) => /^locais$/i.test(n) || /^locations$/i.test(n))
 
   const roteiroSheet = roteiroName ? workbook.Sheets[roteiroName] : undefined
   const gastosSheet = gastosName ? workbook.Sheets[gastosName] : undefined
@@ -368,6 +370,7 @@ export async function importTripFromFile(
     ? workbook.Sheets[childPlacesName]
     : undefined
   const shoppingSheet = shoppingName ? workbook.Sheets[shoppingName] : undefined
+  const locaisSheet = locaisName ? workbook.Sheets[locaisName] : undefined
 
   const roteiroRows = roteiroSheet ? sheetToRows(XLSX, roteiroSheet) : []
   const days = buildDaysFromRows(roteiroRows, XLSX)
@@ -391,6 +394,9 @@ export async function importTripFromFile(
   const importedLocations = [
     ...(shoppingSheet
       ? buildLocations(sheetToRows(XLSX, shoppingSheet), ['categoria'])
+      : []),
+    ...(locaisSheet
+      ? buildLocations(sheetToRows(XLSX, locaisSheet), ['categoria'])
       : []),
     ...(childPlacesSheet
       ? buildLocations(sheetToRows(XLSX, childPlacesSheet), ['o que e', 'o que é'])
@@ -443,39 +449,100 @@ export async function importTripFromFile(
   }
 }
 
-export async function downloadTemplate(): Promise<void> {
-  // Prefer the family's real Orlando workbook when available
-  try {
-    const res = await fetch('/Roteiro_Orlando_2026.xlsx')
-    if (res.ok) {
-      const blob = await res.blob()
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = 'Roteiro_Orlando_2026.xlsx'
-      a.click()
-      URL.revokeObjectURL(url)
-      return
-    }
-  } catch {
-    // fall through to generated template
-  }
+function periodNotes(day: Day, key: 'manha' | 'tarde' | 'noite'): string {
+  return day.activities
+    .filter((activity) => periodFromActivityId(activity.id).key === key)
+    .map((activity) => activity.notes?.trim() || activity.title)
+    .filter(Boolean)
+    .join('\n')
+}
 
-  const XLSX = await loadXlsx()
-  const wb = XLSX.utils.book_new()
-  const roteiro = [
-    ['Data', 'Dia', 'Tipo do dia', 'Manhã', 'Tarde', 'Noite', 'Lugares e endereços', 'Observações / horários'],
-    [
-      '27/11',
-      'Sex',
-      '✈️ Viagem',
-      '—',
-      '—',
-      '✈️ VIAGEM — Embarque',
-      'Aeroporto',
-      'Levar documentos',
-    ],
+function exportPlaces(day: Day): string {
+  const fromNotes = parseDayMeta(day.dayNotes).places
+    .map((place) => (place.addr && place.addr !== 'Buscar pelo nome' ? `${place.name} – ${place.addr}` : place.name))
+    .filter(Boolean)
+  if (fromNotes.length) return fromNotes.join(' | ')
+  const fromActivities = [
+    ...new Set(day.activities.map((activity) => activity.location?.trim()).filter(Boolean)),
   ]
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(roteiro), 'Roteiro completo')
-  XLSX.writeFile(wb, 'modelo-roteiro-familia.xlsx')
+  return fromActivities.join(' | ')
+}
+
+function noteByLabel(day: Day, label: string): string {
+  return parseDayMeta(day.dayNotes).notes.find((note) => note.label === label)?.text ?? ''
+}
+
+export function buildExportSheets(trip: Trip): Record<string, (string | number)[][]> {
+  const roteiro: (string | number)[][] = [
+    [
+      'Data',
+      'Dia',
+      'Tipo do dia',
+      'Manhã',
+      'Tarde',
+      'Noite',
+      'Lugares e endereços',
+      'Carro a partir do hotel',
+      'Criança (soneca, carrinho, comida)',
+      'Observações / horários',
+    ],
+    ...trip.days.map((day) => [
+      formatShortDate(day.date),
+      formatWeekdayShort(day.date),
+      day.label,
+      periodNotes(day, 'manha') || '—',
+      periodNotes(day, 'tarde') || '—',
+      periodNotes(day, 'noite') || '—',
+      exportPlaces(day) || '—',
+      noteByLabel(day, 'Deslocamento') || '—',
+      noteByLabel(day, 'Com a criança') || '—',
+      noteByLabel(day, 'Observações') || '—',
+    ]),
+  ]
+
+  const locais: (string | number)[][] = [
+    ['Categoria', 'Nome / Local', 'Endereço'],
+    ...collectTripLocations(trip).map((place) => [place.category, place.name, place.address]),
+  ]
+
+  const gastos: (string | number)[][] = [
+    ['Data', 'Descrição', 'Valor', 'Orçamento'],
+    ...trip.expenses.map((expense) => {
+      const day = trip.days.find((item) => item.id === expense.dayId)
+      return [
+        day ? formatShortDate(day.date) : '',
+        expense.description,
+        brlToUsd(expense.amount),
+        BUDGET_LABELS[expense.budgetId] ?? expense.budgetId,
+      ]
+    }),
+  ]
+
+  const dicas: (string | number)[][] = [
+    ['Tema', 'Dica / ressalva'],
+    ...(trip.tips ?? []).map((tip) => [tip.tema, tip.texto]),
+  ]
+
+  const viagem: (string | number)[][] = [
+    ['Nome', 'Destino', 'Início', 'Fim'],
+    [trip.name, trip.destination, trip.startDate, trip.endDate],
+  ]
+
+  return { 'Roteiro completo': roteiro, Locais: locais, Gastos: gastos, 'Dicas e ressalvas': dicas, Viagem: viagem }
+}
+
+function downloadWorkbook(XLSX: XLSXModule, sheets: Record<string, (string | number)[][]>, filename: string) {
+  const wb = XLSX.utils.book_new()
+  for (const [name, rows] of Object.entries(sheets)) {
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), name.slice(0, 31))
+  }
+  XLSX.writeFile(wb, filename)
+}
+
+export async function exportTripToExcel(trip: Trip): Promise<string> {
+  const XLSX = await loadXlsx()
+  const slug = trip.name.replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '') || 'roteiro'
+  const filename = `${slug}.xlsx`
+  downloadWorkbook(XLSX, buildExportSheets(trip), filename)
+  return filename
 }

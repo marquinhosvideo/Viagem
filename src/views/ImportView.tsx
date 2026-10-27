@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { Cloud, FileSpreadsheet, History, RotateCcw } from 'lucide-react'
+import { Cloud, Download, FileSpreadsheet, History, RotateCcw } from 'lucide-react'
 import type { Trip } from '../types'
-import { importTripFromFile } from '../lib/importExcel'
+import { exportTripToExcel, importTripFromFile } from '../lib/importExcel'
 import { formatShortDate } from '../lib/format'
 import { collectTripLocations } from '../lib/locations'
 import { isSupabaseConfigured } from '../lib/supabase'
@@ -39,9 +39,10 @@ export function ImportView({ trip, onImported, onReset, onRestore }: Props) {
   const [fileName, setFileName] = useState('Roteiro_Orlando_2026.xlsx')
   const [status, setStatus] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [busy, setBusy] = useState(false)
+  const [busy, setBusy] = useState<'export' | 'import' | 'reset' | 'restore' | null>(null)
   const [versions, setVersions] = useState<TripVersion[]>([])
   const [versionsLoading, setVersionsLoading] = useState(isSupabaseConfigured)
+  const working = busy != null
 
   async function refreshVersions() {
     if (!isSupabaseConfigured) {
@@ -75,7 +76,7 @@ export function ImportView({ trip, onImported, onReset, onRestore }: Props) {
       )
       return
     }
-    setBusy(true)
+    setBusy('import')
     setError(null)
     setStatus(null)
     setFileName(file.name)
@@ -94,8 +95,28 @@ export function ImportView({ trip, onImported, onReset, onRestore }: Props) {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Falha ao importar o arquivo.')
     } finally {
-      setBusy(false)
+      setBusy(null)
       if (inputRef.current) inputRef.current.value = ''
+    }
+  }
+
+  async function handleExport() {
+    setBusy('export')
+    setError(null)
+    setStatus(null)
+    try {
+      const filename = await exportTripToExcel(trip)
+      setFileName(filename)
+      const locations = collectTripLocations(trip).length
+      setStatus(
+        `Exportado: ${filename} · ${trip.days.length} dias · ${locations} locais` +
+          (trip.expenses.length ? ` · ${trip.expenses.length} gastos` : '') +
+          '.',
+      )
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Falha ao exportar o arquivo.')
+    } finally {
+      setBusy(null)
     }
   }
 
@@ -113,7 +134,7 @@ export function ImportView({ trip, onImported, onReset, onRestore }: Props) {
     ) {
       return
     }
-    setBusy(true)
+    setBusy('reset')
     setError(null)
     try {
       await pushTripVersion(trip, { reason: 'reset' })
@@ -123,7 +144,7 @@ export function ImportView({ trip, onImported, onReset, onRestore }: Props) {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Falha ao restaurar o roteiro.')
     } finally {
-      setBusy(false)
+      setBusy(null)
     }
   }
 
@@ -135,7 +156,7 @@ export function ImportView({ trip, onImported, onReset, onRestore }: Props) {
     ) {
       return
     }
-    setBusy(true)
+    setBusy('restore')
     setError(null)
     try {
       const snapshot = await loadTripVersion(version.id)
@@ -150,7 +171,7 @@ export function ImportView({ trip, onImported, onReset, onRestore }: Props) {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Falha ao restaurar a versão.')
     } finally {
-      setBusy(false)
+      setBusy(null)
     }
   }
 
@@ -161,24 +182,34 @@ export function ImportView({ trip, onImported, onReset, onRestore }: Props) {
           <FileSpreadsheet size={40} strokeWidth={1.5} className="import-icon" />
           <h1 className="display-lg">Planilha.</h1>
           <p className="lede">
-            Importe o Excel do roteiro para atualizar dias, locais e observações. Gastos na planilha
-            entram em US$ e são convertidos para reais. Marcações já feitas no app são
-            mantidas quando possível. Até {MAX_TRIP_VERSIONS} versões ficam no banco
-            (Supabase) para recuperar de qualquer aparelho.
+            Exporte o roteiro atual para Excel ou importe uma planilha para atualizar dias,
+            locais e observações. Gastos na planilha entram em US$ e são convertidos para
+            reais. Marcações já feitas no app são mantidas quando possível. Até{' '}
+            {MAX_TRIP_VERSIONS} versões ficam no banco (Supabase) para recuperar de
+            qualquer aparelho.
           </p>
           <div className="import-actions">
             <button
               type="button"
               className="btn btn--primary"
-              disabled={busy}
-              onClick={() => inputRef.current?.click()}
+              disabled={working}
+              onClick={() => void handleExport()}
             >
-              {busy ? 'Importando…' : 'Importar Excel'}
+              <Download size={18} strokeWidth={2} aria-hidden />
+              {busy === 'export' ? 'Preparando…' : 'Exportar Excel'}
             </button>
             <button
               type="button"
               className="btn btn--ghost-pill"
-              disabled={busy}
+              disabled={working}
+              onClick={() => inputRef.current?.click()}
+            >
+              {busy === 'import' ? 'Importando…' : 'Importar Excel'}
+            </button>
+            <button
+              type="button"
+              className="btn btn--ghost-pill"
+              disabled={working}
               onClick={() => void handleReset()}
             >
               Restaurar roteiro
@@ -257,7 +288,7 @@ export function ImportView({ trip, onImported, onReset, onRestore }: Props) {
                   <button
                     type="button"
                     className="btn btn--ghost-pill version-item__restore"
-                    disabled={busy}
+                    disabled={working}
                     onClick={() => void handleRestore(version)}
                   >
                     <RotateCcw size={16} strokeWidth={2} aria-hidden />

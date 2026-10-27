@@ -133,6 +133,7 @@ function sanitizeAddress(value: string): string {
   return clean(value)
     .replace(/\s*\((?:alternativa|alt\.?):\s*.+$/i, '')
     .replace(/\s*\(todos em [^)]+\)\s*$/i, '')
+    .replace(/^.+?\(\d+[.,]\d+[^)]*\baval\.?\)\s*[–—-]\s*/i, '')
     .trim()
 }
 
@@ -182,18 +183,22 @@ const BRANCH_HINTS: [RegExp, string][] = [
   [/turkey lake/i, 'Turkey Lake'],
   [/vineland rd/i, 'Lake Buena Vista'],
   [/daryl carter/i, 'Vineland'],
+  [/regency village/i, 'Vineland'],
+  [/eastgate/i, 'Eastgate'],
+  [/1736 sand lake/i, 'Florida Mall'],
+  [/grand national/i, 'Grand National'],
+  [/john young/i, 'John Young'],
   [/millenia/i, 'Millenia'],
   [/international dr/i, 'I-Drive'],
   [/international blvd/i, 'I-Drive'],
   [/orange blossom/i, 'Florida Mall'],
-  [/grand national/i, 'I-Drive'],
-  [/eastgate/i, 'Eastgate'],
-  [/john young/i, 'John Young'],
   [/sand lake/i, 'Sand Lake'],
   [/daniels rd/i, 'Winter Garden Village'],
   [/w colonial/i, 'W Colonial'],
   [/florida mall ave/i, 'Florida Mall'],
   [/kirkman/i, 'Kirkman'],
+  [/osceola pkwy/i, 'Kissimmee'],
+  [/rolling oaks/i, 'Rolling Oaks'],
 ]
 
 function chainOf(name: string): (typeof CHAINS)[number] | undefined {

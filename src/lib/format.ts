@@ -26,6 +26,14 @@ export function formatShortDate(dateIso: string): string {
   return format(date, 'dd/MM', { locale: ptBR })
 }
 
+const WEEKDAYS_SHORT = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
+
+export function formatWeekdayShort(dateIso: string): string {
+  const date = parseISO(dateIso)
+  if (!isValid(date)) return ''
+  return WEEKDAYS_SHORT[date.getUTCDay()] ?? ''
+}
+
 export function uid(prefix = 'id'): string {
   return `${prefix}-${crypto.randomUUID().slice(0, 8)}`
 }

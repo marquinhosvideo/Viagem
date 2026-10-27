@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import { EXTRA_CHAIN_STORES } from '../data/chainStores'
+import { sampleTrip } from '../data/sampleTrip'
 import type { Trip } from '../types'
 import { splitPlaceChunks } from './dayMeta'
 import {
@@ -134,9 +135,44 @@ function tripWith(days: Trip['days'], locations: Trip['locations'] = []): Trip {
     EXTRA_CHAIN_STORES,
   )
   const ross = collectLocatedPlaces(trip).filter((place) => /^Ross/.test(place.name))
-  assert.equal(ross.length, 3, ross.map((place) => `${place.name} ${place.address}`).join(' | '))
+  assert.ok(ross.length >= 6, ross.map((place) => `${place.name} ${place.address}`).join(' | '))
   const targets = collectLocatedPlaces(trip).filter((place) => /^Target/.test(place.name))
   assert.ok(targets.length >= 4, `expected extra Target branches, got ${targets.map((p) => p.name).join(', ')}`)
+  const bestBuy = collectLocatedPlaces(trip).filter((place) => /^Best Buy/.test(place.name))
+  const burlington = collectLocatedPlaces(trip).filter((place) => /^Burlington/.test(place.name))
+  const tjMaxx = collectLocatedPlaces(trip).filter((place) => /^T\.J\. Maxx/.test(place.name))
+  const fiveBelow = collectLocatedPlaces(trip).filter((place) => /^Five Below/.test(place.name))
+  const ulta = collectLocatedPlaces(trip).filter((place) => /^Ulta/.test(place.name))
+  assert.ok(bestBuy.length >= 3, `expected extra Best Buy branches, got ${bestBuy.map((p) => p.name).join(', ')}`)
+  assert.ok(burlington.length >= 3, `expected extra Burlington branches, got ${burlington.map((p) => p.name).join(', ')}`)
+  assert.ok(tjMaxx.length >= 4, `expected extra T.J. Maxx branches, got ${tjMaxx.map((p) => p.name).join(', ')}`)
+  assert.ok(fiveBelow.length >= 2, `expected extra Five Below branches, got ${fiveBelow.map((p) => p.name).join(', ')}`)
+  assert.ok(ulta.length >= 3, `expected extra Ulta branches, got ${ulta.map((p) => p.name).join(', ')}`)
+}
+
+{
+  const nordstrom = collectLocatedPlaces(sampleTrip).filter((place) => /nordstrom/i.test(place.name))
+  assert.ok(
+    nordstrom.some((place) => /eastgate/i.test(place.name) && /4036 eastgate/i.test(place.address)),
+  )
+  assert.ok(!nordstrom.some((place) => /aval/i.test(place.address)))
+}
+
+{
+  const chainReuse = collectLocatedPlaces(sampleTrip).filter(
+    (place) =>
+      place.days.length > 1 &&
+      /^(Walmart|Target|Ross|Best Buy|Burlington|Marshalls|T\.J\. Maxx|Five Below|Ulta|Beauty Master|Nordstrom)/.test(
+        place.name,
+      ),
+  )
+  assert.equal(
+    chainReuse.length,
+    0,
+    chainReuse
+      .map((place) => `${place.name} on ${place.days.map((day) => day.date).join(', ')}`)
+      .join(' | '),
+  )
 }
 
 console.log('locations.test.ts ok')
