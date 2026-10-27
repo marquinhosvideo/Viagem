@@ -14,6 +14,21 @@ export type DayPlace = {
   copyText: string
 }
 
+/** Splits "A | B" and "A (alternativa: B)" into separate place lines. */
+export function splitPlaceChunks(raw: string): string[] {
+  const parts: string[] = []
+  for (const chunk of raw.split('|').map((value) => value.trim()).filter(Boolean)) {
+    const alt = chunk.match(/^(.*?)\s*\((?:alternativa|alt\.?):\s*(.+?)\)\s*$/i)
+    if (alt) {
+      parts.push(alt[1].trim())
+      parts.push(alt[2].trim())
+    } else {
+      parts.push(chunk)
+    }
+  }
+  return parts
+}
+
 export function parseDayMeta(dayNotes?: string): {
   notes: DayNoteItem[]
   places: DayPlace[]
@@ -27,9 +42,7 @@ export function parseDayMeta(dayNotes?: string): {
     const icon = iconFromEmoji(para, NotebookPen)
     if (icon === MapPin || para.trim().startsWith('📍')) {
       const raw = stripEmoji(para)
-      raw.split('|').forEach((seg) => {
-        const piece = seg.trim()
-        if (!piece) return
+      splitPlaceChunks(raw).forEach((piece) => {
         const [name, ...rest] = piece.split(/\s+[–—-]\s+/)
         places.push({
           name: name.trim(),

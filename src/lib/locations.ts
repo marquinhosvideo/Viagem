@@ -1,5 +1,6 @@
+import { EXTRA_CHAIN_STORES } from '../data/chainStores'
 import type { Day, SavedPlace, Trip } from '../types'
-import { parseDayMeta } from './dayMeta'
+import { parseDayMeta, splitPlaceChunks } from './dayMeta'
 
 export const PLACE_SECTIONS = ['Alimentação', 'Lazer', 'Compras'] as const
 export type PlaceSection = (typeof PLACE_SECTIONS)[number]
@@ -92,13 +93,13 @@ export function inferPlaceCategory(name: string, context = ''): string {
   return classifyPlace(name, category, dayContext).section
 }
 
-function parsePlaceLine(raw: string): { name: string; address: string } | null {
-  const piece = clean(raw)
-  if (!piece) return null
-  const [name, ...rest] = piece.split(/\s+[–—-]\s+/)
-  const cleanName = name.trim()
-  if (!cleanName) return null
-  return { name: cleanName, address: rest.join(' – ').trim() }
+function parsePlaceLine(raw: string): { name: string; address: string }[] {
+  return splitPlaceChunks(clean(raw)).flatMap((piece) => {
+    const [name, ...rest] = piece.split(/\s+[–—-]\s+/)
+    const cleanName = name.trim()
+    if (!cleanName) return []
+    return [{ name: cleanName, address: rest.join(' – ').trim() }]
+  })
 }
 
 function dayContext(day: Day): string {
@@ -118,18 +119,32 @@ function placesFromDay(day: Day): SavedPlace[] {
     address: clean(place.addr),
     category: inferPlaceCategory(place.name, context),
   }))
-  const fromActivities = day.activities.flatMap((activity) => {
-    const parsed = parsePlaceLine(activity.location ?? '')
-    if (!parsed) return []
-    return [
-      {
-        name: parsed.name,
-        address: parsed.address,
-        category: inferPlaceCategory(parsed.name, `${context} ${activity.location}`),
-      },
-    ]
-  })
+  const fromActivities = day.activities.flatMap((activity) =>
+    parsePlaceLine(activity.location ?? '').map((parsed) => ({
+      name: parsed.name,
+      address: parsed.address,
+      category: inferPlaceCategory(parsed.name, `${context} ${activity.location}`),
+    })),
+  )
   return [...fromNotes, ...fromActivities]
+}
+
+function sanitizeAddress(value: string): string {
+  return clean(value)
+    .replace(/\s*\((?:alternativa|alt\.?):\s*.+$/i, '')
+    .replace(/\s*\(todos em [^)]+\)\s*$/i, '')
+    .trim()
+}
+
+function pickRicherAddress(current: string, incoming: string): string {
+  const a = sanitizeAddress(current)
+  const b = sanitizeAddress(incoming)
+  const score = (value: string) => {
+    let points = value.length
+    if (/,\s*FL\s*\d{5}/i.test(value)) points += 24
+    return points
+  }
+  return score(b) > score(a) ? b : a
 }
 
 export function normalizePlace(
@@ -137,7 +152,7 @@ export function normalizePlace(
   options?: { allowMissingAddress?: boolean },
 ): SavedPlace | null {
   const name = clean(place.name).slice(0, 160)
-  const address = clean(place.address).slice(0, 300)
+  const address = sanitizeAddress(place.address).slice(0, 300)
   const category = clean(place.category).slice(0, 80) || 'Outros'
   const missingAddress = !address || /^buscar pelo nome$/i.test(address)
   if (!name) return null
@@ -149,8 +164,78 @@ function placeNameKey(name: string): string {
   return fold(name)
 }
 
-function placeFullKey(name: string, address: string): string {
-  return address ? `${placeNameKey(name)}|${fold(address)}` : placeNameKey(name)
+const CHAINS: { key: string; label: string; match: RegExp }[] = [
+  { key: 'walmart', label: 'Walmart', match: /\bwalmart\b/i },
+  { key: 'target', label: 'Target', match: /\btarget\b/i },
+  { key: 'ross', label: 'Ross', match: /\bross\b/i },
+  { key: 'bestbuy', label: 'Best Buy', match: /\bbest buy\b/i },
+  { key: 'burlington', label: 'Burlington', match: /\bburlington\b/i },
+  { key: 'ulta', label: 'Ulta', match: /\bulta\b/i },
+  { key: 'marshalls', label: 'Marshalls', match: /\bmarshalls\b/i },
+  { key: 'fivebelow', label: 'Five Below', match: /\bfive below\b/i },
+  { key: 'beautymaster', label: 'Beauty Master', match: /\bbeauty master\b/i },
+  { key: 'nordstrom', label: 'Nordstrom Rack', match: /\bnordstrom\b/i },
+  { key: 'tjmaxx', label: 'T.J. Maxx', match: /\bt\.?\s*j\.?\s*maxx\b/i },
+]
+
+const BRANCH_HINTS: [RegExp, string][] = [
+  [/turkey lake/i, 'Turkey Lake'],
+  [/vineland rd/i, 'Lake Buena Vista'],
+  [/daryl carter/i, 'Vineland'],
+  [/millenia/i, 'Millenia'],
+  [/international dr/i, 'I-Drive'],
+  [/international blvd/i, 'I-Drive'],
+  [/orange blossom/i, 'Florida Mall'],
+  [/grand national/i, 'I-Drive'],
+  [/eastgate/i, 'Eastgate'],
+  [/john young/i, 'John Young'],
+  [/sand lake/i, 'Sand Lake'],
+  [/daniels rd/i, 'Winter Garden Village'],
+  [/w colonial/i, 'W Colonial'],
+  [/florida mall ave/i, 'Florida Mall'],
+  [/kirkman/i, 'Kirkman'],
+]
+
+function chainOf(name: string): (typeof CHAINS)[number] | undefined {
+  return CHAINS.find((chain) => chain.match.test(name))
+}
+
+function streetIdentity(address: string): string {
+  const text = fold(address)
+    .replace(/\s*\([^)]*\)/g, ' ')
+    .replace(/[.,#]/g, ' ')
+    .replace(/\b(ste|suite|unit|apt)\b.*$/, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+  const match = text.match(/(\d+)\s+((?:[a-z0-9]+\s+){0,3}[a-z0-9]+)/)
+  if (!match) return text
+  const street = match[2].replace(/\s+\b(rd|dr|ave|blvd|way|pkwy|trl|st|hwy|plaza)\b.*$/, ' $1')
+  return `${match[1]} ${street}`.trim()
+}
+
+function lookupKey(place: SavedPlace): string {
+  const chain = chainOf(place.name)
+  const street = streetIdentity(place.address)
+  if (chain && street) return `${chain.key}|${street}`
+  return street ? `${placeNameKey(place.name)}|${street}` : placeNameKey(place.name)
+}
+
+function branchLabel(name: string, address: string): string | undefined {
+  const blob = `${name} ${address}`
+  return BRANCH_HINTS.find(([pattern]) => pattern.test(blob))?.[1]
+}
+
+export function withBranchName(name: string, address: string): string {
+  const chain = chainOf(name)
+  if (!chain) return name
+  const label = branchLabel(name, address)
+  if (!label) return name
+  const supercenter = /\bsupercenter\b/i.test(name) ? ' Supercenter' : ''
+  const base = `${chain.label}${supercenter}`
+  if (fold(name).includes(fold(label))) {
+    return name.includes(label) ? name : `${base} ${label}`
+  }
+  return `${base} ${label}`
 }
 
 export type PlaceDayRef = {
@@ -174,31 +259,54 @@ function mergeDays(current: PlaceDayRef[], incoming: PlaceDayRef[]): PlaceDayRef
   return next.sort((a, b) => a.date.localeCompare(b.date) || a.index - b.index)
 }
 
+function findExistingPlace(
+  byKey: Map<string, LocatedPlace>,
+  candidate: LocatedPlace,
+): LocatedPlace | undefined {
+  const key = lookupKey(candidate)
+  const exact = byKey.get(key)
+  if (exact) return exact
+
+  const chain = chainOf(candidate.name)
+  const street = streetIdentity(candidate.address)
+  const nameKey = placeNameKey(candidate.name)
+
+  return [...byKey.values()].find((place) => {
+    if (chain) {
+      if (chainOf(place.name)?.key !== chain.key) return false
+      if (!street) return !place.address
+      return streetIdentity(place.address) === street
+    }
+    if (placeNameKey(place.name) !== nameKey) return false
+    if (!street || !place.address) return true
+    return streetIdentity(place.address) === street
+  })
+}
+
 function upsertLocatedPlace(
   byKey: Map<string, LocatedPlace>,
   candidate: LocatedPlace,
 ) {
-  const nameKey = placeNameKey(candidate.name)
-  const fullKey = placeFullKey(candidate.name, candidate.address)
-  const existing =
-    byKey.get(fullKey) ??
-    byKey.get(nameKey) ??
-    [...byKey.values()].find((place) => placeNameKey(place.name) === nameKey)
+  const labeled: LocatedPlace = {
+    ...candidate,
+    name: withBranchName(candidate.name, candidate.address),
+  }
+  const existing = findExistingPlace(byKey, labeled)
 
   if (!existing) {
-    byKey.set(fullKey, candidate)
+    byKey.set(lookupKey(labeled), labeled)
     return
   }
 
-  const richerAddress =
-    candidate.address.length > existing.address.length ? candidate.address : existing.address
+  const richerAddress = pickRicherAddress(existing.address, labeled.address)
   const merged: LocatedPlace = {
     ...existing,
+    name: withBranchName(existing.name, richerAddress),
     address: richerAddress,
-    category: existing.category || candidate.category,
-    days: mergeDays(existing.days, candidate.days),
+    category: existing.category || labeled.category,
+    days: mergeDays(existing.days, labeled.days),
   }
-  const nextKey = placeFullKey(merged.name, merged.address)
+  const nextKey = lookupKey(merged)
   for (const [key, value] of byKey) {
     if (value === existing) byKey.delete(key)
   }
@@ -217,7 +325,7 @@ export function collectLocatedPlaces(trip: Trip): LocatedPlace[] {
     }
   }
 
-  for (const candidate of trip.locations ?? []) {
+  for (const candidate of [...(trip.locations ?? []), ...EXTRA_CHAIN_STORES]) {
     const place = normalizePlace(candidate)
     if (!place) continue
     upsertLocatedPlace(byKey, { ...place, days: [] })

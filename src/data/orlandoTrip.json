@@ -32,13 +32,13 @@
       "id": "day-2026-11-28",
       "date": "2026-11-28",
       "label": "✈️ Viagem + 🛒 Mercado",
-      "dayNotes": "📍 Walmart Supercenter – 8990 Turkey Lake Rd, Orlando, FL 32819 (alternativa: Target Millenia ⭐ – 4750 Millenia Plaza Way, Orlando, FL 32839)\n\n🚗 MIA → hotel: ~4h30 sem trânsito (~377 km); contar 5h–5h30 com paradas. Walmart: ~10 min do hotel.\n\n👶 Criança dorme no carro — planejar a parada principal para depois do cochilo. Paradas nas áreas de serviço da Turnpike. Lei da Flórida exige cadeirinha para menores de 4 anos.\n\n📝 Pedágios: confirmar o programa de pedágio da locadora. Opção B (NÃO recomendada): Sawgrass Mills abre de manhã, mas sábado pós-Black Friday + noite sem dormir com criança = muito desgaste.",
+      "dayNotes": "📍 Walmart Supercenter Turkey Lake – 8990 Turkey Lake Rd, Orlando, FL 32819\n\n🚗 MIA → hotel: ~4h30 sem trânsito (~377 km); contar 5h–5h30 com paradas. Walmart Turkey Lake: ~10 min do hotel.\n\n👶 Criança dorme no carro — planejar a parada principal para depois do cochilo. Paradas nas áreas de serviço da Turnpike. Lei da Flórida exige cadeirinha para menores de 4 anos.\n\n📝 Pedágios: confirmar o programa de pedágio da locadora. Opção B (NÃO recomendada): Sawgrass Mills abre de manhã, mas sábado pós-Black Friday + noite sem dormir com criança = muito desgaste. Target Millenia fica para 08/12; outras filiais de Walmart/Target estão na aba Locais.",
       "activities": [
         {
           "id": "act-2026-11-28-manha",
           "time": "09:00",
           "title": "Manhã — ️ VIAGEM — Chegada em Miami (madrugada/manhã cedo — conferir no bilhete), imigração, retirada do …",
-          "location": "Walmart Supercenter – 8990 Turkey Lake Rd, Orlando, FL 32819 (alternativa: Target Millenia ⭐ – 4750 Millenia Plaza Way, Orlando, FL 32839)",
+          "location": "Walmart Supercenter Turkey Lake – 8990 Turkey Lake Rd, Orlando, FL 32819",
           "notes": "✈️ VIAGEM — Chegada em Miami (madrugada/manhã cedo — conferir no bilhete), imigração, retirada do carro (cadeirinha!) e café da manhã. Seguir pela Florida's Turnpike até Orlando.",
           "done": false
         },
@@ -46,7 +46,7 @@
           "id": "act-2026-11-28-tarde",
           "time": "14:00",
           "title": "Tarde — ️ VIAGEM — Chegada em Orlando por volta do meio-dia/início da tarde. Check-in (pedir early check-…",
-          "location": "Walmart Supercenter – 8990 Turkey Lake Rd, Orlando, FL 32819 (alternativa: Target Millenia ⭐ – 4750 Millenia Plaza Way, Orlando, FL 32839)",
+          "location": "Walmart Supercenter Turkey Lake – 8990 Turkey Lake Rd, Orlando, FL 32819",
           "notes": "✈️ VIAGEM — Chegada em Orlando por volta do meio-dia/início da tarde. Check-in (pedir early check-in).\n🛒 MERCADO — Parada rápida no Walmart Supercenter Turkey Lake (⭐ da sua planilha) para fraldas, lenços, leite, frutas, água, lanches, protetor solar.",
           "done": false
         },
@@ -54,7 +54,7 @@
           "id": "act-2026-11-28-noite",
           "time": "19:00",
           "title": "Noite — DESCANSO/SONECA — Jantar perto do hotel e dormir cedo.",
-          "location": "Walmart Supercenter – 8990 Turkey Lake Rd, Orlando, FL 32819 (alternativa: Target Millenia ⭐ – 4750 Millenia Plaza Way, Orlando, FL 32839)",
+          "location": "Walmart Supercenter Turkey Lake – 8990 Turkey Lake Rd, Orlando, FL 32819",
           "notes": "😴 DESCANSO/SONECA — Jantar perto do hotel e dormir cedo.",
           "done": false
         }
@@ -224,21 +224,21 @@
       "id": "day-2026-12-04",
       "date": "2026-12-04",
       "label": "🛍️ Compras leves + 🎡 Passeio (ICON Park)",
-      "dayNotes": "📍 Ross – 7603 Turkey Lake Rd, Orlando, FL 32819 | Walmart – 8990 Turkey Lake Rd, Orlando, FL 32819 | ICON Park – 8375 International Dr, Orlando, FL 32819\n\n🚗 Ross / Walmart: ~5–10 min | ICON Park: ~5 min\n\n👶 The Wheel é uma cabine fechada de ~20 min: se a criança estiver agitada, o carrossel e o playground são o plano B. Confirmar no site do ICON Park a regra/preço de ingresso para criança de 2 anos antes de comprar.\n\n📝 Interpretei \"Interpark\" como ICON Park (I-Drive). The Wheel a partir de US$29,99 por adulto (preço de referência; confirmar). Horários do ICON Park não confirmados — ver no site no dia. A Crayola saiu deste dia e virou opcional no sábado (05/12).",
+      "dayNotes": "📍 Ross – 7603 Turkey Lake Rd, Orlando, FL 32819 | Target Sand Lake – 880 Sand Lake Rd, Orlando, FL 32809 | ICON Park – 8375 International Dr, Orlando, FL 32819\n\n🚗 Ross: ~5–10 min | Target Sand Lake: ~5–10 min | ICON Park: ~5 min\n\n👶 The Wheel é uma cabine fechada de ~20 min: se a criança estiver agitada, o carrossel e o playground são o plano B. Confirmar no site do ICON Park a regra/preço de ingresso para criança de 2 anos antes de comprar.\n\n📝 Interpretei \"Interpark\" como ICON Park (I-Drive). The Wheel a partir de US$29,99 por adulto (preço de referência; confirmar). Horários do ICON Park não confirmados — ver no site no dia. A Crayola saiu deste dia e virou opcional no sábado (05/12). O mercado deste dia é o Target Sand Lake — não repetir o Walmart Turkey Lake da chegada.",
       "activities": [
         {
           "id": "act-2026-12-04-manha",
           "time": "09:00",
-          "title": "Manhã — ️ COMPRAS — ~10h30, sem pressa: Ross Dress for Less Turkey Lake ⭐ (4,4★) — roupa e infantil off-p…",
+          "title": "Manhã — COMPRAS — ~10h30: Ross Turkey Lake ⭐; se precisar de mercado, Target Sand Lake.",
           "location": "Ross – 7603 Turkey Lake Rd, Orlando, FL 32819",
-          "notes": "🛍️ COMPRAS — ~10h30, sem pressa: Ross Dress for Less Turkey Lake ⭐ (4,4★) — roupa e infantil off-price.\n🛒 MERCADO — Depois, Walmart Turkey Lake (a 2 min do Ross) para repor fraldas/lanches ou lembrancinhas, se precisar.",
+          "notes": "🛍️ COMPRAS — ~10h30, sem pressa: Ross Dress for Less Turkey Lake ⭐ (4,4★) — roupa e infantil off-price.\n🛒 MERCADO — Depois, Target Sand Lake (880 Sand Lake Rd, ~5–10 min) para repor fraldas/lanches se precisar — outra loja, não o Walmart da chegada.",
           "done": false
         },
         {
           "id": "act-2026-12-04-tarde",
           "time": "14:00",
           "title": "Tarde — DESCANSO/SONECA — Almoço perto do hotel e soneca (~13h).",
-          "location": "Ross – 7603 Turkey Lake Rd, Orlando, FL 32819",
+          "location": "ICON Park – 8375 International Dr, Orlando, FL 32819",
           "notes": "😴 DESCANSO/SONECA — Almoço perto do hotel e soneca (~13h).\n🎡 PASSEIO — ~16h30: ICON Park, chegando antes do pôr do sol (~17h30 em dezembro). The Wheel (roda-gigante, cabine fechada, ~20 min), carrossel, Pearl Express Train e o playground. Estacionamento grátis na garagem (andares 4–7).",
           "done": false
         },
@@ -246,7 +246,7 @@
           "id": "act-2026-12-04-noite",
           "time": "19:00",
           "title": "Noite — PASSEIO — Jantar perto do ICON Park e volta cedo — dia leve depois de dois parques seguidos.",
-          "location": "Ross – 7603 Turkey Lake Rd, Orlando, FL 32819",
+          "location": "ICON Park – 8375 International Dr, Orlando, FL 32819",
           "notes": "🎡 PASSEIO — Jantar perto do ICON Park e volta cedo — dia leve depois de dois parques seguidos.",
           "done": false
         }
@@ -320,7 +320,7 @@
       "id": "day-2026-12-07",
       "date": "2026-12-07",
       "label": "😴 Descanso",
-      "dayNotes": "📍 Harry P. Leu Gardens – 1920 N Forest Ave, Orlando, FL 32803 | Walmart – 8990 Turkey Lake Rd, Orlando, FL 32819\n\n🚗 Leu Gardens: ~25 min | Walmart: ~10 min\n\n👶 Dia de recuperação pós-festa: sem horário, sem compromisso.\n\n📝 Leu Gardens: 9h–16h (última entrada 15h) nesta época; dia grátis pode lotar. Atenção: os barcos-cisne do Lake Eola NÃO funcionam às segundas.",
+      "dayNotes": "📍 Harry P. Leu Gardens – 1920 N Forest Ave, Orlando, FL 32803 | Walmart Supercenter John Young – 8101 S John Young Pkwy, Orlando, FL 32819\n\n🚗 Leu Gardens: ~25 min | Walmart John Young: ~10–15 min\n\n👶 Dia de recuperação pós-festa: sem horário, sem compromisso.\n\n📝 Leu Gardens: 9h–16h (última entrada 15h) nesta época; dia grátis pode lotar. Atenção: os barcos-cisne do Lake Eola NÃO funcionam às segundas. Se for mercado, usar o Walmart John Young — não voltar ao de Turkey Lake.",
       "activities": [
         {
           "id": "act-2026-12-07-manha",
@@ -334,8 +334,8 @@
           "id": "act-2026-12-07-tarde",
           "time": "14:00",
           "title": "Tarde — DESCANSO/SONECA — Soneca.",
-          "location": "Harry P. Leu Gardens – 1920 N Forest Ave, Orlando, FL 32803",
-          "notes": "😴 DESCANSO/SONECA — Soneca.\n🛒 MERCADO — Se precisar: reposição rápida no Walmart Turkey Lake ou Target.",
+          "location": "Walmart Supercenter John Young – 8101 S John Young Pkwy, Orlando, FL 32819",
+          "notes": "😴 DESCANSO/SONECA — Soneca.\n🛒 MERCADO — Se precisar: reposição no Walmart Supercenter John Young (8101 S John Young Pkwy) — filial diferente da chegada.",
           "done": false
         },
         {
@@ -352,13 +352,13 @@
       "id": "day-2026-12-08",
       "date": "2026-12-08",
       "label": "🛍️ Compras + 🛒 Mercado + 💄 Beleza",
-      "dayNotes": "📍 Target – 4750 Millenia Plaza Way | Best Buy – 4155 Millenia Blvd | Ross – 4661 Millenia Plaza Way | Marshalls – 4648 Millenia Plaza Way | Ulta – 4600 Millenia Plaza Way Ste 11 | The Mall at Millenia – 4200 Conroy Rd | Nordstrom Rack – 4036 Eastgate Dr, Orlando, FL 32839 (todos em Orlando, FL 32839)\n\n🚗 ~10–15 min (Nordstrom Rack: ~10 min, estimativa)\n\n👶 Tudo perto: dá para fazer só a parte da manhã e voltar. Target tem banheiro e lanches para a criança.\n\n📝 Mall at Millenia: seg–sex 11h–21h, sáb 10h–21h, dom 11h–19h (horário de feriado 2026 ainda não publicado). Target e Best Buy: conferir o horário no app. Nordstrom Rack Eastgate: seg–sáb 10h–21h, dom 11h–19h; loja menor que a média, e reviews alertam para devolução rígida (compre o que for ficar).",
+      "dayNotes": "📍 Target Millenia – 4750 Millenia Plaza Way, Orlando, FL 32839 | Best Buy – 4155 Millenia Blvd | Ross – 4661 Millenia Plaza Way | Marshalls – 4648 Millenia Plaza Way | Ulta – 4600 Millenia Plaza Way Ste 11 | The Mall at Millenia – 4200 Conroy Rd | Nordstrom Rack – 4036 Eastgate Dr, Orlando, FL 32839 (todos em Orlando, FL 32839)\n\n🚗 ~10–15 min (Nordstrom Rack: ~10 min, estimativa)\n\n👶 Tudo perto: dá para fazer só a parte da manhã e voltar. Target tem banheiro e lanches para a criança.\n\n📝 Mall at Millenia: seg–sex 11h–21h, sáb 10h–21h, dom 11h–19h (horário de feriado 2026 ainda não publicado). Target e Best Buy: conferir o horário no app. Nordstrom Rack Eastgate: seg–sáb 10h–21h, dom 11h–19h; loja menor que a média, e reviews alertam para devolução rígida (compre o que for ficar).",
       "activities": [
         {
           "id": "act-2026-12-08-manha",
           "time": "09:00",
           "title": "Manhã — MERCADO — 9h30: Millenia Plaza — Target Millenia ⭐ (mercado enorme, merch Disney).",
-          "location": "Target – 4750 Millenia Plaza Way",
+          "location": "Target Millenia – 4750 Millenia Plaza Way, Orlando, FL 32839",
           "notes": "🛒 MERCADO — 9h30: Millenia Plaza — Target Millenia ⭐ (mercado enorme, merch Disney).\n🛍️ COMPRAS — Best Buy Millenia ⭐, Ross e Marshalls no mesmo complexo.\n💄 BELEZA — Ulta (Millenia Plaza Way).\n🛍️ COMPRAS — ~10h30: Nordstrom Rack Eastgate ⭐ (4036 Eastgate Dr, abre 10h) — poucos minutos de carro de Millenia Plaza. Depois, 11h30: The Mall at Millenia (Apple, Macy's, Bloomingdale's, Neiman Marcus). Almoço no shopping.",
           "done": false
         },
@@ -366,7 +366,7 @@
           "id": "act-2026-12-08-tarde",
           "time": "14:00",
           "title": "Tarde — DESCANSO/SONECA — ~13h30 volta ao hotel para a soneca.",
-          "location": "Target – 4750 Millenia Plaza Way",
+          "location": "Target Millenia – 4750 Millenia Plaza Way, Orlando, FL 32839",
           "notes": "😴 DESCANSO/SONECA — ~13h30 volta ao hotel para a soneca.",
           "done": false
         },
@@ -374,7 +374,7 @@
           "id": "act-2026-12-08-noite",
           "time": "19:00",
           "title": "Noite — DESCANSO/SONECA — Livre; preparar o dia do Epic Universe.",
-          "location": "Target – 4750 Millenia Plaza Way",
+          "location": "Target Millenia – 4750 Millenia Plaza Way, Orlando, FL 32839",
           "notes": "😴 DESCANSO/SONECA — Livre; preparar o dia do Epic Universe.",
           "done": false
         }
@@ -448,7 +448,7 @@
       "id": "day-2026-12-11",
       "date": "2026-12-11",
       "label": "🛍️ Compras (outlets)",
-      "dayNotes": "📍 Orlando Vineland Premium Outlets – 8200 Vineland Ave, Orlando, FL 32821 | Lake Buena Vista Factory Stores – 15657 State Rd 535, Orlando, FL 32821 | Walmart – 3250 Vineland Rd, Kissimmee, FL 34746\n\n🚗 Vineland: ~15–20 min | LBV Factory Stores: ~15–20 min\n\n👶 Vagas para famílias com crianças pequenas na entrada da adidas e no Promenade. Aluguel de carrinho disponível.\n\n📝 Domingo 11h–19h; seg–sáb: conferir no site. Sexta é bem melhor que sábado para a Character Warehouse.",
+      "dayNotes": "📍 Orlando Vineland Premium Outlets – 8200 Vineland Ave, Orlando, FL 32821 | Lake Buena Vista Factory Stores – 15657 State Rd 535, Orlando, FL 32821 | Walmart Supercenter Lake Buena Vista – 3250 Vineland Rd, Kissimmee, FL 34746\n\n🚗 Vineland: ~15–20 min | LBV Factory Stores: ~15–20 min\n\n👶 Vagas para famílias com crianças pequenas na entrada da adidas e no Promenade. Aluguel de carrinho disponível.\n\n📝 Domingo 11h–19h; seg–sáb: conferir no site. Sexta é bem melhor que sábado para a Character Warehouse.",
       "activities": [
         {
           "id": "act-2026-12-11-manha",
@@ -463,7 +463,7 @@
           "time": "14:00",
           "title": "Tarde — DESCANSO/SONECA — Soneca no hotel (~15 min).",
           "location": "Orlando Vineland Premium Outlets – 8200 Vineland Ave, Orlando, FL 32821",
-          "notes": "😴 DESCANSO/SONECA — Soneca no hotel (~15 min).\n🛍️ COMPRAS — Opcional no fim da tarde: Lake Buena Vista Factory Stores (Carter's + OshKosh grande, Nike, Levi's, Crocs; menos lotado).\n🛒 MERCADO — Ou Walmart Lake Buena Vista ⭐.",
+          "notes": "😴 DESCANSO/SONECA — Soneca no hotel (~15 min).\n🛍️ COMPRAS — Opcional no fim da tarde: Lake Buena Vista Factory Stores (Carter's + OshKosh grande, Nike, Levi's, Crocs; menos lotado).\n🛒 MERCADO — Ou Walmart Supercenter Lake Buena Vista ⭐ (3250 Vineland Rd) — outra filial. Target Vineland (11619 Daryl Carter Pkwy) é alternativa na aba Locais.",
           "done": false
         },
         {
@@ -480,7 +480,7 @@
       "id": "day-2026-12-12",
       "date": "2026-12-12",
       "label": "💄 Beleza + 🎡 Passeio (Winter Garden) + 🛍️ Compras finais",
-      "dayNotes": "📍 Beauty Master – 7175 W Colonial Dr, Orlando, FL 32818 | Winter Garden Farmers Market – 104 S Lakeview Ave, Winter Garden, FL 34787 | Plant St. Market – 426 W Plant St, Winter Garden, FL 34787 | T.J. Maxx – 6716 Grand National Dr | Burlington – 6870 Grand National Dr | Walmart – 8990 Turkey Lake Rd (Orlando, FL 32819)\n\n🚗 Beauty Master: ~20 min | Winter Garden: ~25–30 min (estimativa) | Grand National / Walmart: ~5–10 min\n\n👶 Centro de Winter Garden é plano e bom para carrinho. Se a criança dormir no carro na ida, deixe o Beauty Master para a volta, em vez de acordá-la.\n\n📝 Farmers Market: sábado 8h–13h (dado do Google; confirmar no site da cidade, wgfl.gov). Beauty Master é uma loja grande de beleza com seção de K-beauty (não só coreana); reviews são mistos sobre atendimento. Os barcos-cisne do Lake Eola saíram do roteiro. Winter Garden Village (Marshalls, Target etc.) fica como opção se sobrar pique.",
+      "dayNotes": "📍 Beauty Master – 7175 W Colonial Dr, Orlando, FL 32818 | Winter Garden Farmers Market – 104 S Lakeview Ave, Winter Garden, FL 34787 | Plant St. Market – 426 W Plant St, Winter Garden, FL 34787 | Target Winter Garden Village – 3343 Daniels Rd, Winter Garden, FL 34787 | T.J. Maxx – 6716 Grand National Dr | Burlington – 6870 Grand National Dr\n\n🚗 Beauty Master: ~20 min | Winter Garden / Target Village: ~25–30 min (estimativa) | Grand National: ~5–10 min\n\n👶 Centro de Winter Garden é plano e bom para carrinho. Se a criança dormir no carro na ida, deixe o Beauty Master para a volta, em vez de acordá-la.\n\n📝 Farmers Market: sábado 8h–13h (dado do Google; confirmar no site da cidade, wgfl.gov). Beauty Master é uma loja grande de beleza com seção de K-beauty (não só coreana); reviews são mistos sobre atendimento. Os barcos-cisne do Lake Eola saíram do roteiro. Mercado deste dia: Target Winter Garden Village (e Marshalls no mesmo complexo) — não repetir o Walmart Turkey Lake.",
       "activities": [
         {
           "id": "act-2026-12-12-manha",
@@ -493,16 +493,16 @@
         {
           "id": "act-2026-12-12-tarde",
           "time": "14:00",
-          "title": "Tarde — DESCANSO/SONECA — ~13h30 volta ao hotel (~25–30 min) para a soneca.",
-          "location": "Beauty Master – 7175 W Colonial Dr, Orlando, FL 32818",
-          "notes": "😴 DESCANSO/SONECA — ~13h30 volta ao hotel (~25–30 min) para a soneca.\n🛍️ COMPRAS — Fim da tarde: compras finais perto do hotel — T.J. Maxx Grand National ⭐ e Burlington I-Drive (ao lado), bons para malas extras.\n🛒 MERCADO — Walmart Turkey Lake ⭐: lembrancinhas, chocolates, lanches da viagem de volta, balança de mala.",
+          "title": "Tarde — MERCADO — Target Winter Garden Village; depois T.J. Maxx e Burlington perto do hotel.",
+          "location": "Target Winter Garden Village – 3343 Daniels Rd, Winter Garden, FL 34787",
+          "notes": "😴 DESCANSO/SONECA — ~13h30 volta ao hotel (~25–30 min) para a soneca. No caminho, Target Winter Garden Village ⭐ (3343 Daniels Rd) para lembrancinhas, chocolates e lanches da volta — Marshalls fica no mesmo complexo.\n🛍️ COMPRAS — Fim da tarde perto do hotel: T.J. Maxx Grand National ⭐ e Burlington I-Drive (ao lado), bons para malas extras.",
           "done": false
         },
         {
           "id": "act-2026-12-12-noite",
           "time": "19:00",
           "title": "Noite — DESCANSO/SONECA — Jantar de despedida perto do hotel; arrumar e pesar as malas; dormir cedo.",
-          "location": "Beauty Master – 7175 W Colonial Dr, Orlando, FL 32818",
+          "location": "T.J. Maxx – 6716 Grand National Dr",
           "notes": "😴 DESCANSO/SONECA — Jantar de despedida perto do hotel; arrumar e pesar as malas; dormir cedo.",
           "done": false
         }
@@ -597,25 +597,10 @@
     },
     {
       "tema": "Premissas desta versão",
-      "texto": "\"Interpark\" foi interpretado como ICON Park. Disney Springs aparece em 29/11 e 10/12 (propositalmente: uma vez p/ ingressos+compras, outra p/ Natal). Best Buy aparece no Florida Mall (05/12) e no Millenia (08/12): vá só a um, o que tiver o produto. Tempos de carro novos são estimativas. A loja coreana é a Beauty Master (W Colonial); a moida K-Beauty saiu. Nordstrom Rack: só a de Eastgate (08/12); a de Winter Park é longe demais."
+      "texto": "\"Interpark\" foi interpretado como ICON Park. Disney Springs aparece em 29/11 e 10/12 (propositalmente: uma vez p/ ingressos+compras, outra p/ Natal). Best Buy aparece no Florida Mall (05/12) e no Millenia (08/12): vá só a um, o que tiver o produto. Mercados não repetem a mesma loja: 28/11 Walmart Turkey Lake, 04/12 Target Sand Lake, 07/12 Walmart John Young, 08/12 Target Millenia, 11/12 Walmart Lake Buena Vista, 12/12 Target Winter Garden Village. Tempos de carro novos são estimativas. A loja coreana é a Beauty Master (W Colonial); a moida K-Beauty saiu. Nordstrom Rack: só a de Eastgate (08/12); a de Winter Park é longe demais."
     }
   ],
   "locations": [
-    {
-      "name": "Aeroporto do Galeão (GIG)",
-      "address": "Buscar pelo nome",
-      "category": "Aeroportos"
-    },
-    {
-      "name": "GIG",
-      "address": "Buscar pelo nome",
-      "category": "Aeroportos"
-    },
-    {
-      "name": "Miami International Airport (MIA)",
-      "address": "Buscar pelo nome",
-      "category": "Aeroportos"
-    },
     {
       "name": "Cape May Cafe",
       "address": "Minnie's Beach Bash (Beach Club) – Disney's Beach Club Resort, 1800 Epcot Resorts Blvd, Lake Buena Vista, FL 32830",
@@ -637,53 +622,38 @@
       "category": "Bebê"
     },
     {
-      "name": "Beauty Master",
-      "address": "W Colonial (4,6, 743 aval.) – 7175 W Colonial Dr, Orlando, FL 32818",
-      "category": "Beleza"
-    },
-    {
-      "name": "Beauty Master",
+      "name": "Beauty Master Florida Mall",
       "address": "Florida Mall (4,3, 250 aval.) – 1631 Florida Mall Ave, Orlando, FL 32809",
       "category": "Beleza (alternativa)"
     },
     {
-      "name": "Celebration Town Center",
-      "address": "Market St, Celebration, FL 34747",
-      "category": "Centrinho"
-    },
-    {
-      "name": "Beauty Master",
-      "address": "7175 W Colonial Dr, Orlando, FL 32818",
+      "name": "Beauty Master W Colonial",
+      "address": "W Colonial (4,6, 743 aval.) – 7175 W Colonial Dr, Orlando, FL 32818",
       "category": "Compras"
     },
     {
-      "name": "Best Buy",
+      "name": "Best Buy Florida Mall",
       "address": "8350 S Orange Blossom Trl",
       "category": "Compras"
     },
     {
-      "name": "Best Buy",
+      "name": "Best Buy Millenia",
       "address": "4155 Millenia Blvd",
       "category": "Compras"
     },
     {
-      "name": "Burlington",
+      "name": "Burlington Florida Mall",
       "address": "8204 S Orange Blossom Trl",
       "category": "Compras"
     },
     {
-      "name": "Burlington",
+      "name": "Burlington I-Drive",
       "address": "6870 Grand National Dr",
       "category": "Compras"
     },
     {
-      "name": "Disney Ticket Center",
-      "address": "Town Center de Disney Springs",
-      "category": "Compras"
-    },
-    {
-      "name": "Five Below",
-      "address": "5295 International Dr, Ste 660",
+      "name": "Five Below I-Drive",
+      "address": "I-Drive – 5295 International Dr, Ste 660, Orlando, FL 32819",
       "category": "Compras"
     },
     {
@@ -692,13 +662,18 @@
       "category": "Compras"
     },
     {
-      "name": "Marshalls",
+      "name": "Marshalls Millenia",
       "address": "4648 Millenia Plaza Way",
       "category": "Compras"
     },
     {
-      "name": "Nordstrom Rack",
-      "address": "4036 Eastgate Dr, Orlando, FL 32839 (todos em Orlando, FL 32839)",
+      "name": "Marshalls Winter Garden Village",
+      "address": "3349 Daniels Rd, Winter Garden, FL 34787",
+      "category": "Compras"
+    },
+    {
+      "name": "Nordstrom Rack Millenia",
+      "address": "Eastgate / Millenia (4,2, 1.697 aval.) – 4036 Eastgate Dr, Orlando, FL 32839",
       "category": "Compras"
     },
     {
@@ -722,69 +697,159 @@
       "category": "Compras"
     },
     {
-      "name": "Ross",
+      "name": "Ross I-Drive",
       "address": "5295 International Dr",
       "category": "Compras"
     },
     {
-      "name": "Ross",
-      "address": "7603 Turkey Lake Rd, Orlando, FL 32819",
-      "category": "Compras"
-    },
-    {
-      "name": "Ross",
+      "name": "Ross Millenia",
       "address": "4661 Millenia Plaza Way",
       "category": "Compras"
     },
     {
-      "name": "T.J. Maxx",
+      "name": "Ross Turkey Lake",
+      "address": "7603 Turkey Lake Rd, Orlando, FL 32819",
+      "category": "Compras"
+    },
+    {
+      "name": "T.J. Maxx I-Drive",
       "address": "6716 Grand National Dr",
       "category": "Compras"
     },
     {
-      "name": "Target",
-      "address": "4750 Millenia Plaza Way",
+      "name": "Target Millenia",
+      "address": "4750 Millenia Plaza Way, Orlando, FL 32839",
+      "category": "Compras"
+    },
+    {
+      "name": "Target Sand Lake",
+      "address": "880 Sand Lake Rd, Orlando, FL 32809",
+      "category": "Compras"
+    },
+    {
+      "name": "Target Vineland",
+      "address": "11619 Daryl Carter Pkwy, Orlando, FL 32821",
+      "category": "Compras"
+    },
+    {
+      "name": "Target Winter Garden Village",
+      "address": "3343 Daniels Rd, Winter Garden, FL 34787",
       "category": "Compras"
     },
     {
       "name": "The Mall at Millenia",
-      "address": "4200 Conroy Rd",
+      "address": "4200 Conroy Rd, Orlando, FL 32839",
       "category": "Compras"
     },
     {
-      "name": "Ulta",
-      "address": "5295 International Blvd, Ste 100-A (todos em Orlando, FL 32819)",
+      "name": "Ulta I-Drive",
+      "address": "5295 International Blvd, Ste 100-A",
       "category": "Compras"
     },
     {
-      "name": "Ulta",
+      "name": "Ulta Millenia",
       "address": "4600 Millenia Plaza Way Ste 11",
       "category": "Compras"
     },
     {
-      "name": "Walmart",
-      "address": "8990 Turkey Lake Rd, Orlando, FL 32819",
+      "name": "Walmart Supercenter John Young",
+      "address": "8101 S John Young Pkwy, Orlando, FL 32819",
       "category": "Compras"
     },
     {
-      "name": "Walmart",
+      "name": "Walmart Supercenter Kirkman",
+      "address": "2500 S Kirkman Rd, Orlando, FL 32811",
+      "category": "Compras"
+    },
+    {
+      "name": "Walmart Supercenter Lake Buena Vista",
       "address": "3250 Vineland Rd, Kissimmee, FL 34746",
       "category": "Compras"
     },
     {
-      "name": "Walmart",
-      "address": "8990 Turkey Lake Rd (Orlando, FL 32819)",
-      "category": "Compras"
-    },
-    {
-      "name": "Walmart Supercenter",
-      "address": "8990 Turkey Lake Rd, Orlando, FL 32819 (alternativa: Target Millenia – 4750 Millenia Plaza Way, Orlando, FL 32839)",
+      "name": "Walmart Supercenter Turkey Lake",
+      "address": "8990 Turkey Lake Rd, Orlando, FL 32819",
       "category": "Compras"
     },
     {
       "name": "Hotéis Disney com gingerbread (resort hopping)",
       "address": "Contemporary: 4600 N World Dr",
       "category": "Hospedagem"
+    },
+    {
+      "name": "Aeroporto do Galeão (GIG)",
+      "address": "",
+      "category": "Lazer"
+    },
+    {
+      "name": "Celebration Town Center",
+      "address": "Market St, Celebration, FL 34747",
+      "category": "Lazer"
+    },
+    {
+      "name": "Disney Springs",
+      "address": "Lake Buena Vista, FL 32830 (estacionamento grátis)",
+      "category": "Lazer"
+    },
+    {
+      "name": "Disney Ticket Center",
+      "address": "Town Center de Disney Springs",
+      "category": "Lazer"
+    },
+    {
+      "name": "Disney's Animal Kingdom",
+      "address": "",
+      "category": "Lazer"
+    },
+    {
+      "name": "Disney's Hollywood Studios",
+      "address": "",
+      "category": "Lazer"
+    },
+    {
+      "name": "Epic Universe",
+      "address": "Orlando, FL",
+      "category": "Lazer"
+    },
+    {
+      "name": "GIG",
+      "address": "",
+      "category": "Lazer"
+    },
+    {
+      "name": "Harry P. Leu Gardens",
+      "address": "1920 N Forest Ave, Orlando, FL 32803",
+      "category": "Lazer"
+    },
+    {
+      "name": "ICON Park",
+      "address": "8375 International Dr, Orlando, FL 32819",
+      "category": "Lazer"
+    },
+    {
+      "name": "Magic Kingdom",
+      "address": "estacionamento no Transportation & Ticket Center",
+      "category": "Lazer"
+    },
+    {
+      "name": "Miami International Airport (MIA)",
+      "address": "",
+      "category": "Lazer"
+    },
+    {
+      "name": "Plant St. Market",
+      "address": "426 W Plant St, Winter Garden, FL 34787",
+      "category": "Lazer"
+    },
+    {
+      "name": "The Florida Mall (Play Park, Crayola)",
+      "address": "8001 S Orange Blossom Trl, Orlando, FL 32809",
+      "category": "Lazer"
+    },
+    {
+      "name": "Winter Garden Farmers Market",
+      "address": "104 S Lakeview Ave, Winter Garden, FL 34787",
+      "category": "Lazer"
     },
     {
       "name": "Crayola Store (Florida Mall)",
@@ -797,11 +862,6 @@
       "category": "Loja Disney"
     },
     {
-      "name": "Nordstrom Rack",
-      "address": "Eastgate / Millenia (4,2, 1.697 aval.) – 4036 Eastgate Dr, Orlando, FL 32839",
-      "category": "Off-price"
-    },
-    {
       "name": "Sawgrass Mills",
       "address": "12801 W Sunrise Blvd, Sunrise, FL 33323",
       "category": "Outlet (Miami)"
@@ -810,11 +870,6 @@
       "name": "Dolphin Mall",
       "address": "11401 NW 12th St, Miami, FL 33172",
       "category": "Outlet/shopping (Miami)"
-    },
-    {
-      "name": "Beach Club: 1800 Epcot Resorts Blvd (Lake Buena Vista, FL 32830)",
-      "address": "Buscar pelo nome",
-      "category": "Outros"
     },
     {
       "name": "Cocoa Beach (Pier)",
@@ -857,33 +912,8 @@
       "category": "Parques"
     },
     {
-      "name": "Disney's Animal Kingdom",
-      "address": "Buscar pelo nome",
-      "category": "Parques"
-    },
-    {
-      "name": "Disney's Hollywood Studios",
-      "address": "Buscar pelo nome",
-      "category": "Parques"
-    },
-    {
-      "name": "Epic Universe",
-      "address": "Orlando, FL",
-      "category": "Parques"
-    },
-    {
       "name": "Gatorland",
       "address": "14501 S Orange Blossom Trl, Orlando, FL 32837",
-      "category": "Parques"
-    },
-    {
-      "name": "Magic Kingdom",
-      "address": "estacionamento no Transportation & Ticket Center",
-      "category": "Parques"
-    },
-    {
-      "name": "Magic Kingdom",
-      "address": "Buscar pelo nome",
       "category": "Parques"
     },
     {
@@ -892,33 +922,13 @@
       "category": "Parques"
     },
     {
-      "name": "The Florida Mall (Play Park, Crayola)",
-      "address": "8001 S Orange Blossom Trl, Orlando, FL 32809",
-      "category": "Parques"
-    },
-    {
       "name": "Winter Garden",
       "address": "Farmers Market (4,8), Plant St. Market (4,8) e splash pad – 104 S Lakeview Ave e 426 W Plant St, Winter Garden, FL 34787",
       "category": "Passeio/centrinho"
     },
     {
-      "name": "Disney Springs",
-      "address": "Lake Buena Vista, FL 32830 (estacionamento grátis)",
-      "category": "Passeios"
-    },
-    {
       "name": "Disney Springs + Christmas Tree Stroll",
       "address": "Lake Buena Vista, FL 32830",
-      "category": "Passeios"
-    },
-    {
-      "name": "Harry P. Leu Gardens",
-      "address": "1920 N Forest Ave, Orlando, FL 32803",
-      "category": "Passeios"
-    },
-    {
-      "name": "ICON Park",
-      "address": "8375 International Dr, Orlando, FL 32819",
       "category": "Passeios"
     },
     {
@@ -932,17 +942,7 @@
       "category": "Passeios"
     },
     {
-      "name": "Plant St. Market",
-      "address": "426 W Plant St, Winter Garden, FL 34787",
-      "category": "Passeios"
-    },
-    {
       "name": "Winter Garden (Farmers Market + Plant Street + splash pad)",
-      "address": "104 S Lakeview Ave, Winter Garden, FL 34787",
-      "category": "Passeios"
-    },
-    {
-      "name": "Winter Garden Farmers Market",
       "address": "104 S Lakeview Ave, Winter Garden, FL 34787",
       "category": "Passeios"
     },
@@ -960,16 +960,6 @@
       "name": "The Florida Mall",
       "address": "8001 S Orange Blossom Trl, Orlando, FL 32809",
       "category": "Shopping"
-    },
-    {
-      "name": "The Mall at Millenia",
-      "address": "4200 Conroy Rd, Orlando, FL 32839",
-      "category": "Shopping"
-    },
-    {
-      "name": "Five Below",
-      "address": "I-Drive – 5295 International Dr, Ste 660, Orlando, FL 32819",
-      "category": "Variedades"
     }
   ]
 }

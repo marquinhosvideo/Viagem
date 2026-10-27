@@ -33,7 +33,7 @@ export function LocationsView({ trip, onOpenDay }: Props) {
           <h1 className="display-lg">Todos os endereços.</h1>
           <p className="lede">
             {total
-              ? `${total} locais do roteiro, em Alimentação, Lazer e Compras.`
+              ? `${total} locais do roteiro, em Alimentação, Lazer e Compras. Cada filial (Walmart, Target, Ross) tem o próprio endereço.`
               : 'Nenhum endereço no roteiro ainda.'}
           </p>
         </div>
