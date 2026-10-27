@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { CalendarPlus, Pencil, Plus, Trash2 } from 'lucide-react'
 import type { Activity, Day, Trip } from '../types'
 import { ActivityItem } from '../components/ActivityItem'
@@ -13,6 +13,7 @@ import { uid } from '../lib/format'
 type Props = {
   trip: Trip
   initialDayId?: string
+  focusDayId?: string
   onToggle: (dayId: string, activityId: string) => void
   onChange: (trip: Trip) => void | Promise<void>
 }
@@ -24,9 +25,22 @@ type Editor =
   | { type: 'activity-edit'; activity: Activity }
   | null
 
-export function ItineraryView({ trip, initialDayId, onToggle, onChange }: Props) {
+export function ItineraryView({
+  trip,
+  initialDayId,
+  focusDayId,
+  onToggle,
+  onChange,
+}: Props) {
   const [selectedId, setSelectedId] = useState(initialDayId ?? trip.days[0]?.id)
   const [editor, setEditor] = useState<Editor>(null)
+
+  useEffect(() => {
+    if (!focusDayId) return
+    if (!trip.days.some((day) => day.id === focusDayId)) return
+    setSelectedId(focusDayId)
+    setEditor(null)
+  }, [focusDayId, trip.days])
   const dayIndex = Math.max(
     0,
     trip.days.findIndex((d) => d.id === selectedId),

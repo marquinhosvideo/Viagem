@@ -1,24 +1,21 @@
 import { useMemo, useState } from 'react'
 import { Copy, MapPin, Navigation } from 'lucide-react'
-import type { SavedPlace, Trip } from '../types'
+import type { Trip } from '../types'
 import { copyText } from '../lib/addresses'
-import { groupTripLocations } from '../lib/locations'
-import { sampleTrip } from '../data/sampleTrip'
+import { formatShortDate } from '../lib/format'
+import {
+  groupTripLocations,
+  type LocatedPlace,
+  type PlaceDayRef,
+} from '../lib/locations'
 
 type Props = {
   trip: Trip
+  onOpenDay: (dayId: string) => void
 }
 
-export function LocationsView({ trip }: Props) {
-  const groups = useMemo(
-    () =>
-      groupTripLocations({
-        ...trip,
-        // Migração transparente para roteiros salvos antes da seção Locais.
-        locations: trip.locations?.length ? trip.locations : sampleTrip.locations,
-      }),
-    [trip],
-  )
+export function LocationsView({ trip, onOpenDay }: Props) {
+  const groups = useMemo(() => groupTripLocations(trip), [trip])
   const [copied, setCopied] = useState<string | null>(null)
   const total = groups.reduce((sum, group) => sum + group.places.length, 0)
 
@@ -36,8 +33,8 @@ export function LocationsView({ trip }: Props) {
           <h1 className="display-lg">Todos os endereços.</h1>
           <p className="lede">
             {total
-              ? `${total} locais do planejamento, em Alimentação, Lazer e Compras.`
-              : 'Nenhum endereço salvo no planejamento.'}
+              ? `${total} locais do roteiro, em Alimentação, Lazer e Compras.`
+              : 'Nenhum endereço no roteiro ainda.'}
           </p>
         </div>
       </section>
@@ -60,11 +57,17 @@ export function LocationsView({ trip }: Props) {
                     places={subgroup.places}
                     copied={copied}
                     onCopy={handleCopy}
+                    onOpenDay={onOpenDay}
                   />
                 </div>
               ))
             ) : (
-              <LocationCards places={group.places} copied={copied} onCopy={handleCopy} />
+              <LocationCards
+                places={group.places}
+                copied={copied}
+                onCopy={handleCopy}
+                onOpenDay={onOpenDay}
+              />
             )}
           </div>
         </section>
@@ -77,28 +80,44 @@ function LocationCards({
   places,
   copied,
   onCopy,
+  onOpenDay,
 }: {
-  places: SavedPlace[]
+  places: LocatedPlace[]
   copied: string | null
   onCopy: (key: string, text: string) => void
+  onOpenDay: (dayId: string) => void
 }) {
   return (
     <ul className="locations-list">
       {places.map((place) => {
         const key = `${place.name}|${place.address}`
-        const query = encodeURIComponent(`${place.name}, ${place.address}`)
+        const query = encodeURIComponent(
+          place.address ? `${place.name}, ${place.address}` : place.name,
+        )
         return (
           <li className="location-card" key={key}>
             <MapPin size={19} aria-hidden className="location-card__pin" />
             <div className="location-card__text">
               <h3>{place.name}</h3>
-              <p>{place.address}</p>
+              {place.address ? <p>{place.address}</p> : null}
+              {place.days.length ? (
+                <div className="location-card__days">
+                  {place.days.map((day) => (
+                    <DayTag key={day.dayId} day={day} onOpen={onOpenDay} />
+                  ))}
+                </div>
+              ) : null}
             </div>
             <div className="location-card__actions">
               <button
                 type="button"
                 className="icon-btn"
-                onClick={() => onCopy(key, `${place.name} – ${place.address}`)}
+                onClick={() =>
+                  onCopy(
+                    key,
+                    place.address ? `${place.name} – ${place.address}` : place.name,
+                  )
+                }
                 aria-label={`Copiar endereço de ${place.name}`}
                 title="Copiar endereço"
               >
@@ -124,5 +143,26 @@ function LocationCards({
         )
       })}
     </ul>
+  )
+}
+
+function DayTag({
+  day,
+  onOpen,
+}: {
+  day: PlaceDayRef
+  onOpen: (dayId: string) => void
+}) {
+  const label = `D${day.index} · ${formatShortDate(day.date)}`
+  return (
+    <button
+      type="button"
+      className="location-day-tag"
+      onClick={() => onOpen(day.dayId)}
+      aria-label={`Abrir ${label} no roteiro`}
+      title={`Abrir ${label} no roteiro`}
+    >
+      {label}
+    </button>
   )
 }

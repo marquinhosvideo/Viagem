@@ -28,6 +28,7 @@ const TABS: { id: TabId; label: string; icon: typeof Home }[] = [
 
 export default function App() {
   const [tab, setTab] = useState<TabId>('hoje')
+  const [roteiroDayId, setRoteiroDayId] = useState<string | undefined>()
   const viewport = useViewportLayout()
   const auth = useAuth()
   const remoteEnabled = isSupabaseConfigured && Boolean(auth.session)
@@ -111,7 +112,8 @@ export default function App() {
         {tab === 'roteiro' ? (
           <ItineraryView
             trip={trip}
-            initialDayId={activeDay?.id}
+            initialDayId={roteiroDayId ?? activeDay?.id}
+            focusDayId={roteiroDayId}
             onToggle={toggleActivity}
             onChange={restoreTripSnapshot}
           />
@@ -124,7 +126,15 @@ export default function App() {
             onRemove={removeExpense}
           />
         ) : null}
-        {tab === 'locais' ? <LocationsView trip={trip} /> : null}
+        {tab === 'locais' ? (
+          <LocationsView
+            trip={trip}
+            onOpenDay={(dayId) => {
+              setRoteiroDayId(dayId)
+              selectTab('roteiro')
+            }}
+          />
+        ) : null}
         {tab === 'parques' ? <ParksView trip={trip} /> : null}
         {tab === 'importar' ? (
           <ImportView

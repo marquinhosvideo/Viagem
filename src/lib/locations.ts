@@ -92,74 +92,171 @@ export function inferPlaceCategory(name: string, context = ''): string {
   return classifyPlace(name, category, dayContext).section
 }
 
-function placesFromDay(day: Day): SavedPlace[] {
-  const { places } = parseDayMeta(day.dayNotes)
-  const context = [
+function parsePlaceLine(raw: string): { name: string; address: string } | null {
+  const piece = clean(raw)
+  if (!piece) return null
+  const [name, ...rest] = piece.split(/\s+[–—-]\s+/)
+  const cleanName = name.trim()
+  if (!cleanName) return null
+  return { name: cleanName, address: rest.join(' – ').trim() }
+}
+
+function dayContext(day: Day): string {
+  return [
     day.label,
     ...day.activities.flatMap((activity) => [
       activity.title,
       activity.notes ?? '',
     ]),
   ].join(' ')
+}
 
-  return places.map((place) => ({
+function placesFromDay(day: Day): SavedPlace[] {
+  const context = dayContext(day)
+  const fromNotes = parseDayMeta(day.dayNotes).places.map((place) => ({
     name: clean(place.name),
     address: clean(place.addr),
     category: inferPlaceCategory(place.name, context),
   }))
+  const fromActivities = day.activities.flatMap((activity) => {
+    const parsed = parsePlaceLine(activity.location ?? '')
+    if (!parsed) return []
+    return [
+      {
+        name: parsed.name,
+        address: parsed.address,
+        category: inferPlaceCategory(parsed.name, `${context} ${activity.location}`),
+      },
+    ]
+  })
+  return [...fromNotes, ...fromActivities]
 }
 
-export function normalizePlace(place: SavedPlace): SavedPlace | null {
+export function normalizePlace(
+  place: SavedPlace,
+  options?: { allowMissingAddress?: boolean },
+): SavedPlace | null {
   const name = clean(place.name).slice(0, 160)
   const address = clean(place.address).slice(0, 300)
   const category = clean(place.category).slice(0, 80) || 'Outros'
-  if (!name || !address || /^buscar pelo nome$/i.test(address)) return null
-  return { name, address, category }
+  const missingAddress = !address || /^buscar pelo nome$/i.test(address)
+  if (!name) return null
+  if (missingAddress && !options?.allowMissingAddress) return null
+  return { name, address: missingAddress ? '' : address, category }
 }
 
-export function collectTripLocations(trip: Trip): SavedPlace[] {
-  const candidates = [
-    ...(trip.locations ?? []),
-    ...trip.days.flatMap(placesFromDay),
-  ]
-  const deduped = new Map<string, SavedPlace>()
+function placeNameKey(name: string): string {
+  return fold(name)
+}
 
-  for (const candidate of candidates) {
-    const place = normalizePlace(candidate)
-    if (!place) continue
-    const key = `${place.name}|${place.address}`
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLocaleLowerCase('pt-BR')
-    if (!deduped.has(key)) deduped.set(key, place)
+function placeFullKey(name: string, address: string): string {
+  return address ? `${placeNameKey(name)}|${fold(address)}` : placeNameKey(name)
+}
+
+export type PlaceDayRef = {
+  dayId: string
+  date: string
+  index: number
+}
+
+export type LocatedPlace = SavedPlace & {
+  days: PlaceDayRef[]
+}
+
+function mergeDays(current: PlaceDayRef[], incoming: PlaceDayRef[]): PlaceDayRef[] {
+  const seen = new Set(current.map((day) => day.dayId))
+  const next = [...current]
+  for (const day of incoming) {
+    if (seen.has(day.dayId)) continue
+    seen.add(day.dayId)
+    next.push(day)
+  }
+  return next.sort((a, b) => a.date.localeCompare(b.date) || a.index - b.index)
+}
+
+function upsertLocatedPlace(
+  byKey: Map<string, LocatedPlace>,
+  candidate: LocatedPlace,
+) {
+  const nameKey = placeNameKey(candidate.name)
+  const fullKey = placeFullKey(candidate.name, candidate.address)
+  const existing =
+    byKey.get(fullKey) ??
+    byKey.get(nameKey) ??
+    [...byKey.values()].find((place) => placeNameKey(place.name) === nameKey)
+
+  if (!existing) {
+    byKey.set(fullKey, candidate)
+    return
   }
 
-  return [...deduped.values()].sort((a, b) => {
+  const richerAddress =
+    candidate.address.length > existing.address.length ? candidate.address : existing.address
+  const merged: LocatedPlace = {
+    ...existing,
+    address: richerAddress,
+    category: existing.category || candidate.category,
+    days: mergeDays(existing.days, candidate.days),
+  }
+  const nextKey = placeFullKey(merged.name, merged.address)
+  for (const [key, value] of byKey) {
+    if (value === existing) byKey.delete(key)
+  }
+  byKey.set(nextKey, merged)
+}
+
+export function collectLocatedPlaces(trip: Trip): LocatedPlace[] {
+  const byKey = new Map<string, LocatedPlace>()
+
+  for (const [index, day] of trip.days.entries()) {
+    const dayRef: PlaceDayRef = { dayId: day.id, date: day.date, index: index + 1 }
+    for (const candidate of placesFromDay(day)) {
+      const place = normalizePlace(candidate, { allowMissingAddress: true })
+      if (!place) continue
+      upsertLocatedPlace(byKey, { ...place, days: [dayRef] })
+    }
+  }
+
+  for (const candidate of trip.locations ?? []) {
+    const place = normalizePlace(candidate)
+    if (!place) continue
+    upsertLocatedPlace(byKey, { ...place, days: [] })
+  }
+
+  return [...byKey.values()].sort((a, b) => {
     const category = a.category.localeCompare(b.category, 'pt-BR')
     return category || a.name.localeCompare(b.name, 'pt-BR')
   })
 }
 
+export function collectTripLocations(trip: Trip): SavedPlace[] {
+  return collectLocatedPlaces(trip).map((place) => ({
+    name: place.name,
+    address: place.address,
+    category: place.category,
+  }))
+}
+
 export type PlaceSubgroup = {
   category: ShoppingKind
-  places: SavedPlace[]
+  places: LocatedPlace[]
 }
 
 export type PlaceGroup = {
   category: PlaceSection
-  places: SavedPlace[]
+  places: LocatedPlace[]
   subgroups: PlaceSubgroup[]
 }
 
-function byName(a: SavedPlace, b: SavedPlace): number {
+function byName(a: LocatedPlace, b: LocatedPlace): number {
   return a.name.localeCompare(b.name, 'pt-BR')
 }
 
 export function groupTripLocations(trip: Trip): PlaceGroup[] {
-  const sections = new Map<PlaceSection, SavedPlace[]>()
-  const shopping = new Map<ShoppingKind, SavedPlace[]>()
+  const sections = new Map<PlaceSection, LocatedPlace[]>()
+  const shopping = new Map<ShoppingKind, LocatedPlace[]>()
 
-  for (const place of collectTripLocations(trip)) {
+  for (const place of collectLocatedPlaces(trip)) {
     const classified = classifyPlace(place.name, place.category)
     const sectionPlaces = sections.get(classified.section) ?? []
     sectionPlaces.push(place)
