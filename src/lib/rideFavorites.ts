@@ -37,6 +37,18 @@ export const DEFAULT_FAVORITE_MATCHERS = [
   'fantasmic',
   'pixar pals',
   'encounter darth vader',
+  // Epic Universe — Isle of Berk / Super Nintendo World
+  'meet toothless',
+  'toothless and hiccup',
+  'viking training camp',
+  'untrainable dragon',
+  'mario e luigi',
+  'mario and luigi',
+  'princess peach',
+  'toad e donkey',
+  'toad and donkey',
+  'donkey kong',
+  "yoshi's adventure",
 ] as const
 
 function fold(value: string): string {
