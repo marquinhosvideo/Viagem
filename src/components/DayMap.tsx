@@ -65,6 +65,15 @@ export function DayMap({ trip, day }: Props) {
           pontos.
         </p>
         <DayLeafletMap stops={stops} coords={coords} />
+        <a
+          className="btn btn--primary day-map__open"
+          href={mapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <ExternalLink size={18} aria-hidden />
+          Abrir rota no Google Maps
+        </a>
         <ol className="day-map__legend">
           {stops.map((stop, index) => (
             <li key={stop.id} className="day-map__legend-item">
@@ -80,15 +89,6 @@ export function DayMap({ trip, day }: Props) {
             </li>
           ))}
         </ol>
-        <a
-          className="btn btn--primary day-map__open"
-          href={mapsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <ExternalLink size={18} aria-hidden />
-          Abrir rota no Google Maps
-        </a>
       </div>
     </section>
   )
