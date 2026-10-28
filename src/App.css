@@ -888,6 +888,114 @@ html[data-device='mobile'][data-aspect='landscape'] .day-hero__progress-row,
   color: var(--color-ink-muted-48);
 }
 
+.day-map {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  margin-top: 20px;
+  border: 1px solid var(--color-hairline);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.day-map__canvas {
+  height: 280px;
+  width: 100%;
+  background: #eef1ee;
+}
+
+.day-map__canvas .leaflet-container {
+  height: 100%;
+  width: 100%;
+  font-family: inherit;
+  background: #eef1ee;
+}
+
+.day-map__pending {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #fff;
+  color: var(--color-ink-muted-48);
+  font-size: 14px;
+}
+
+.day-map__legend {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.day-map__legend-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--color-ink);
+}
+
+.day-map__legend-item strong {
+  font-weight: 600;
+}
+
+.day-map__badge {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.day-map__badge--hotel {
+  background: #fff;
+  color: var(--color-ink);
+  border: 1px solid var(--color-ink);
+}
+
+.day-map__open {
+  margin-top: 18px;
+}
+
+.leaflet-div-icon.day-map__marker {
+  background: transparent;
+  border: none;
+}
+
+.day-map__marker span {
+  display: flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(12, 10, 9, 0.28);
+}
+
+.day-map__marker--hotel span {
+  background: #fff;
+  color: var(--color-ink);
+  border: 1px solid var(--color-ink);
+}
+
 /* Tips */
 .tips-stack {
   display: flex;

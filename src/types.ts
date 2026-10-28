@@ -71,6 +71,11 @@ export type SavedPlace = {
   category: string
 }
 
+export type Hotel = {
+  name: string
+  address: string
+}
+
 export type Trip = {
   name: string
   destination: string
@@ -80,6 +85,8 @@ export type Trip = {
   days: Day[]
   expenses: Expense[]
   tips?: Tip[]
+  /** Ponto de partida dos deslocamentos do dia (I-Drive / Sand Lake). */
+  hotel?: Hotel
   /** Locais importados da planilha; dados antigos são derivados do roteiro. */
   locations?: SavedPlace[]
   /** Overrides opcionais dos tetos (R$) — senão usa BUDGETS */

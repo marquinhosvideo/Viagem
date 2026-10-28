@@ -3,6 +3,7 @@ import { CalendarPlus, Pencil, Plus, Trash2 } from 'lucide-react'
 import type { Activity, Day, Trip } from '../types'
 import { ActivityItem } from '../components/ActivityItem'
 import { AddressCopyList } from '../components/AddressCopyList'
+import { DayMap } from '../components/DayMap'
 import { DayChips } from '../components/DayChips'
 import { DayHero } from '../components/DayHero'
 import { DayInfo } from '../components/DayInfo'
@@ -269,6 +270,7 @@ export function ItineraryView({
       </section>
 
       <DayInfo notes={notes} />
+      <DayMap trip={trip} day={day} />
       <AddressCopyList places={places} />
     </section>
   )

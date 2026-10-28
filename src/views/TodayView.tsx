@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import type { Day, Trip } from '../types'
 import { ActivityItem } from '../components/ActivityItem'
 import { AddressCopyList } from '../components/AddressCopyList'
+import { DayMap } from '../components/DayMap'
 import { BudgetWidgets } from '../components/BudgetWidgets'
 import { DayHero } from '../components/DayHero'
 import { DayInfo } from '../components/DayInfo'
@@ -71,6 +72,7 @@ export function TodayView({ trip, day, onToggle }: Props) {
       </section>
 
       <DayInfo notes={notes} />
+      <DayMap trip={trip} day={day} />
       <AddressCopyList places={places} />
     </section>
   )

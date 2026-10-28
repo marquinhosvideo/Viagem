@@ -1,6 +1,10 @@
 {
   "name": "Orlando 2026",
   "destination": "Orlando, Flórida · família",
+  "hotel": {
+    "name": "Hotel",
+    "address": "8600 International Dr, Orlando, FL 32819"
+  },
   "startDate": "2026-11-27",
   "endDate": "2026-12-14",
   "currency": "BRL",
