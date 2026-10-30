@@ -3,10 +3,15 @@ import { BUDGET_LABELS, type Activity, type BudgetId, type Day, type Expense, ty
 import { brlToUsd, usdToBrl } from './currency'
 import { formatShortDate, formatWeekdayShort, parseAmount, uid } from './format'
 import { normalizeBudgetId } from './budgets'
-import { locationForActivityText } from './activityLocation'
+import {
+  activityTitleFromBlock,
+  locationForActivityText,
+  repairTripActivityLocations,
+  splitActivityBlocks,
+} from './activityLocation'
 import { periodFromActivityId } from './display'
 import { collectTripLocations, inferPlaceCategory, normalizePlace } from './locations'
-import { parseDayMeta, toDayPlace, type DayPlace } from './dayMeta'
+import { parseDayMeta, toDayPlace } from './dayMeta'
 
 type XLSXModule = typeof import('xlsx')
 const MAX_IMPORT_BYTES = 10 * 1024 * 1024
@@ -101,15 +106,7 @@ function hasOrlandoColumns(rows: Row[]): boolean {
   return headers.includes('manha') && headers.includes('tarde') && headers.includes('noite')
 }
 
-function activityTitle(text: string): string {
-  const line = text.split('\n')[0]
-  const body = line
-    .replace(/^[\p{Emoji_Presentation}\p{Extended_Pictographic}\s⭐\uFE0F]*\s*/u, '')
-    .trim()
-  return body.length > 100 ? `${body.slice(0, 97)}…` : body
-}
-
-function placesFromLocationColumn(location: string): DayPlace[] {
+function placesFromLocationColumn(location: string) {
   if (!location || location === '—') return []
   return location
     .split('|')
@@ -168,13 +165,20 @@ function buildOrlandoDays(rows: Row[], XLSX: XLSXModule): Day[] {
       const raw = pick(row, period.keys)
       if (isEmptyPeriod(raw)) continue
       const text = clean(raw)
-      const matchedLocation = locationForActivityText(text, dayPlaces)
-      activities.push({
-        id: `act-${date}-${period.key}`,
-        title: activityTitle(text),
-        ...(matchedLocation ? { location: matchedLocation } : {}),
-        notes: text,
-        done: false,
+      const blocks = splitActivityBlocks(text)
+      blocks.forEach((block, index) => {
+        const matchedLocation = locationForActivityText(block, dayPlaces)
+        const id =
+          index === 0
+            ? `act-${date}-${period.key}`
+            : `act-${date}-${period.key}-${index}`
+        activities.push({
+          id,
+          title: activityTitleFromBlock(block),
+          ...(matchedLocation ? { location: matchedLocation } : {}),
+          notes: block,
+          done: false,
+        })
       })
     }
 
@@ -418,7 +422,7 @@ export async function importTripFromFile(
   const meta = metaRows[0] ?? {}
   const looksOrlando = hasOrlandoColumns(roteiroRows)
 
-  const trip: Trip = {
+  const draft: Trip = {
     name: looksOrlando
       ? 'Orlando 2026'
       : clean(pick(meta, ['nome', 'name', 'viagem'])) || current.name,
@@ -432,6 +436,7 @@ export async function importTripFromFile(
     days,
     expenses,
     tips,
+    hotel: current.hotel,
     locations: collectTripLocations({
       ...current,
       days,
@@ -448,11 +453,13 @@ export async function importTripFromFile(
     },
   }
 
+  const trip = repairTripActivityLocations(draft)
+
   return {
     trip,
     stats: {
-      days: days.length,
-      activities: days.reduce((sum, d) => sum + d.activities.length, 0),
+      days: trip.days.length,
+      activities: trip.days.reduce((sum, d) => sum + d.activities.length, 0),
       expenses: expenses.length,
       tips: tips?.length ?? 0,
       locations: trip.locations?.length ?? 0,

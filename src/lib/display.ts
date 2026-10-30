@@ -97,7 +97,7 @@ export function periodFromActivityId(id: string): {
   label: string
   icon: LucideIcon
 } {
-  const key = (id.match(/(manha|tarde|noite)$/) || [])[1] as PeriodKey | undefined
+  const key = (id.match(/(manha|tarde|noite)(?:-\d+)?$/) || [])[1] as PeriodKey | undefined
   if (key === 'manha') return { key, label: 'Manhã', icon: Sunrise }
   if (key === 'tarde') return { key, label: 'Tarde', icon: Sun }
   if (key === 'noite') return { key, label: 'Noite', icon: Moon }
