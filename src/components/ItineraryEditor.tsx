@@ -1,6 +1,17 @@
 import { useState, type FormEvent } from 'react'
 import type { Activity, Day } from '../types'
-import { periodFromActivityId, type PeriodKey } from '../lib/display'
+import { parseDayMeta, replaceDayPlaces } from '../lib/dayMeta'
+
+function notesOnlyText(dayNotes?: string): string {
+  return parseDayMeta(dayNotes)
+    .notes.map((note) => {
+      if (note.label === 'Deslocamento') return `🚗 ${note.text}`
+      if (note.label === 'Com a criança') return `👶 ${note.text}`
+      if (note.label === 'Onde') return `📍 ${note.text}`
+      return `📝 ${note.text}`
+    })
+    .join('\n\n')
+}
 
 type DayFormProps = {
   day?: Day
@@ -11,16 +22,18 @@ type DayFormProps = {
 export function DayForm({ day, onSave, onCancel }: DayFormProps) {
   const [date, setDate] = useState(day?.date ?? '')
   const [label, setLabel] = useState(day?.label ?? '')
-  const [dayNotes, setDayNotes] = useState(day?.dayNotes ?? '')
+  const [dayNotes, setDayNotes] = useState(notesOnlyText(day?.dayNotes))
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
     const cleanLabel = label.trim()
     if (!date || !cleanLabel) return
+    const places = parseDayMeta(day?.dayNotes).places
+    const merged = replaceDayPlaces(dayNotes.trim().slice(0, 10_000) || undefined, places)
     onSave({
       date,
       label: cleanLabel.slice(0, 200),
-      dayNotes: dayNotes.trim().slice(0, 10_000) || undefined,
+      dayNotes: merged,
     })
   }
 
@@ -51,12 +64,12 @@ export function DayForm({ day, onSave, onCancel }: DayFormProps) {
         </div>
       </div>
       <div className="field">
-        <label htmlFor="day-notes">Locais e observações</label>
+        <label htmlFor="day-notes">Observações do dia</label>
         <textarea
           id="day-notes"
           value={dayNotes}
           onChange={(event) => setDayNotes(event.target.value)}
-          placeholder={'📍 Local – endereço\n\n📝 Observações'}
+          placeholder={'🚗 Deslocamento\n\n📝 Observações'}
           maxLength={10_000}
           rows={5}
         />
@@ -69,7 +82,6 @@ export function DayForm({ day, onSave, onCancel }: DayFormProps) {
 type ActivityFormProps = {
   activity?: Activity
   onSave: (input: {
-    period: PeriodKey
     time?: string
     title: string
     location?: string
@@ -79,12 +91,7 @@ type ActivityFormProps = {
 }
 
 export function ActivityForm({ activity, onSave, onCancel }: ActivityFormProps) {
-  const existingPeriod = activity ? periodFromActivityId(activity.id).key : null
-  const initialPeriod = existingPeriod ?? 'manha'
-  const [period, setPeriod] = useState<PeriodKey>(initialPeriod)
-  const [time, setTime] = useState(
-    activity?.time ?? (initialPeriod === 'manha' ? '09:00' : initialPeriod === 'tarde' ? '14:00' : '19:00'),
-  )
+  const [time, setTime] = useState(activity?.time ?? '')
   const [title, setTitle] = useState(activity?.title ?? '')
   const [location, setLocation] = useState(activity?.location ?? '')
   const [notes, setNotes] = useState(activity?.notes ?? '')
@@ -94,7 +101,6 @@ export function ActivityForm({ activity, onSave, onCancel }: ActivityFormProps) 
     const cleanTitle = title.trim()
     if (!cleanTitle) return
     onSave({
-      period,
       time: time || undefined,
       title: cleanTitle.slice(0, 1000),
       location: location.trim().slice(0, 500) || undefined,
@@ -104,43 +110,23 @@ export function ActivityForm({ activity, onSave, onCancel }: ActivityFormProps) 
 
   return (
     <form className="itinerary-editor" onSubmit={handleSubmit}>
-      <h3>{activity ? 'Editar período.' : 'Adicionar período.'}</h3>
-      <div className="itinerary-editor__grid itinerary-editor__grid--activity">
-        <div className="field">
-          <label htmlFor="activity-period">Período</label>
-          <select
-            id="activity-period"
-            value={period}
-            onChange={(event) => {
-              const next = event.target.value as PeriodKey
-              setPeriod(next)
-              if (!activity) {
-                setTime(next === 'manha' ? '09:00' : next === 'tarde' ? '14:00' : '19:00')
-              }
-            }}
-          >
-            <option value="manha">Manhã</option>
-            <option value="tarde">Tarde</option>
-            <option value="noite">Noite</option>
-          </select>
-        </div>
-        <div className="field">
-          <label htmlFor="activity-time">Horário</label>
-          <input
-            id="activity-time"
-            type="time"
-            value={time}
-            onChange={(event) => setTime(event.target.value)}
-          />
-        </div>
+      <h3>{activity ? 'Editar evento.' : 'Adicionar evento.'}</h3>
+      <div className="field">
+        <label htmlFor="activity-time">Horário (opcional)</label>
+        <input
+          id="activity-time"
+          type="time"
+          value={time}
+          onChange={(event) => setTime(event.target.value)}
+        />
       </div>
       <div className="field">
-        <label htmlFor="activity-title">Atividade</label>
+        <label htmlFor="activity-title">Evento</label>
         <input
           id="activity-title"
           value={title}
           onChange={(event) => setTitle(event.target.value)}
-          placeholder="Nome da atividade"
+          placeholder="Nome do evento"
           maxLength={1000}
           required
         />

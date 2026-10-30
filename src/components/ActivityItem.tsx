@@ -1,26 +1,41 @@
-import { useState } from 'react'
-import { Check, MapPin, Pencil, Trash2 } from 'lucide-react'
+import { useState, type DragEvent } from 'react'
+import { Check, Clock, GripVertical, MapPin, Pencil, Trash2 } from 'lucide-react'
 import type { Activity } from '../types'
 import { copyText } from '../lib/addresses'
-import { parseActivityLines, periodFromActivityId } from '../lib/display'
+import { parseActivityLines } from '../lib/display'
 
 type Props = {
   activity: Activity
   onToggle: () => void
   onEdit?: () => void
   onDelete?: () => void
+  draggable?: boolean
+  onDragStart?: (event: DragEvent) => void
+  onDragOver?: (event: DragEvent) => void
+  onDrop?: (event: DragEvent) => void
+  onDragEnd?: () => void
+  dragging?: boolean
 }
 
-export function ActivityItem({ activity, onToggle, onEdit, onDelete }: Props) {
+export function ActivityItem({
+  activity,
+  onToggle,
+  onEdit,
+  onDelete,
+  draggable = false,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  onDragEnd,
+  dragging = false,
+}: Props) {
   const [expanded, setExpanded] = useState(false)
   const [copied, setCopied] = useState(false)
-  const period = periodFromActivityId(activity.id)
-  const PeriodIcon = period.icon
   const source = activity.notes || activity.title
   const lines = parseActivityLines(source)
   const headline = lines[0]?.text || activity.title
   const cats = lines.filter((l) => l.cat)
-  const hasDetails = lines.length > 1 || Boolean(activity.location)
+  const hasDetails = lines.length > 1
 
   async function handleCopyAddress() {
     if (!activity.location) return
@@ -31,14 +46,27 @@ export function ActivityItem({ activity, onToggle, onEdit, onDelete }: Props) {
   }
 
   return (
-    <article className={`activity ${activity.done ? 'activity--done' : ''}`}>
+    <article
+      className={`activity ${activity.done ? 'activity--done' : ''} ${dragging ? 'activity--dragging' : ''} ${draggable ? 'activity--sortable' : ''}`}
+      draggable={draggable}
+      onDragStart={onDragStart}
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+      onDragEnd={onDragEnd}
+    >
       <div className="activity__row">
+        {draggable ? (
+          <span className="activity__drag" aria-hidden title="Arrastar para reordenar">
+            <GripVertical size={18} />
+          </span>
+        ) : null}
+
         <button
           type="button"
           className="activity__check-btn"
           onClick={onToggle}
           aria-pressed={activity.done}
-          aria-label="Concluir período"
+          aria-label="Concluir evento"
         >
           <span className="activity__check" aria-hidden>
             <Check size={16} strokeWidth={2.5} />
@@ -46,10 +74,15 @@ export function ActivityItem({ activity, onToggle, onEdit, onDelete }: Props) {
         </button>
 
         <div className="activity__body">
-          <div className="activity__period">
-            <PeriodIcon size={16} aria-hidden />
-            <span>{period.label}</span>
-            {activity.time ? <span className="activity__time">{activity.time}</span> : null}
+          <div className="activity__meta">
+            {activity.time ? (
+              <span className="activity__time">
+                <Clock size={16} aria-hidden />
+                {activity.time}
+              </span>
+            ) : (
+              <span className="activity__time activity__time--muted">Evento</span>
+            )}
             {onEdit || onDelete ? (
               <span className="activity__actions">
                 {onEdit ? (
@@ -92,6 +125,22 @@ export function ActivityItem({ activity, onToggle, onEdit, onDelete }: Props) {
             </div>
           ) : null}
 
+          {activity.location ? (
+            <div className="activity__address activity__address--inline">
+              <div className="activity__address-text">
+                <MapPin size={18} aria-hidden />
+                <p>{activity.location}</p>
+              </div>
+              <button
+                type="button"
+                className="btn btn--pearl"
+                onClick={() => void handleCopyAddress()}
+              >
+                {copied ? 'Copiado.' : 'Copiar'}
+              </button>
+            </div>
+          ) : null}
+
           {hasDetails ? (
             <button
               type="button"
@@ -117,21 +166,6 @@ export function ActivityItem({ activity, onToggle, onEdit, onDelete }: Props) {
                   </div>
                 )
               })}
-              {activity.location ? (
-                <div className="activity__address">
-                  <div className="activity__address-text">
-                    <MapPin size={18} aria-hidden />
-                    <p>{activity.location}</p>
-                  </div>
-                  <button
-                    type="button"
-                    className="btn btn--pearl"
-                    onClick={() => void handleCopyAddress()}
-                  >
-                    {copied ? 'Copiado.' : 'Copiar para o Waze'}
-                  </button>
-                </div>
-              ) : null}
             </div>
           ) : null}
         </div>

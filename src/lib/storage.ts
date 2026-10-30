@@ -1,5 +1,6 @@
 import type { Expense, Trip } from '../types'
 import { sampleTrip } from '../data/sampleTrip'
+import { repairTripActivityLocations } from './activityLocation'
 import { normalizeBudgetId } from './budgets'
 
 const STORAGE_KEY = 'roteiro-orlando-2026-v3-budgets'
@@ -29,17 +30,18 @@ export function resetTrip(): Trip {
 }
 
 function withBudgets(trip: Trip): Trip {
+  const repaired = repairTripActivityLocations(trip)
   return {
-    ...trip,
+    ...repaired,
     currency: 'BRL',
-    budgetLimits: trip.budgetLimits ?? {
+    budgetLimits: repaired.budgetLimits ?? {
       marcos: 5000,
       dielen: 5000,
       helena: 5000,
       alimentacao: 5000,
       outros: 5000,
     },
-    expenses: (trip.expenses ?? []).map(migrateExpense).filter(Boolean) as Expense[],
+    expenses: (repaired.expenses ?? []).map(migrateExpense).filter(Boolean) as Expense[],
   }
 }
 

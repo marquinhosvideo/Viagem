@@ -3,9 +3,10 @@ import { BUDGET_LABELS, type Activity, type BudgetId, type Day, type Expense, ty
 import { brlToUsd, usdToBrl } from './currency'
 import { formatShortDate, formatWeekdayShort, parseAmount, uid } from './format'
 import { normalizeBudgetId } from './budgets'
+import { locationForActivityText } from './activityLocation'
 import { periodFromActivityId } from './display'
 import { collectTripLocations, inferPlaceCategory, normalizePlace } from './locations'
-import { parseDayMeta } from './dayMeta'
+import { parseDayMeta, toDayPlace, type DayPlace } from './dayMeta'
 
 type XLSXModule = typeof import('xlsx')
 const MAX_IMPORT_BYTES = 10 * 1024 * 1024
@@ -100,11 +101,25 @@ function hasOrlandoColumns(rows: Row[]): boolean {
   return headers.includes('manha') && headers.includes('tarde') && headers.includes('noite')
 }
 
-function periodTitle(period: string, text: string): string {
+function activityTitle(text: string): string {
   const line = text.split('\n')[0]
-  const body = line.replace(/^[\p{Emoji_Presentation}\p{Extended_Pictographic}\s⭐]*\s*/u, '')
-  const short = body.length > 100 ? `${body.slice(0, 97)}…` : body
-  return `${period} — ${short}`
+  const body = line
+    .replace(/^[\p{Emoji_Presentation}\p{Extended_Pictographic}\s⭐\uFE0F]*\s*/u, '')
+    .trim()
+  return body.length > 100 ? `${body.slice(0, 97)}…` : body
+}
+
+function placesFromLocationColumn(location: string): DayPlace[] {
+  if (!location || location === '—') return []
+  return location
+    .split('|')
+    .flatMap((chunk) => {
+      const piece = chunk.trim()
+      if (!piece) return []
+      const [name, ...rest] = piece.split(/\s+[–—-]\s+/)
+      const place = toDayPlace(name, rest.join(' – '))
+      return place ? [place] : []
+    })
 }
 
 function buildOrlandoDays(rows: Row[], XLSX: XLSXModule): Day[] {
@@ -141,27 +156,23 @@ function buildOrlandoDays(rows: Row[], XLSX: XLSXModule): Day[] {
       .filter(Boolean)
       .join('\n\n')
 
-    const periods: { key: string; time: string; keys: string[] }[] = [
-      { key: 'Manhã', time: '09:00', keys: ['manha', 'manhã'] },
-      { key: 'Tarde', time: '14:00', keys: ['tarde'] },
-      { key: 'Noite', time: '19:00', keys: ['noite'] },
+    const periods: { key: string; keys: string[] }[] = [
+      { key: 'manha', keys: ['manha', 'manhã'] },
+      { key: 'tarde', keys: ['tarde'] },
+      { key: 'noite', keys: ['noite'] },
     ]
 
+    const dayPlaces = placesFromLocationColumn(location)
     const activities: Activity[] = []
     for (const period of periods) {
       const raw = pick(row, period.keys)
       if (isEmptyPeriod(raw)) continue
       const text = clean(raw)
-      const periodSlug =
-        period.key === 'Manhã' ? 'manha' : period.key === 'Tarde' ? 'tarde' : 'noite'
+      const matchedLocation = locationForActivityText(text, dayPlaces)
       activities.push({
-        id: `act-${date}-${periodSlug}`,
-        time: period.time,
-        title: periodTitle(period.key, text),
-        location:
-          location && location !== '—'
-            ? location.split('|')[0].trim()
-            : undefined,
+        id: `act-${date}-${period.key}`,
+        title: activityTitle(text),
+        ...(matchedLocation ? { location: matchedLocation } : {}),
         notes: text,
         done: false,
       })
@@ -449,9 +460,36 @@ export async function importTripFromFile(
   }
 }
 
+function activitiesForExportPeriod(
+  day: Day,
+  key: 'manha' | 'tarde' | 'noite',
+): Activity[] {
+  const tagged = day.activities.filter(
+    (activity) => periodFromActivityId(activity.id).key === key,
+  )
+  if (tagged.length) return tagged
+
+  const untagged = day.activities.filter(
+    (activity) => periodFromActivityId(activity.id).key == null,
+  )
+  if (!untagged.length) return []
+
+  return untagged.filter((activity) => {
+    if (!activity.time) {
+      const index = untagged.indexOf(activity)
+      if (key === 'manha') return index === 0
+      if (key === 'tarde') return index === 1
+      return index >= 2 || untagged.length === 1
+    }
+    const hour = Number(activity.time.slice(0, 2))
+    if (key === 'manha') return hour < 12
+    if (key === 'tarde') return hour < 18
+    return hour >= 18
+  })
+}
+
 function periodNotes(day: Day, key: 'manha' | 'tarde' | 'noite'): string {
-  return day.activities
-    .filter((activity) => periodFromActivityId(activity.id).key === key)
+  return activitiesForExportPeriod(day, key)
     .map((activity) => activity.notes?.trim() || activity.title)
     .filter(Boolean)
     .join('\n')

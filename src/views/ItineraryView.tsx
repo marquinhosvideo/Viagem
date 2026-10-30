@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type DragEvent } from 'react'
 import { CalendarPlus, Pencil, Plus, Trash2 } from 'lucide-react'
 import type { Activity, Day, Trip } from '../types'
 import { ActivityItem } from '../components/ActivityItem'
@@ -8,7 +8,7 @@ import { DayChips } from '../components/DayChips'
 import { DayHero } from '../components/DayHero'
 import { DayInfo } from '../components/DayInfo'
 import { ActivityForm, DayForm } from '../components/ItineraryEditor'
-import { parseDayMeta } from '../lib/dayMeta'
+import { parseDayMeta, replaceDayPlaces, type DayPlace } from '../lib/dayMeta'
 import { uid } from '../lib/format'
 
 type Props = {
@@ -35,6 +35,7 @@ export function ItineraryView({
 }: Props) {
   const [selectedId, setSelectedId] = useState(initialDayId ?? trip.days[0]?.id)
   const [editor, setEditor] = useState<Editor>(null)
+  const [dragActivityId, setDragActivityId] = useState<string | null>(null)
 
   useEffect(() => {
     if (!focusDayId) return
@@ -67,6 +68,12 @@ export function ItineraryView({
     }
   }
 
+  function updateDay(nextDay: Day) {
+    void onChange(
+      withDays(trip.days.map((candidate) => (candidate.id === day.id ? nextDay : candidate))),
+    )
+  }
+
   function saveDay(input: { date: string; label: string; dayNotes?: string }) {
     if (editor?.type === 'day-add') {
       if (trip.days.some((candidate) => candidate.date === input.date)) {
@@ -81,13 +88,7 @@ export function ItineraryView({
       setSelectedId(nextDay.id)
       void onChange(withDays([...trip.days, nextDay]))
     } else {
-      void onChange(
-        withDays(
-          trip.days.map((candidate) =>
-            candidate.id === day.id ? { ...candidate, ...input } : candidate,
-          ),
-        ),
-      )
+      updateDay({ ...day, ...input })
     }
     setEditor(null)
   }
@@ -111,55 +112,71 @@ export function ItineraryView({
   }
 
   function saveActivity(input: {
-    period: 'manha' | 'tarde' | 'noite'
     time?: string
     title: string
     location?: string
     notes?: string
   }) {
     const existing = editor?.type === 'activity-edit' ? editor.activity : null
-    const baseId = existing?.id.replace(/-(manha|tarde|noite)$/, '') ?? uid('act')
     const nextActivity: Activity = {
-      id: `${baseId}-${input.period}`,
+      id: existing?.id ?? uid('act'),
       time: input.time,
       title: input.title,
       location: input.location,
       notes: input.notes,
       done: existing?.done ?? false,
     }
+    if (!nextActivity.location) delete nextActivity.location
+    if (!nextActivity.time) delete nextActivity.time
+    if (!nextActivity.notes) delete nextActivity.notes
+
     const activities = existing
       ? day.activities.map((activity) =>
           activity.id === existing.id ? nextActivity : activity,
         )
       : [...day.activities, nextActivity]
-    activities.sort((a, b) => (a.time ?? '').localeCompare(b.time ?? ''))
-    void onChange(
-      withDays(
-        trip.days.map((candidate) =>
-          candidate.id === day.id ? { ...candidate, activities } : candidate,
-        ),
-      ),
-    )
+    updateDay({ ...day, activities })
     setEditor(null)
   }
 
   function deleteActivity(activity: Activity) {
     if (!window.confirm(`Excluir “${activity.title}”?`)) return
-    void onChange(
-      withDays(
-        trip.days.map((candidate) =>
-          candidate.id === day.id
-            ? {
-                ...candidate,
-                activities: candidate.activities.filter(
-                  (item) => item.id !== activity.id,
-                ),
-              }
-            : candidate,
-        ),
-      ),
-    )
+    updateDay({
+      ...day,
+      activities: day.activities.filter((item) => item.id !== activity.id),
+    })
     setEditor(null)
+  }
+
+  function reorderActivities(fromId: string, toId: string) {
+    if (fromId === toId) return
+    const from = day.activities.findIndex((activity) => activity.id === fromId)
+    const to = day.activities.findIndex((activity) => activity.id === toId)
+    if (from < 0 || to < 0) return
+    const activities = [...day.activities]
+    const [moved] = activities.splice(from, 1)
+    activities.splice(to, 0, moved)
+    updateDay({ ...day, activities })
+  }
+
+  function handleActivityDragStart(activityId: string, event: DragEvent) {
+    setDragActivityId(activityId)
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.setData('text/plain', activityId)
+  }
+
+  function handleActivityDrop(activityId: string, event: DragEvent) {
+    event.preventDefault()
+    const fromId = event.dataTransfer.getData('text/plain') || dragActivityId
+    if (fromId) reorderActivities(fromId, activityId)
+    setDragActivityId(null)
+  }
+
+  function savePlaces(nextPlaces: DayPlace[]) {
+    updateDay({
+      ...day,
+      dayNotes: replaceDayPlaces(day.dayNotes, nextPlaces),
+    })
   }
 
   return (
@@ -168,7 +185,7 @@ export function ItineraryView({
         <div className="band__inner">
           <p className="eyebrow">Roteiro</p>
           <h1 className="display-lg">{trip.days.length} dias em Orlando.</h1>
-          <p className="lede">Marque e edite manhã, tarde e noite.</p>
+          <p className="lede">Eventos em sequência — arraste para ordenar.</p>
           <button
             type="button"
             className="btn btn--ghost-pill itinerary-add-day"
@@ -233,6 +250,15 @@ export function ItineraryView({
               <ActivityItem
                 key={activity.id}
                 activity={activity}
+                draggable
+                dragging={dragActivityId === activity.id}
+                onDragStart={(event) => handleActivityDragStart(activity.id, event)}
+                onDragOver={(event) => {
+                  event.preventDefault()
+                  event.dataTransfer.dropEffect = 'move'
+                }}
+                onDrop={(event) => handleActivityDrop(activity.id, event)}
+                onDragEnd={() => setDragActivityId(null)}
                 onToggle={() => onToggle(day.id, activity.id)}
                 onEdit={() => setEditor({ type: 'activity-edit', activity })}
                 onDelete={() => deleteActivity(activity)}
@@ -240,7 +266,7 @@ export function ItineraryView({
             ))}
           </div>
           {day.activities.length === 0 ? (
-            <p className="empty-hint">Nenhum período adicionado neste dia.</p>
+            <p className="empty-hint">Nenhum evento neste dia.</p>
           ) : null}
           {editor?.type === 'activity-add' ||
           editor?.type === 'activity-edit' ? (
@@ -263,7 +289,7 @@ export function ItineraryView({
               onClick={() => setEditor({ type: 'activity-add' })}
             >
               <Plus size={18} aria-hidden />
-              Adicionar período
+              Adicionar evento
             </button>
           )}
         </div>
@@ -271,7 +297,7 @@ export function ItineraryView({
 
       <DayInfo notes={notes} />
       <DayMap trip={trip} day={day} />
-      <AddressCopyList places={places} />
+      <AddressCopyList places={places} onChange={savePlaces} />
     </section>
   )
 }

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { BudgetId, Expense, Trip } from '../types'
+import { repairTripActivityLocations } from '../lib/activityLocation'
 import { loadTrip, resetTrip, saveTrip } from '../lib/storage'
 import { uid } from '../lib/format'
 import { isSupabaseConfigured } from '../lib/supabase'
@@ -59,11 +60,12 @@ export function useTrip(enabled = true) {
     const unsubscribe = subscribeRemote((change) => {
       setTrip((prev) => {
         if (change.type === 'trip_document') {
+          const incoming = repairTripActivityLocations(change.trip)
           return {
-            ...change.trip,
+            ...incoming,
             // Prefer live checks/expenses overlays when document arrives without them
-            expenses: change.trip.expenses?.length ? change.trip.expenses : prev.expenses,
-            days: change.trip.days.map((day) => {
+            expenses: incoming.expenses?.length ? incoming.expenses : prev.expenses,
+            days: incoming.days.map((day) => {
               const prevDay = prev.days.find((d) => d.id === day.id)
               return {
                 ...day,

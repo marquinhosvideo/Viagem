@@ -86,7 +86,7 @@ export function ImportView({ trip, onImported, onReset, onRestore }: Props) {
       await onImported(result.trip)
       await refreshVersions()
       setStatus(
-        `Importado: ${result.stats.days} dias, ${result.stats.activities} períodos` +
+        `Importado: ${result.stats.days} dias, ${result.stats.activities} eventos` +
           (result.stats.locations ? `, ${result.stats.locations} locais` : '') +
           (result.stats.tips ? `, ${result.stats.tips} dicas` : '') +
           (result.stats.expenses ? `, ${result.stats.expenses} gastos` : '') +
@@ -281,7 +281,7 @@ export function ImportView({ trip, onImported, onReset, onRestore }: Props) {
                     </p>
                     <h3 className="version-item__title">{version.label}</h3>
                     <p className="version-item__stats">
-                      {version.stats.days} dias · {version.stats.activities} períodos ·{' '}
+                      {version.stats.days} dias · {version.stats.activities} eventos ·{' '}
                       {version.stats.tips} dicas · {version.stats.expenses} gastos
                     </p>
                   </div>

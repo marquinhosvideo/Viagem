@@ -35,7 +35,7 @@ export function DayHero({ day, dayIndex, dayCount }: Props) {
           <div>
             <p className="day-hero__pct">{pct}%</p>
             <p className="day-hero__progress-label">
-              {done} de {total} períodos concluídos.
+              {done} de {total} eventos concluídos.
             </p>
           </div>
           <p className="day-hero__index">

@@ -625,7 +625,30 @@ html[data-device='mobile'][data-aspect='landscape'] .day-hero__progress-row,
   min-width: 0;
 }
 
-.activity__period {
+.activity--sortable {
+  cursor: grab;
+}
+
+.activity--dragging {
+  opacity: 0.55;
+}
+
+.activity__drag {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 44px;
+  margin: -6px 0 0 -8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  color: var(--color-ink-muted-48);
+  cursor: grab;
+  padding: 0;
+}
+
+.activity__meta {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -653,7 +676,14 @@ html[data-device='mobile'][data-aspect='landscape'] .day-hero__progress-row,
 }
 
 .activity__time {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-weight: 400;
+}
+
+.activity__time--muted {
+  font-weight: 600;
 }
 
 .activity__title {
@@ -737,6 +767,15 @@ html[data-device='mobile'][data-aspect='landscape'] .day-hero__progress-row,
   gap: 10px;
   padding-top: 14px;
   border-top: 1px solid var(--color-hairline);
+}
+
+.activity__address--inline {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-hairline);
+  border-radius: 16px;
+  border-top: 1px solid var(--color-hairline);
+  background: var(--color-canvas-parchment);
 }
 
 .activity__address-text {
@@ -864,6 +903,55 @@ html[data-device='mobile'][data-aspect='landscape'] .day-hero__progress-row,
   padding: 16px 18px;
   border: 1px solid var(--color-hairline);
   border-radius: 18px;
+}
+
+.address-card--sortable {
+  cursor: grab;
+}
+
+.address-card--dragging {
+  opacity: 0.55;
+}
+
+.address-card__drag {
+  flex: 0 0 auto;
+  color: var(--color-ink-muted-48);
+  display: flex;
+  align-items: center;
+}
+
+.address-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.address-add {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid var(--color-hairline);
+  border-radius: 18px;
+  background: var(--color-canvas-parchment);
+}
+
+.address-add h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 20px;
+}
+
+.address-add__grid {
+  display: grid;
+  grid-template-columns: minmax(140px, 0.9fr) minmax(180px, 1.1fr);
+  gap: 12px;
+}
+
+.address-add .btn {
+  align-self: flex-start;
 }
 
 .address-card__pin {
@@ -2022,7 +2110,8 @@ html[data-device='mobile'][data-aspect='landscape'] .day-hero__progress-row,
   }
 
   .itinerary-editor__grid,
-  .itinerary-editor__grid--activity {
+  .itinerary-editor__grid--activity,
+  .address-add__grid {
     grid-template-columns: 1fr;
   }
 
