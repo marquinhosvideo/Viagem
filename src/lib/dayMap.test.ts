@@ -11,7 +11,7 @@ import {
 
 {
   assert.equal(hotelOf({}).address, DEFAULT_HOTEL.address)
-  assert.match(hotelOf(sampleTrip).address, /8600 International Dr/)
+  assert.match(hotelOf(sampleTrip).address, /10330 Turkey Lake Road/)
 }
 
 {
@@ -30,7 +30,7 @@ import {
   const url = googleMapsDirUrl(stops)
   assert.match(url, /^https:\/\/www\.google\.com\/maps\/dir\/\?/)
   assert.match(url, /origin=/)
-  assert.match(url, /8600/)
+  assert.match(url, /10330/)
   assert.match(url, /travelmode=driving/)
 }
 

@@ -1,6 +1,7 @@
 import type { Expense, Trip } from '../types'
 import { sampleTrip } from '../data/sampleTrip'
 import { repairTripActivityLocations } from './activityLocation'
+import { ensureCurrentHotel } from './dayMap'
 import { normalizeBudgetId } from './budgets'
 
 const STORAGE_KEY = 'roteiro-orlando-2026-v3-budgets'
@@ -30,7 +31,7 @@ export function resetTrip(): Trip {
 }
 
 function withBudgets(trip: Trip): Trip {
-  const repaired = repairTripActivityLocations(trip)
+  const repaired = repairTripActivityLocations(ensureCurrentHotel(trip))
   return {
     ...repaired,
     currency: 'BRL',

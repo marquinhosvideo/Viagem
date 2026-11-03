@@ -3,7 +3,7 @@
   "destination": "Orlando, Flórida · família",
   "hotel": {
     "name": "Hotel",
-    "address": "8600 International Dr, Orlando, FL 32819"
+    "address": "10330 Turkey Lake Road, Orlando, FL 32819"
   },
   "startDate": "2026-11-27",
   "endDate": "2026-12-14",
@@ -47,7 +47,7 @@
           "title": "VIAGEM — Chegada em Orlando por volta do meio-dia/início da tarde. Check-in (pedir early check-in).",
           "notes": "✈️ VIAGEM — Chegada em Orlando por volta do meio-dia/início da tarde. Check-in (pedir early check-in).",
           "done": false,
-          "location": "Hotel – 8600 International Dr, Orlando, FL 32819"
+          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
         },
         {
           "id": "act-2026-11-28-tarde-1",
@@ -61,7 +61,7 @@
           "title": "DESCANSO/SONECA — Jantar perto do hotel e dormir cedo.",
           "notes": "😴 DESCANSO/SONECA — Jantar perto do hotel e dormir cedo.",
           "done": false,
-          "location": "Hotel – 8600 International Dr, Orlando, FL 32819"
+          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
         }
       ]
     },
@@ -82,7 +82,7 @@
           "title": "DESCANSO/SONECA — Soneca no hotel.",
           "notes": "😴 DESCANSO/SONECA — Soneca no hotel.",
           "done": false,
-          "location": "Hotel – 8600 International Dr, Orlando, FL 32819"
+          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
         },
         {
           "id": "act-2026-11-29-tarde-1",
@@ -154,7 +154,7 @@
           "title": "DESCANSO/SONECA — ~13h volta ao hotel para a soneca.",
           "notes": "😴 DESCANSO/SONECA — ~13h volta ao hotel para a soneca.",
           "done": false,
-          "location": "Hotel – 8600 International Dr, Orlando, FL 32819"
+          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
         },
         {
           "id": "act-2026-12-01-tarde-1",
@@ -255,7 +255,7 @@
           "title": "DESCANSO/SONECA — Almoço perto do hotel e soneca (~13h).",
           "notes": "😴 DESCANSO/SONECA — Almoço perto do hotel e soneca (~13h).",
           "done": false,
-          "location": "Hotel – 8600 International Dr, Orlando, FL 32819"
+          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
         },
         {
           "id": "act-2026-12-04-tarde-1",
@@ -290,7 +290,7 @@
           "title": "DESCANSO/SONECA — Almoço no Dining Pavilion. Soneca (no carrinho ou no hotel, ~10–15 min).",
           "notes": "😴 DESCANSO/SONECA — Almoço no Dining Pavilion. Soneca (no carrinho ou no hotel, ~10–15 min).",
           "done": false,
-          "location": "Hotel – 8600 International Dr, Orlando, FL 32819"
+          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
         },
         {
           "id": "act-2026-12-05-tarde-1",
@@ -378,7 +378,7 @@
           "title": "DESCANSO/SONECA — Jantar cedo perto do hotel.",
           "notes": "😴 DESCANSO/SONECA — Jantar cedo perto do hotel.",
           "done": false,
-          "location": "Hotel – 8600 International Dr, Orlando, FL 32819"
+          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
         }
       ]
     },
@@ -421,7 +421,7 @@
           "title": "DESCANSO/SONECA — ~13h30 volta ao hotel para a soneca.",
           "notes": "😴 DESCANSO/SONECA — ~13h30 volta ao hotel para a soneca.",
           "done": false,
-          "location": "Hotel – 8600 International Dr, Orlando, FL 32819"
+          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
         },
         {
           "id": "act-2026-12-08-noite",
@@ -484,7 +484,7 @@
           "title": "DESCANSO/SONECA — Volta ao hotel ~13h para a soneca.",
           "notes": "😴 DESCANSO/SONECA — Volta ao hotel ~13h para a soneca.",
           "done": false,
-          "location": "Hotel – 8600 International Dr, Orlando, FL 32819"
+          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
         },
         {
           "id": "act-2026-12-10-tarde-1",
@@ -520,7 +520,7 @@
           "title": "DESCANSO/SONECA — Soneca no hotel (~15 min).",
           "notes": "😴 DESCANSO/SONECA — Soneca no hotel (~15 min).",
           "done": false,
-          "location": "Hotel – 8600 International Dr, Orlando, FL 32819"
+          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
         },
         {
           "id": "act-2026-12-11-tarde-1",
@@ -583,7 +583,7 @@
           "title": "DESCANSO/SONECA — Jantar de despedida perto do hotel; arrumar e pesar as malas; dormir cedo.",
           "notes": "😴 DESCANSO/SONECA — Jantar de despedida perto do hotel; arrumar e pesar as malas; dormir cedo.",
           "done": false,
-          "location": "Hotel – 8600 International Dr, Orlando, FL 32819"
+          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
         }
       ]
     },

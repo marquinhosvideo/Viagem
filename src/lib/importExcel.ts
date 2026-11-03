@@ -436,7 +436,24 @@ export async function importTripFromFile(
     days,
     expenses,
     tips,
-    hotel: current.hotel,
+    hotel: (() => {
+      const hotelName = clean(pick(meta, ['hotel', 'hospedagem', 'nome do hotel']))
+      const hotelAddress = clean(
+        pick(meta, [
+          'endereco do hotel',
+          'endereço do hotel',
+          'hotel endereco',
+          'hotel endereço',
+        ]),
+      )
+      if (hotelAddress) {
+        return {
+          name: hotelName || current.hotel?.name || 'Hotel',
+          address: hotelAddress,
+        }
+      }
+      return current.hotel
+    })(),
     locations: collectTripLocations({
       ...current,
       days,
@@ -568,9 +585,17 @@ export function buildExportSheets(trip: Trip): Record<string, (string | number)[
     ...(trip.tips ?? []).map((tip) => [tip.tema, tip.texto]),
   ]
 
+  const hotel = trip.hotel
   const viagem: (string | number)[][] = [
-    ['Nome', 'Destino', 'Início', 'Fim'],
-    [trip.name, trip.destination, trip.startDate, trip.endDate],
+    ['Nome', 'Destino', 'Início', 'Fim', 'Hotel', 'Endereço do hotel'],
+    [
+      trip.name,
+      trip.destination,
+      trip.startDate,
+      trip.endDate,
+      hotel?.name?.trim() || 'Hotel',
+      hotel?.address?.trim() || '',
+    ],
   ]
 
   return { 'Roteiro completo': roteiro, Locais: locais, Gastos: gastos, 'Dicas e ressalvas': dicas, Viagem: viagem }

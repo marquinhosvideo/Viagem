@@ -1,5 +1,6 @@
 import type { BudgetId, Expense, Trip } from '../types'
 import { repairTripActivityLocations } from './activityLocation'
+import { ensureCurrentHotel } from './dayMap'
 import { normalizeBudgetId } from './budgets'
 import { supabase } from './supabase'
 
@@ -113,7 +114,7 @@ export async function fetchRemoteState(): Promise<{
   const tripRow = tripRes.data as TripDocumentRow | null
   const tripDocument =
     tripRow && isValidTrip(tripRow.trip)
-      ? repairTripActivityLocations(tripRow.trip)
+      ? repairTripActivityLocations(ensureCurrentHotel(tripRow.trip))
       : null
 
   return {
@@ -129,7 +130,7 @@ export function applyRemoteToTrip(
   checks: Record<string, boolean>,
   expenses: Expense[],
 ): Trip {
-  const repaired = repairTripActivityLocations(trip)
+  const repaired = repairTripActivityLocations(ensureCurrentHotel(trip))
   return {
     ...repaired,
     days: repaired.days.map((day) => ({

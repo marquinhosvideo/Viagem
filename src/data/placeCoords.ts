@@ -1,6 +1,8 @@
 /** Street-identity keys → coordinates for the day minimap (no Maps API key). */
 export const PLACE_COORDS: Record<string, { lat: number; lng: number }> = {
   '8600 international dr': { lat: 28.4413629, lng: -81.4727958 },
+  '10330 turkey lake road': { lat: 28.4285, lng: -81.4758 },
+  '10330 turkey lake rd': { lat: 28.4285, lng: -81.4758 },
   '8990 turkey lake rd': { lat: 28.4398555, lng: -81.4763729 },
   'disney springs': { lat: 28.3711613, lng: -81.5183686 },
   'disney ticket center': { lat: 28.3711613, lng: -81.5183686 },
