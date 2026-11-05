@@ -10,6 +10,11 @@ import {
   splitActivityBlocks,
 } from './activityLocation'
 import { periodFromActivityId } from './display'
+import {
+  applyCanonicalHotel,
+  CANONICAL_HOTEL,
+  resolveHotelFromMeta,
+} from './hotel'
 import { collectTripLocations, inferPlaceCategory, normalizePlace } from './locations'
 import { parseDayMeta, toDayPlace } from './dayMeta'
 
@@ -436,29 +441,15 @@ export async function importTripFromFile(
     days,
     expenses,
     tips,
-    hotel: (() => {
-      const hotelName = clean(pick(meta, ['hotel', 'hospedagem', 'nome do hotel']))
-      const hotelAddress = clean(
-        pick(meta, [
-          'endereco do hotel',
-          'endereço do hotel',
-          'hotel endereco',
-          'hotel endereço',
-        ]),
-      )
-      if (hotelAddress) {
-        return {
-          name: hotelName || current.hotel?.name || 'Hotel',
-          address: hotelAddress,
-        }
-      }
-      return current.hotel
-    })(),
+    hotel: looksOrlando
+      ? resolveHotelFromMeta(meta as Record<string, unknown>, current.hotel)
+      : current.hotel ?? CANONICAL_HOTEL,
     locations: collectTripLocations({
       ...current,
       days,
       expenses,
       tips,
+      hotel: looksOrlando ? CANONICAL_HOTEL : current.hotel,
       locations: [...(current.locations ?? []), ...importedLocations],
     }),
     budgetLimits: current.budgetLimits ?? {
@@ -470,7 +461,7 @@ export async function importTripFromFile(
     },
   }
 
-  const trip = repairTripActivityLocations(draft)
+  const trip = applyCanonicalHotel(repairTripActivityLocations(draft))
 
   return {
     trip,
@@ -535,6 +526,10 @@ function noteByLabel(day: Day, label: string): string {
 }
 
 export function buildExportSheets(trip: Trip): Record<string, (string | number)[][]> {
+  const canonical = applyCanonicalHotel(trip)
+  const hotel = canonical.hotel ?? CANONICAL_HOTEL
+  const hotelHeader = `Carro a partir do hotel — ${hotel.address}`
+
   const roteiro: (string | number)[][] = [
     [
       'Data',
@@ -544,11 +539,11 @@ export function buildExportSheets(trip: Trip): Record<string, (string | number)[
       'Tarde',
       'Noite',
       'Lugares e endereços',
-      'Carro a partir do hotel',
+      hotelHeader,
       'Criança (soneca, carrinho, comida)',
       'Observações / horários',
     ],
-    ...trip.days.map((day) => [
+    ...canonical.days.map((day) => [
       formatShortDate(day.date),
       formatWeekdayShort(day.date),
       day.label,
@@ -562,15 +557,19 @@ export function buildExportSheets(trip: Trip): Record<string, (string | number)[
     ]),
   ]
 
+  const tripLocations = collectTripLocations(canonical).filter(
+    (place) => !/^hotel\b/i.test(place.name) && !/10330\s+turkey\s+lake/i.test(place.address),
+  )
   const locais: (string | number)[][] = [
     ['Categoria', 'Nome / Local', 'Endereço'],
-    ...collectTripLocations(trip).map((place) => [place.category, place.name, place.address]),
+    ['Hospedagem', hotel.name, hotel.address],
+    ...tripLocations.map((place) => [place.category, place.name, place.address]),
   ]
 
   const gastos: (string | number)[][] = [
     ['Data', 'Descrição', 'Valor', 'Orçamento'],
-    ...trip.expenses.map((expense) => {
-      const day = trip.days.find((item) => item.id === expense.dayId)
+    ...canonical.expenses.map((expense) => {
+      const day = canonical.days.find((item) => item.id === expense.dayId)
       return [
         day ? formatShortDate(day.date) : '',
         expense.description,
@@ -582,23 +581,28 @@ export function buildExportSheets(trip: Trip): Record<string, (string | number)[
 
   const dicas: (string | number)[][] = [
     ['Tema', 'Dica / ressalva'],
-    ...(trip.tips ?? []).map((tip) => [tip.tema, tip.texto]),
+    ...(canonical.tips ?? []).map((tip) => [tip.tema, tip.texto]),
   ]
 
-  const hotel = trip.hotel
   const viagem: (string | number)[][] = [
     ['Nome', 'Destino', 'Início', 'Fim', 'Hotel', 'Endereço do hotel'],
     [
-      trip.name,
-      trip.destination,
-      trip.startDate,
-      trip.endDate,
-      hotel?.name?.trim() || 'Hotel',
-      hotel?.address?.trim() || '',
+      canonical.name,
+      canonical.destination,
+      canonical.startDate,
+      canonical.endDate,
+      hotel.name,
+      hotel.address,
     ],
   ]
 
-  return { 'Roteiro completo': roteiro, Locais: locais, Gastos: gastos, 'Dicas e ressalvas': dicas, Viagem: viagem }
+  return {
+    Viagem: viagem,
+    'Roteiro completo': roteiro,
+    Locais: locais,
+    Gastos: gastos,
+    'Dicas e ressalvas': dicas,
+  }
 }
 
 function downloadWorkbook(XLSX: XLSXModule, sheets: Record<string, (string | number)[][]>, filename: string) {

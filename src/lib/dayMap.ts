@@ -1,26 +1,13 @@
 import { PLACE_COORDS } from '../data/placeCoords'
 import type { Day, Hotel, Trip } from '../types'
 import { parseDayMeta, type DayPlace } from './dayMeta'
+import { applyCanonicalHotel, CANONICAL_HOTEL } from './hotel'
 
-export const DEFAULT_HOTEL: Hotel = {
-  name: 'Hotel',
-  address: '10330 Turkey Lake Road, Orlando, FL 32819',
-}
+export const DEFAULT_HOTEL: Hotel = CANONICAL_HOTEL
 
-const PREVIOUS_HOTEL_ADDRESSES =
-  /8600\s+international\s+dr|7389\s+universal\s+boulevard/i
-
-/** Upgrades known previous hotel defaults to the current address. */
-export function ensureCurrentHotel<T extends Pick<Trip, 'hotel'>>(trip: T): T {
-  const address = trip.hotel?.address?.trim() ?? ''
-  if (address && !PREVIOUS_HOTEL_ADDRESSES.test(address)) return trip
-  return {
-    ...trip,
-    hotel: {
-      name: trip.hotel?.name?.trim() || DEFAULT_HOTEL.name,
-      address: DEFAULT_HOTEL.address,
-    },
-  }
+/** Forces the canonical Turkey Lake hotel on the trip. */
+export function ensureCurrentHotel(trip: Trip): Trip {
+  return applyCanonicalHotel(trip)
 }
 
 const SKIP_PLACE =

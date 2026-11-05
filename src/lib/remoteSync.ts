@@ -114,7 +114,9 @@ export async function fetchRemoteState(): Promise<{
   const tripRow = tripRes.data as TripDocumentRow | null
   const tripDocument =
     tripRow && isValidTrip(tripRow.trip)
-      ? repairTripActivityLocations(ensureCurrentHotel(tripRow.trip))
+      ? ensureCurrentHotel(
+          repairTripActivityLocations(ensureCurrentHotel(tripRow.trip)),
+        )
       : null
 
   return {
@@ -130,7 +132,7 @@ export function applyRemoteToTrip(
   checks: Record<string, boolean>,
   expenses: Expense[],
 ): Trip {
-  const repaired = repairTripActivityLocations(ensureCurrentHotel(trip))
+  const repaired = ensureCurrentHotel(repairTripActivityLocations(ensureCurrentHotel(trip)))
   return {
     ...repaired,
     days: repaired.days.map((day) => ({

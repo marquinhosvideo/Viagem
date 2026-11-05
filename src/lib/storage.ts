@@ -31,7 +31,7 @@ export function resetTrip(): Trip {
 }
 
 function withBudgets(trip: Trip): Trip {
-  const repaired = repairTripActivityLocations(ensureCurrentHotel(trip))
+  const repaired = ensureCurrentHotel(repairTripActivityLocations(ensureCurrentHotel(trip)))
   return {
     ...repaired,
     currency: 'BRL',

@@ -1,6 +1,6 @@
 import type { Activity, Day, Hotel, Trip } from '../types'
 import { formatDayPlace, parseDayMeta, toDayPlace, type DayPlace } from './dayMeta'
-import { DEFAULT_HOTEL } from './dayMap'
+import { CANONICAL_HOTEL } from './hotel'
 
 function fold(value: string): string {
   return value
@@ -49,8 +49,8 @@ const HOTEL_HINT =
   /\b(hotel|check-?\s*in|soneca no hotel|perto do hotel|volta ao hotel|voltar ao hotel|dormir cedo|jantar (?:cedo )?(?:perto do|no) hotel)\b/i
 
 function hotelPlace(hotel?: Hotel | null): DayPlace | null {
-  const name = hotel?.name?.trim() || DEFAULT_HOTEL.name
-  const address = hotel?.address?.trim() || DEFAULT_HOTEL.address
+  const name = hotel?.name?.trim() || CANONICAL_HOTEL.name
+  const address = hotel?.address?.trim() || CANONICAL_HOTEL.address
   return toDayPlace(name, address)
 }
 
