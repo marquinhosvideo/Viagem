@@ -8,6 +8,7 @@ import {
   type LocatedPlace,
   type PlaceDayRef,
 } from '../lib/locations'
+import { hasAddress } from '../lib/places'
 
 type Props = {
   trip: Trip
@@ -33,8 +34,8 @@ export function LocationsView({ trip, onOpenDay }: Props) {
           <h1 className="display-lg">Todos os endereços.</h1>
           <p className="lede">
             {total
-              ? `${total} locais do roteiro, em Alimentação, Lazer e Compras. Cada filial da mesma rede tem o próprio endereço.`
-              : 'Nenhum endereço no roteiro ainda.'}
+              ? `${total} locais únicos do roteiro, por categoria. O mesmo local pode aparecer em vários dias.`
+              : 'Nenhum local no roteiro ainda.'}
           </p>
         </div>
       </section>
@@ -43,32 +44,15 @@ export function LocationsView({ trip, onOpenDay }: Props) {
         <section className="band locations-group" key={group.category}>
           <div className="band__inner">
             <div className="locations-group__head">
-              <h2 className="section-title">{group.category}</h2>
+              <h2 className="section-title">{group.categoryLabel}</h2>
               <span>{group.places.length}</span>
             </div>
-            {group.subgroups.length > 0 ? (
-              group.subgroups.map((subgroup) => (
-                <div className="locations-subgroup" key={subgroup.category}>
-                  <div className="locations-subgroup__head">
-                    <h3>{subgroup.category}</h3>
-                    <span>{subgroup.places.length}</span>
-                  </div>
-                  <LocationCards
-                    places={subgroup.places}
-                    copied={copied}
-                    onCopy={handleCopy}
-                    onOpenDay={onOpenDay}
-                  />
-                </div>
-              ))
-            ) : (
-              <LocationCards
-                places={group.places}
-                copied={copied}
-                onCopy={handleCopy}
-                onOpenDay={onOpenDay}
-              />
-            )}
+            <LocationCards
+              places={group.places}
+              copied={copied}
+              onCopy={handleCopy}
+              onOpenDay={onOpenDay}
+            />
           </div>
         </section>
       ))}
@@ -90,16 +74,16 @@ function LocationCards({
   return (
     <ul className="locations-list">
       {places.map((place) => {
-        const key = `${place.name}|${place.address}`
+        const key = place.id
         const query = encodeURIComponent(
-          place.address ? `${place.name}, ${place.address}` : place.name,
+          place.address ? `${place.name}, ${place.address}` : `${place.name}, Orlando, FL`,
         )
         return (
           <li className="location-card" key={key}>
             <MapPin size={19} aria-hidden className="location-card__pin" />
             <div className="location-card__text">
               <h3>{place.name}</h3>
-              {place.address ? <p>{place.address}</p> : null}
+              {place.address ? <p>{place.address}</p> : <p className="muted">Endereço a completar</p>}
               {place.days.length ? (
                 <div className="location-card__days">
                   {place.days.map((day) => (
@@ -123,16 +107,18 @@ function LocationCards({
               >
                 <Copy size={18} aria-hidden />
               </button>
-              <a
-                className="icon-btn"
-                href={`https://www.google.com/maps/search/?api=1&query=${query}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Abrir ${place.name} no mapa`}
-                title="Abrir no mapa"
-              >
-                <Navigation size={18} aria-hidden />
-              </a>
+              {hasAddress(place) ? (
+                <a
+                  className="icon-btn"
+                  href={`https://www.google.com/maps/search/?api=1&query=${query}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Abrir ${place.name} no mapa`}
+                  title="Abrir no mapa"
+                >
+                  <Navigation size={18} aria-hidden />
+                </a>
+              ) : null}
             </div>
             {copied === key ? (
               <span className="location-card__copied" role="status">

@@ -86,11 +86,13 @@ export function ImportView({ trip, onImported, onReset, onRestore }: Props) {
       await onImported(result.trip)
       await refreshVersions()
       setStatus(
-        `Importado: ${result.stats.days} dias, ${result.stats.activities} eventos` +
-          (result.stats.locations ? `, ${result.stats.locations} locais` : '') +
+        `Importado: ${result.stats.days} dias, ${result.stats.stops} paradas` +
+          (result.stats.places ? `, ${result.stats.places} locais` : '') +
+          (result.stats.optionalStops ? ` (${result.stats.optionalStops} opcionais)` : '') +
           (result.stats.tips ? `, ${result.stats.tips} dicas` : '') +
           (result.stats.expenses ? `, ${result.stats.expenses} gastos` : '') +
-          '. Versão anterior salva no banco.',
+          '. Versão anterior salva no banco.' +
+          (result.warnings.length ? ` Aviso: ${result.warnings.join(' ')}` : ''),
       )
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Falha ao importar o arquivo.')
@@ -107,9 +109,10 @@ export function ImportView({ trip, onImported, onReset, onRestore }: Props) {
     try {
       const filename = await exportTripToExcel(trip)
       setFileName(filename)
-      const locations = collectTripLocations(trip).length
+      const places = collectTripLocations(trip).length
+      const stops = trip.days.reduce((sum, day) => sum + day.stops.length, 0)
       setStatus(
-        `Exportado: ${filename} · ${trip.days.length} dias · ${locations} locais` +
+        `Exportado: ${filename} · ${trip.days.length} dias · ${stops} paradas · ${places} locais` +
           (trip.expenses.length ? ` · ${trip.expenses.length} gastos` : '') +
           '.',
       )
@@ -182,11 +185,10 @@ export function ImportView({ trip, onImported, onReset, onRestore }: Props) {
           <FileSpreadsheet size={40} strokeWidth={1.5} className="import-icon" />
           <h1 className="display-lg">Planilha.</h1>
           <p className="lede">
-            Exporte o roteiro atual para Excel ou importe uma planilha para atualizar dias,
-            locais e observações. Gastos na planilha entram em US$ e são convertidos para
-            reais. Marcações já feitas no app são mantidas quando possível. Até{' '}
-            {MAX_TRIP_VERSIONS} versões ficam no banco (Supabase) para recuperar de
-            qualquer aparelho.
+            Use a planilha revisada (abas Viagem, Roteiro completo, Dias). Cada linha do
+            roteiro é uma parada com local, categoria e status — sem Manhã/Tarde/Noite.
+            Gastos entram em US$ e viram reais. Checks já feitos são mantidos pelo id da
+            parada. Até {MAX_TRIP_VERSIONS} versões ficam no banco (Supabase).
           </p>
           <div className="import-actions">
             <button
@@ -233,7 +235,9 @@ export function ImportView({ trip, onImported, onReset, onRestore }: Props) {
             <p className="utility-card__eyebrow">Arquivo atual</p>
             <h3 className="utility-card__title">{fileName}</h3>
             <p className="utility-card__footnote">
-              {trip.days.length} dias · {collectTripLocations(trip).length} locais ·{' '}
+              {trip.days.length} dias ·{' '}
+              {trip.days.reduce((sum, day) => sum + day.stops.length, 0)} paradas ·{' '}
+              {collectTripLocations(trip).length} locais ·{' '}
               {formatShortDate(trip.startDate)} a {formatShortDate(trip.endDate)}
             </p>
           </article>
@@ -281,7 +285,7 @@ export function ImportView({ trip, onImported, onReset, onRestore }: Props) {
                     </p>
                     <h3 className="version-item__title">{version.label}</h3>
                     <p className="version-item__stats">
-                      {version.stats.days} dias · {version.stats.activities} eventos ·{' '}
+                      {version.stats.days} dias · {version.stats.stops ?? version.stats.activities} paradas ·{' '}
                       {version.stats.tips} dicas · {version.stats.expenses} gastos
                     </p>
                   </div>

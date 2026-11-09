@@ -155,7 +155,7 @@ export function ReceiptScanButton({
             <select id="ocr-day" value={dayId} onChange={(e) => setDayId(e.target.value)}>
               {days.map((day, i) => (
                 <option key={day.id} value={day.id}>
-                  D{i + 1} · {formatShortDate(day.date)} · {day.label}
+                  D{i + 1} · {formatShortDate(day.date)} · {day.dayType}
                 </option>
               ))}
             </select>

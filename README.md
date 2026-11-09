@@ -1,6 +1,12 @@
 # Roteiro — Orlando 2026
 
-App web mobile-first para a viagem em família a Orlando: roteiro dia a dia (Manhã / Tarde / Noite), checks, gastos por orçamento e sync na nuvem.
+App web mobile-first para a viagem em família a Orlando: lista ordenada de paradas por dia, checks, gastos por orçamento e sync na nuvem.
+
+## Modelo
+
+Cada dia tem paradas ordenadas; cada parada aponta para um **local** único (com categoria: hotel, alimentação, compras, lazer, transporte). Não há mais campos Manhã / Tarde / Noite.
+
+Fonte da verdade: planilha revisada (`scripts/Orlando-2026_revisado.xlsx`). Schema SQL de referência: `supabase/roteiro_paradas.sql`.
 
 ## Como usar
 
@@ -20,10 +26,11 @@ Passo a passo: **[SYNC.md](./SYNC.md)** (também compara Excel/OneDrive vs Supab
 ### Abas
 
 - **Hoje** — dia ativo + widgets de orçamento
-- **Roteiro** — todos os dias com checks
+- **Roteiro** — todos os dias com paradas e checks
 - **Gastos** — Marcos / Dielen / Helena / Alimentação / Outros
-- **Dicas** — ressalvas da planilha
-- **Excel** — baixar/reimportar o roteiro
+- **Locais** — catálogo único por categoria
+- **Parques** — filas ao vivo
+- **Excel** — baixar/reimportar o roteiro (formato Seq / Ordem no dia / Local / Status)
 
 ### Orçamentos (topo)
 

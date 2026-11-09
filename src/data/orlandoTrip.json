@@ -1,31 +1,400 @@
 {
   "name": "Orlando 2026",
   "destination": "Orlando, Flórida · família",
+  "startDate": "2026-11-27",
+  "endDate": "2026-12-14",
+  "currency": "BRL",
   "hotel": {
     "name": "Hotel",
     "address": "10330 Turkey Lake Road, Orlando, FL 32819"
   },
-  "startDate": "2026-11-27",
-  "endDate": "2026-12-14",
-  "currency": "BRL",
-  "budgetLimits": {
-    "marcos": 5000,
-    "dielen": 5000,
-    "helena": 5000,
-    "alimentacao": 5000,
-    "outros": 5000
-  },
+  "places": [
+    {
+      "id": "loc-293034fbe3",
+      "name": "Aeroporto do Galeão (GIG)",
+      "address": null,
+      "category": "transporte",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-3000f23692",
+      "name": "Beauty Master W Colonial",
+      "address": "7175 W Colonial Dr, Orlando, FL 32818",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-a13b7c674f",
+      "name": "Best Buy Florida Mall",
+      "address": "8350 S Orange Blossom Trl, Orlando, FL 32809",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-c9f8231064",
+      "name": "Best Buy Millenia",
+      "address": "4155 Millenia Blvd, Orlando, FL 32839",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-40d9706e6e",
+      "name": "Burlington Florida Mall",
+      "address": "8204 S Orange Blossom Trl, Orlando, FL 32809",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-817328c35d",
+      "name": "Burlington Grand National",
+      "address": "6870 Grand National Dr, Orlando, FL 32819",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-a26a561305",
+      "name": "Celebration Town Center",
+      "address": "Market St, Celebration, FL 34747",
+      "category": "lazer",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-5b0981a66b",
+      "name": "Disney Springs",
+      "address": "Lake Buena Vista, FL 32830",
+      "category": "lazer",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-21064cd223",
+      "name": "Disney Ticket Center",
+      "address": null,
+      "category": "lazer",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-753f762f19",
+      "name": "Disney's Animal Kingdom",
+      "address": null,
+      "category": "lazer",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-2dff2120d3",
+      "name": "Disney's Hollywood Studios",
+      "address": null,
+      "category": "lazer",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-68be37f7c8",
+      "name": "Epic Universe",
+      "address": null,
+      "category": "lazer",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-bedbadc12f",
+      "name": "Five Below I-Drive",
+      "address": "5295 International Dr, Ste 660, Orlando, FL 32819",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-adde9deaf7",
+      "name": "Harry P. Leu Gardens",
+      "address": "1920 N Forest Ave, Orlando, FL 32803",
+      "category": "lazer",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-9c4ba7d047",
+      "name": "Hotel",
+      "address": "10330 Turkey Lake Road, Orlando, FL 32819",
+      "category": "hotel",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-88deea5c00",
+      "name": "ICON Park",
+      "address": "8375 International Dr, Orlando, FL 32819",
+      "category": "lazer",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-cce91bc9ba",
+      "name": "Lake Buena Vista Factory Stores",
+      "address": "15657 State Rd 535, Orlando, FL 32821",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-69e4d26fbd",
+      "name": "Magic Kingdom",
+      "address": null,
+      "category": "lazer",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-5ad2d8dd59",
+      "name": "Marshalls Millenia",
+      "address": "4648 Millenia Plaza Way, Orlando, FL 32839",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-9f93c3422e",
+      "name": "Miami International Airport (MIA)",
+      "address": null,
+      "category": "transporte",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-c63fb64fdf",
+      "name": "Nordstrom Rack Eastgate",
+      "address": "4036 Eastgate Dr, Orlando, FL 32839",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-83c4ebfbe6",
+      "name": "Orlando International Premium Outlets",
+      "address": "4951 International Dr, Orlando, FL 32819",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-a9f543bdca",
+      "name": "Orlando Outlet Marketplace",
+      "address": "5269 International Dr, Orlando, FL 32819",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-1c240b65d6",
+      "name": "Orlando Vineland Premium Outlets",
+      "address": "8200 Vineland Ave, Orlando, FL 32821",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-b860ced148",
+      "name": "Plant St. Market",
+      "address": "426 W Plant St, Winter Garden, FL 34787",
+      "category": "alimentacao",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-e14f115ade",
+      "name": "Ross Florida Mall",
+      "address": "1736 Sand Lake Rd, Orlando, FL 32809",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-8bb1303d6f",
+      "name": "Ross I-Drive",
+      "address": "5295 International Dr, Orlando, FL 32819",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-ef7334fadb",
+      "name": "Ross Millenia",
+      "address": "4661 Millenia Plaza Way, Orlando, FL 32839",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-bff29f76f7",
+      "name": "Ross Turkey Lake",
+      "address": "7603 Turkey Lake Rd, Orlando, FL 32819",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-9055574578",
+      "name": "Ross Vineland",
+      "address": "11625 Regency Village Dr, Orlando, FL 32821",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-a98de5ad4e",
+      "name": "Ross W Colonial",
+      "address": "7445 W Colonial Dr, Orlando, FL 32818",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-d11ac1cb4c",
+      "name": "T.J. Maxx Grand National",
+      "address": "6716 Grand National Dr, Orlando, FL 32819",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-87347e6492",
+      "name": "T.J. Maxx I-Drive",
+      "address": "5295 International Dr, Suite 500, Orlando, FL 32819",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-7f0127d404",
+      "name": "Target Millenia",
+      "address": "4750 Millenia Plaza Way, Orlando, FL 32839",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-c8a92df254",
+      "name": "Target Sand Lake",
+      "address": "880 Sand Lake Rd, Orlando, FL 32809",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-2a2d7e857d",
+      "name": "Target Vineland",
+      "address": "11619 Daryl Carter Pkwy, Orlando, FL 32821",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-acbe4d164a",
+      "name": "Target Winter Garden Village",
+      "address": "3343 Daniels Rd, Winter Garden, FL 34787",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-7fc5c72dcd",
+      "name": "The Florida Mall (Play Park, Crayola)",
+      "address": "8001 S Orange Blossom Trl, Orlando, FL 32809",
+      "category": "lazer",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-32ef01d909",
+      "name": "The Mall at Millenia",
+      "address": "4200 Conroy Rd, Orlando, FL 32839",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-e73242a115",
+      "name": "Ulta I-Drive",
+      "address": "5295 International Blvd, Ste 100-A, Orlando, FL 32819",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-15674e2a46",
+      "name": "Ulta Millenia",
+      "address": "4600 Millenia Plaza Way Ste 11, Orlando, FL 32839",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-4bf92c4048",
+      "name": "Walmart Lake Buena Vista",
+      "address": "3250 Vineland Rd, Kissimmee, FL 34746",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-0d91748832",
+      "name": "Walmart Supercenter John Young",
+      "address": "8101 S John Young Pkwy, Orlando, FL 32819",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-e08ccd3db9",
+      "name": "Walmart Supercenter Kirkman",
+      "address": "2500 S Kirkman Rd, Orlando, FL 32811",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-45cf668f41",
+      "name": "Walmart Turkey Lake",
+      "address": "8990 Turkey Lake Rd, Orlando, FL 32819",
+      "category": "compras",
+      "lat": null,
+      "lng": null
+    },
+    {
+      "id": "loc-5174876eb1",
+      "name": "Winter Garden Farmers Market",
+      "address": "104 S Lakeview Ave, Winter Garden, FL 34787",
+      "category": "lazer",
+      "lat": null,
+      "lng": null
+    }
+  ],
   "days": [
     {
       "id": "day-2026-11-27",
       "date": "2026-11-27",
-      "label": "✈️ Viagem",
-      "dayNotes": "📍 Aeroporto do Galeão (GIG)\n\n👶 Carrinho vai até a porta do avião. Levar no bagagem de mão: troca de roupa, fraldas para ~12h, lanches, mamadeira/copo, brinquedo novo. Tentar manter o ritual de dormir no voo.\n\n📝 26/11 é Ação de Graças e 27/11 é a Black Friday (vocês estarão voando) — as ofertas online da Black Friday/Cyber Monday valem até 30/11.",
-      "activities": [
+      "weekday": "Sex",
+      "dayType": "Viagem",
+      "driveFromHotel": null,
+      "kidNotes": "Carrinho vai até a porta do avião. Levar no bagagem de mão: troca de roupa, fraldas para ~12h, lanches, mamadeira/copo, brinquedo novo. Tentar manter o ritual de dormir no voo.",
+      "notes": "26/11 é Ação de Graças e 27/11 é a Black Friday (vocês estarão voando) — as ofertas online da Black Friday/Cyber Monday valem até 30/11.",
+      "stops": [
         {
-          "id": "act-2026-11-27-noite",
-          "title": "VIAGEM — Embarque Rio → Miami às 22:25.",
-          "notes": "✈️ VIAGEM — Embarque Rio → Miami às 22:25.",
+          "id": "stop-001",
+          "seq": 1,
+          "orderInDay": 1,
+          "placeId": "loc-293034fbe3",
+          "status": "fixo",
+          "note": null,
           "done": false
         }
       ]
@@ -33,147 +402,196 @@
     {
       "id": "day-2026-11-28",
       "date": "2026-11-28",
-      "label": "✈️ Viagem + 🛒 Mercado",
-      "dayNotes": "📍 Walmart Supercenter Turkey Lake – 8990 Turkey Lake Rd, Orlando, FL 32819\n\n🚗 MIA → hotel: ~4h30 sem trânsito (~377 km); contar 5h–5h30 com paradas. Walmart Turkey Lake: ~10 min do hotel.\n\n👶 Criança dorme no carro — planejar a parada principal para depois do cochilo. Paradas nas áreas de serviço da Turnpike. Lei da Flórida exige cadeirinha para menores de 4 anos.\n\n📝 Pedágios: confirmar o programa de pedágio da locadora. Opção B (NÃO recomendada): Sawgrass Mills abre de manhã, mas sábado pós-Black Friday + noite sem dormir com criança = muito desgaste. Target Millenia fica para 08/12; outras filiais de Walmart/Target estão na aba Locais.",
-      "activities": [
+      "weekday": "Sáb",
+      "dayType": "Viagem + Mercado",
+      "driveFromHotel": "MIA → hotel: ~4h30 sem trânsito (~377 km); contar 5h–5h30 com paradas. Walmart Kirkman: ~5–10 min do hotel (estimativa).",
+      "kidNotes": "Criança dorme no carro — planejar a parada principal para depois do cochilo. Paradas nas áreas de serviço da Turnpike. Lei da Flórida exige cadeirinha para menores de 4 anos.",
+      "notes": "Pedágios: confirmar o programa de pedágio da locadora. Opção B (NÃO recomendada): Sawgrass Mills abre de manhã, mas sábado pós-Black Friday + noite sem dormir com criança = muito desgaste.",
+      "stops": [
         {
-          "id": "act-2026-11-28-manha",
-          "title": "VIAGEM — Chegada em Miami (madrugada/manhã cedo — conferir no bilhete), imigração, retirada do ca…",
-          "notes": "✈️ VIAGEM — Chegada em Miami (madrugada/manhã cedo — conferir no bilhete), imigração, retirada do carro (cadeirinha!) e café da manhã. Seguir pela Florida's Turnpike até Orlando.",
+          "id": "stop-002",
+          "seq": 2,
+          "orderInDay": 1,
+          "placeId": "loc-9f93c3422e",
+          "status": "fixo",
+          "note": null,
           "done": false
         },
         {
-          "id": "act-2026-11-28-tarde",
-          "title": "VIAGEM — Chegada em Orlando por volta do meio-dia/início da tarde. Check-in (pedir early check-in).",
-          "notes": "✈️ VIAGEM — Chegada em Orlando por volta do meio-dia/início da tarde. Check-in (pedir early check-in).",
-          "done": false,
-          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
+          "id": "stop-003",
+          "seq": 3,
+          "orderInDay": 2,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-11-28-tarde-1",
-          "title": "MERCADO — Parada rápida no Walmart Supercenter Turkey Lake (⭐ da sua planilha) para fraldas, lenç…",
-          "notes": "🛒 MERCADO — Parada rápida no Walmart Supercenter Turkey Lake (⭐ da sua planilha) para fraldas, lenços, leite, frutas, água, lanches, protetor solar.",
-          "done": false,
-          "location": "Walmart Supercenter Turkey Lake – 8990 Turkey Lake Rd, Orlando, FL 32819"
-        },
-        {
-          "id": "act-2026-11-28-noite",
-          "title": "DESCANSO/SONECA — Jantar perto do hotel e dormir cedo.",
-          "notes": "😴 DESCANSO/SONECA — Jantar perto do hotel e dormir cedo.",
-          "done": false,
-          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
+          "id": "stop-004",
+          "seq": 4,
+          "orderInDay": 3,
+          "placeId": "loc-e08ccd3db9",
+          "status": "fixo",
+          "note": null,
+          "done": false
         }
       ]
     },
     {
       "id": "day-2026-11-29",
       "date": "2026-11-29",
-      "label": "🛍️ Compras leves + 🎟️ ingressos (Disney Springs)",
-      "dayNotes": "📍 Disney Springs – Lake Buena Vista, FL 32830 (estacionamento grátis) | Disney Ticket Center – Town Center de Disney Springs\n\n🚗 ~20–25 min\n\n👶 Disney Springs é plano e bom para carrinho. Levar a confirmação da compra, o cartão usado e documento com foto para a retirada.\n\n📝 Domingo do fim de semana de Black Friday: Disney Springs lota no fim da tarde — ir logo depois da soneca e voltar cedo. Retirada dos ingressos: o procedimento que encontrei é de 2022; CONFIRMAR no e-mail da compra se o ingresso já está no My Disney Experience (nesse caso não precisa retirar nada) e o horário do Ticket Center.",
-      "activities": [
+      "weekday": "Dom",
+      "dayType": "Compras leves + ingressos (Disney Springs)",
+      "driveFromHotel": "~20–25 min",
+      "kidNotes": "Disney Springs é plano e bom para carrinho. Levar a confirmação da compra, o cartão usado e documento com foto para a retirada.",
+      "notes": "Domingo do fim de semana de Black Friday: Disney Springs lota no fim da tarde — ir logo depois da soneca e voltar cedo. Retirada dos ingressos: o procedimento que encontrei é de 2022; CONFIRMAR no e-mail da compra se o ingresso já está no My Disney Experience (nesse caso não precisa retirar nada) e o horário do Ticket Center.",
+      "stops": [
         {
-          "id": "act-2026-11-29-manha",
-          "title": "DESCANSO/SONECA — Dormir sem despertador, café da manhã sem pressa.",
-          "notes": "😴 DESCANSO/SONECA — Dormir sem despertador, café da manhã sem pressa.",
+          "id": "stop-005",
+          "seq": 5,
+          "orderInDay": 1,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
           "done": false
         },
         {
-          "id": "act-2026-11-29-tarde",
-          "title": "DESCANSO/SONECA — Soneca no hotel.",
-          "notes": "😴 DESCANSO/SONECA — Soneca no hotel.",
-          "done": false,
-          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
+          "id": "stop-006",
+          "seq": 6,
+          "orderInDay": 2,
+          "placeId": "loc-5b0981a66b",
+          "status": "fixo",
+          "note": "Estacionamento grátis",
+          "done": false
         },
         {
-          "id": "act-2026-11-29-tarde-1",
-          "title": "PARQUE — ~15h30, Disney Springs: retirar os ingressos de 3 dias no Disney Ticket Center (Town Cen…",
-          "notes": "🎢 PARQUE — ~15h30, Disney Springs: retirar os ingressos de 3 dias no Disney Ticket Center (Town Center), para o Magic Kingdom de amanhã começar sem fila de bilheteria.",
-          "done": false,
-          "location": "Disney Ticket Center – Town Center de Disney Springs"
+          "id": "stop-007",
+          "seq": 7,
+          "orderInDay": 3,
+          "placeId": "loc-21064cd223",
+          "status": "fixo",
+          "note": "Fica no Town Center de Disney Springs; confirmar se ainda precisa retirar os ingressos",
+          "done": false
         },
         {
-          "id": "act-2026-11-29-tarde-2",
-          "title": "COMPRAS — Compras leves no mesmo passeio: World of Disney e lojas de Disney Springs, com o carrin…",
-          "notes": "🛍️ COMPRAS — Compras leves no mesmo passeio: World of Disney e lojas de Disney Springs, com o carrinho, sem pressa. Christmas Tree Stroll se sobrar pique.",
-          "done": false,
-          "location": "Disney Springs – Lake Buena Vista, FL 32830 (estacionamento grátis)"
-        },
-        {
-          "id": "act-2026-11-29-noite",
-          "title": "DESCANSO/SONECA — Jantar cedo (Disney Springs ou perto do hotel); preparar a mochila do Magic Kin…",
-          "notes": "😴 DESCANSO/SONECA — Jantar cedo (Disney Springs ou perto do hotel); preparar a mochila do Magic Kingdom.",
-          "done": false,
-          "location": "Disney Springs – Lake Buena Vista, FL 32830 (estacionamento grátis)"
+          "id": "stop-008",
+          "seq": 8,
+          "orderInDay": 4,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
+          "done": false
         }
       ]
     },
     {
       "id": "day-2026-11-30",
       "date": "2026-11-30",
-      "label": "🎢 Parque",
-      "dayNotes": "📍 Magic Kingdom – estacionamento no Transportation & Ticket Center\n\n🚗 ~25–35 min\n\n👶 Soneca no carrinho dentro do parque ou pausa no meio do dia.\n\n📝 Cyber Monday — bom dia para compras online com entrega no hotel (confirmar se o hotel recebe encomendas).",
-      "activities": [
+      "weekday": "Seg",
+      "dayType": "Parque",
+      "driveFromHotel": "~25–35 min",
+      "kidNotes": "Soneca no carrinho dentro do parque ou pausa no meio do dia.",
+      "notes": "Cyber Monday — bom dia para compras online com entrega no hotel (confirmar se o hotel recebe encomendas).",
+      "stops": [
         {
-          "id": "act-2026-11-30-manha",
-          "title": "PARQUE — ⭐ Magic Kingdom (fixo)",
-          "notes": "🎢 PARQUE — ⭐ Magic Kingdom (fixo)",
-          "done": false,
-          "location": "Magic Kingdom – estacionamento no Transportation & Ticket Center"
+          "id": "stop-009",
+          "seq": 9,
+          "orderInDay": 1,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-11-30-tarde",
-          "title": "PARQUE — ⭐ Magic Kingdom",
-          "notes": "🎢 PARQUE — ⭐ Magic Kingdom",
-          "done": false,
-          "location": "Magic Kingdom – estacionamento no Transportation & Ticket Center"
+          "id": "stop-010",
+          "seq": 10,
+          "orderInDay": 2,
+          "placeId": "loc-69e4d26fbd",
+          "status": "fixo",
+          "note": "Estacionamento no Transportation & Ticket Center",
+          "done": false
         },
         {
-          "id": "act-2026-11-30-noite",
-          "title": "PARQUE — ⭐ Magic Kingdom",
-          "notes": "🎢 PARQUE — ⭐ Magic Kingdom",
-          "done": false,
-          "location": "Magic Kingdom – estacionamento no Transportation & Ticket Center"
+          "id": "stop-011",
+          "seq": 11,
+          "orderInDay": 3,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
+          "done": false
         }
       ]
     },
     {
       "id": "day-2026-12-01",
       "date": "2026-12-01",
-      "label": "🛍️ Compras (outlets) + 💄 Beleza",
-      "dayNotes": "📍 Orlando International Premium Outlets – 4951 International Dr, Orlando, FL 32819 | Orlando Outlet Marketplace – 5269 International Dr | Ross – 5295 International Dr | Five Below – 5295 International Dr, Ste 660 | Ulta – 5295 International Blvd, Ste 100-A | T.J. Maxx – 5295 International Dr, Suite 500 (todos em Orlando, FL 32819)\n\n🚗 International: ~10–15 min | Outlet Marketplace: ~5–10 min\n\n👶 Leve o seu carrinho (o outlet também aluga em 5 pontos). Carter's Clearance é apertada para carrinho. Soneca no hotel (10 min).\n\n📝 Horário: seg–sáb 10h–21h, dom 11h–19h. O balcão Simon Guest Services do International fecha ter–qua → pegue os cupons antes, online (Simon / Premium Outlets VIP, grátis). Estacionamento é o ponto fraco: chegar na abertura; valet US$15. Terça depois da Cyber Monday tende a ser mais tranquila que o fim de semana. T.J. Maxx I-Drive fica no mesmo prédio do Ross; outras filiais de Ross/Five Below/Ulta/T.J. Maxx estão na aba Locais.",
-      "activities": [
+      "weekday": "Ter",
+      "dayType": "Compras (outlets) + Beleza",
+      "driveFromHotel": "International: ~10–15 min | Ross / T.J. Maxx / Five Below / Ulta (I-Drive): ~5–10 min",
+      "kidNotes": "Leve o seu carrinho (o outlet também aluga em 5 pontos). Carter's Clearance é apertada para carrinho. Soneca no hotel (10 min).",
+      "notes": "Horário: seg–sáb 10h–21h, dom 11h–19h. O balcão Simon Guest Services do International fecha ter–qua → pegue os cupons antes, online (Simon / Premium Outlets VIP, grátis). Estacionamento é o ponto fraco: chegar na abertura; valet US$15. Terça depois da Cyber Monday tende a ser mais tranquila que o fim de semana.",
+      "stops": [
         {
-          "id": "act-2026-12-01-manha",
-          "title": "COMPRAS — 10h (abertura): Orlando International Premium Outlets. Focos ⭐: Nike Factory, Crocs, Le…",
-          "notes": "🛍️ COMPRAS — 10h (abertura): Orlando International Premium Outlets. Focos ⭐: Nike Factory, Crocs, Levi's, Calvin Klein. Também: Carter's, RL Children's, Coach, Character Warehouse (menor e menos lotada que a de Vineland). Almoço na praça de alimentação.",
-          "done": false,
-          "location": "Orlando International Premium Outlets – 4951 International Dr, Orlando, FL 32819"
+          "id": "stop-012",
+          "seq": 12,
+          "orderInDay": 1,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-12-01-tarde",
-          "title": "DESCANSO/SONECA — ~13h volta ao hotel para a soneca.",
-          "notes": "😴 DESCANSO/SONECA — ~13h volta ao hotel para a soneca.",
-          "done": false,
-          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
+          "id": "stop-013",
+          "seq": 13,
+          "orderInDay": 2,
+          "placeId": "loc-83c4ebfbe6",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-12-01-tarde-1",
-          "title": "COMPRAS — ~16h: Orlando Outlet Marketplace (Nike Clearance, adidas, Carter's Clearance, Levi's, C…",
-          "notes": "🛍️ COMPRAS — ~16h: Orlando Outlet Marketplace (Nike Clearance, adidas, Carter's Clearance, Levi's, Calvin Klein) + Ross I-Drive 5295 ⭐ + Five Below I-Drive + T.J. Maxx I-Drive.",
-          "done": false,
-          "location": "Orlando Outlet Marketplace – 5269 International Dr"
+          "id": "stop-014",
+          "seq": 14,
+          "orderInDay": 3,
+          "placeId": "loc-8bb1303d6f",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-12-01-tarde-2",
-          "title": "BELEZA — Ulta I-Drive ⭐ — tudo no mesmo trecho da I-Drive.",
-          "notes": "💄 BELEZA — Ulta I-Drive ⭐ — tudo no mesmo trecho da I-Drive.",
-          "done": false,
-          "location": "Ulta – 5295 International Blvd, Ste 100-A"
+          "id": "stop-015",
+          "seq": 15,
+          "orderInDay": 4,
+          "placeId": "loc-87347e6492",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-12-01-noite",
-          "title": "DESCANSO/SONECA — Jantar na I-Drive.",
-          "notes": "😴 DESCANSO/SONECA — Jantar na I-Drive.",
+          "id": "stop-016",
+          "seq": 16,
+          "orderInDay": 5,
+          "placeId": "loc-bedbadc12f",
+          "status": "fixo",
+          "note": null,
+          "done": false
+        },
+        {
+          "id": "stop-017",
+          "seq": 17,
+          "orderInDay": 6,
+          "placeId": "loc-e73242a115",
+          "status": "fixo",
+          "note": null,
+          "done": false
+        },
+        {
+          "id": "stop-018",
+          "seq": 18,
+          "orderInDay": 7,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
           "done": false
         }
       ]
@@ -181,25 +599,37 @@
     {
       "id": "day-2026-12-02",
       "date": "2026-12-02",
-      "label": "🎢 Parque",
-      "dayNotes": "📍 Disney's Animal Kingdom\n\n🚗 ~25–30 min\n\n👶 Parque abre/fecha mais cedo; bom para a rotina da criança.\n\n📝 Sua planilha sugere Vineland na volta de um parque Disney — com criança cansada não recomendo; Vineland ficou para 11/12.",
-      "activities": [
+      "weekday": "Qua",
+      "dayType": "Parque",
+      "driveFromHotel": "~25–30 min",
+      "kidNotes": "Parque abre/fecha mais cedo; bom para a rotina da criança.",
+      "notes": "Sua planilha sugere Vineland na volta de um parque Disney — com criança cansada não recomendo; Vineland ficou para 11/12.",
+      "stops": [
         {
-          "id": "act-2026-12-02-manha",
-          "title": "PARQUE — ⭐ Animal Kingdom (fixo)",
-          "notes": "🎢 PARQUE — ⭐ Animal Kingdom (fixo)",
+          "id": "stop-019",
+          "seq": 19,
+          "orderInDay": 1,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
           "done": false
         },
         {
-          "id": "act-2026-12-02-tarde",
-          "title": "PARQUE — ⭐ Animal Kingdom",
-          "notes": "🎢 PARQUE — ⭐ Animal Kingdom",
+          "id": "stop-020",
+          "seq": 20,
+          "orderInDay": 2,
+          "placeId": "loc-753f762f19",
+          "status": "fixo",
+          "note": null,
           "done": false
         },
         {
-          "id": "act-2026-12-02-noite",
-          "title": "PARQUE — ⭐ Animal Kingdom",
-          "notes": "🎢 PARQUE — ⭐ Animal Kingdom",
+          "id": "stop-021",
+          "seq": 21,
+          "orderInDay": 3,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
           "done": false
         }
       ]
@@ -207,25 +637,37 @@
     {
       "id": "day-2026-12-03",
       "date": "2026-12-03",
-      "label": "🎢 Parque",
-      "dayNotes": "📍 Disney's Hollywood Studios\n\n🚗 ~20–30 min",
-      "activities": [
+      "weekday": "Qui",
+      "dayType": "Parque",
+      "driveFromHotel": "~20–30 min",
+      "kidNotes": null,
+      "notes": null,
+      "stops": [
         {
-          "id": "act-2026-12-03-manha",
-          "title": "PARQUE — ⭐ Hollywood Studios (fixo)",
-          "notes": "🎢 PARQUE — ⭐ Hollywood Studios (fixo)",
+          "id": "stop-022",
+          "seq": 22,
+          "orderInDay": 1,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
           "done": false
         },
         {
-          "id": "act-2026-12-03-tarde",
-          "title": "PARQUE — ⭐ Hollywood Studios",
-          "notes": "🎢 PARQUE — ⭐ Hollywood Studios",
+          "id": "stop-023",
+          "seq": 23,
+          "orderInDay": 2,
+          "placeId": "loc-2dff2120d3",
+          "status": "fixo",
+          "note": null,
           "done": false
         },
         {
-          "id": "act-2026-12-03-noite",
-          "title": "PARQUE — ⭐ Hollywood Studios",
-          "notes": "🎢 PARQUE — ⭐ Hollywood Studios",
+          "id": "stop-024",
+          "seq": 24,
+          "orderInDay": 3,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
           "done": false
         }
       ]
@@ -233,200 +675,324 @@
     {
       "id": "day-2026-12-04",
       "date": "2026-12-04",
-      "label": "🛍️ Compras leves + 🎡 Passeio (ICON Park)",
-      "dayNotes": "📍 Ross – 7603 Turkey Lake Rd, Orlando, FL 32819 | Target Sand Lake – 880 Sand Lake Rd, Orlando, FL 32809 | ICON Park – 8375 International Dr, Orlando, FL 32819\n\n🚗 Ross: ~5–10 min | Target Sand Lake: ~5–10 min | ICON Park: ~5 min\n\n👶 The Wheel é uma cabine fechada de ~20 min: se a criança estiver agitada, o carrossel e o playground são o plano B. Confirmar no site do ICON Park a regra/preço de ingresso para criança de 2 anos antes de comprar.\n\n📝 Interpretei \"Interpark\" como ICON Park (I-Drive). The Wheel a partir de US$29,99 por adulto (preço de referência; confirmar). Horários do ICON Park não confirmados — ver no site no dia. A Crayola saiu deste dia e virou opcional no sábado (05/12). O mercado deste dia é o Target Sand Lake — não repetir o Walmart Turkey Lake da chegada.",
-      "activities": [
+      "weekday": "Sex",
+      "dayType": "Compras leves + Passeio (ICON Park)",
+      "driveFromHotel": "Ross / Walmart: ~5–10 min | ICON Park: ~5 min",
+      "kidNotes": "The Wheel é uma cabine fechada de ~20 min: se a criança estiver agitada, o carrossel e o playground são o plano B. Confirmar no site do ICON Park a regra/preço de ingresso para criança de 2 anos antes de comprar.",
+      "notes": "Interpretei \"Interpark\" como ICON Park (I-Drive). The Wheel a partir de US$29,99 por adulto (preço de referência; confirmar). Horários do ICON Park não confirmados — ver no site no dia. A Crayola saiu deste dia e virou opcional no sábado (05/12).",
+      "stops": [
         {
-          "id": "act-2026-12-04-manha",
-          "title": "COMPRAS — ~10h30, sem pressa: Ross Dress for Less Turkey Lake ⭐ (4,4★) — roupa e infantil off-price.",
-          "notes": "🛍️ COMPRAS — ~10h30, sem pressa: Ross Dress for Less Turkey Lake ⭐ (4,4★) — roupa e infantil off-price.",
-          "done": false,
-          "location": "Ross – 7603 Turkey Lake Rd, Orlando, FL 32819"
+          "id": "stop-025",
+          "seq": 25,
+          "orderInDay": 1,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-12-04-manha-1",
-          "title": "MERCADO — Depois, Target Sand Lake (880 Sand Lake Rd, ~5–10 min) para repor fraldas/lanches se pr…",
-          "notes": "🛒 MERCADO — Depois, Target Sand Lake (880 Sand Lake Rd, ~5–10 min) para repor fraldas/lanches se precisar — outra loja, não o Walmart da chegada.",
-          "done": false,
-          "location": "Target Sand Lake – 880 Sand Lake Rd, Orlando, FL 32809"
+          "id": "stop-026",
+          "seq": 26,
+          "orderInDay": 2,
+          "placeId": "loc-bff29f76f7",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-12-04-tarde",
-          "title": "DESCANSO/SONECA — Almoço perto do hotel e soneca (~13h).",
-          "notes": "😴 DESCANSO/SONECA — Almoço perto do hotel e soneca (~13h).",
-          "done": false,
-          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
+          "id": "stop-027",
+          "seq": 27,
+          "orderInDay": 3,
+          "placeId": "loc-45cf668f41",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-12-04-tarde-1",
-          "title": "PASSEIO — ~16h30: ICON Park, chegando antes do pôr do sol (~17h30 em dezembro). The Wheel (roda-g…",
-          "notes": "🎡 PASSEIO — ~16h30: ICON Park, chegando antes do pôr do sol (~17h30 em dezembro). The Wheel (roda-gigante, cabine fechada, ~20 min), carrossel, Pearl Express Train e o playground. Estacionamento grátis na garagem (andares 4–7).",
-          "done": false,
-          "location": "ICON Park – 8375 International Dr, Orlando, FL 32819"
+          "id": "stop-028",
+          "seq": 28,
+          "orderInDay": 4,
+          "placeId": "loc-88deea5c00",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-12-04-noite",
-          "title": "PASSEIO — Jantar perto do ICON Park e volta cedo — dia leve depois de dois parques seguidos.",
-          "notes": "🎡 PASSEIO — Jantar perto do ICON Park e volta cedo — dia leve depois de dois parques seguidos.",
-          "done": false,
-          "location": "ICON Park – 8375 International Dr, Orlando, FL 32819"
+          "id": "stop-029",
+          "seq": 29,
+          "orderInDay": 5,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
+          "done": false
         }
       ]
     },
     {
       "id": "day-2026-12-05",
       "date": "2026-12-05",
-      "label": "🎡 Passeio (Play Park) + 🛍️ Compras — Florida Mall",
-      "dayNotes": "📍 The Florida Mall (Play Park, Crayola) – 8001 S Orange Blossom Trl, Orlando, FL 32809 | Burlington – 8204 S Orange Blossom Trl | Best Buy – 8350 S Orange Blossom Trl | Ross – 1736 Sand Lake Rd, Orlando, FL 32809 | Ulta – 8001 S Orange Blossom Trl, Orlando, FL 32809 | Celebration Town Center – Market St, Celebration, FL 34747\n\n🚗 Florida Mall: ~10–15 min | Celebration: ~25–30 min\n\n👶 Florida Mall tem aluguel de carrinho, banheiros família e fraldário no Dining Pavilion. Ver a neve das 18h e voltar — a festa é amanhã.\n\n📝 Florida Mall no sábado: seg–qui 10h–20h, sex–sáb 10h–21h — chegar na abertura, o shopping lota depois. Gatorland saiu do roteiro (continua na aba \"Lugares com criança\"). Ross Florida Mall e Ulta Florida Mall ficam no mesmo trecho; Beauty Master Florida Mall é alternativa na aba Locais.",
-      "activities": [
+      "weekday": "Sáb",
+      "dayType": "Passeio (Play Park) + Compras — Florida Mall",
+      "driveFromHotel": "Florida Mall: ~10–15 min | Celebration: ~25–30 min",
+      "kidNotes": "Florida Mall tem aluguel de carrinho, banheiros família e fraldário no Dining Pavilion. Ver a neve das 18h e voltar — a festa é amanhã.",
+      "notes": "Florida Mall no sábado: seg–qui 10h–20h, sex–sáb 10h–21h — chegar na abertura, o shopping lota depois. Gatorland saiu do roteiro (continua na aba \"Lugares com criança\").",
+      "stops": [
         {
-          "id": "act-2026-12-05-manha",
-          "title": "PASSEIO — 10h (abertura): Florida Mall — Play Park (parquinho coberto grátis) para gastar energia…",
-          "notes": "🎡 PASSEIO — 10h (abertura): Florida Mall — Play Park (parquinho coberto grátis) para gastar energia. Opcional: Crayola Experience (até 2 anos grátis; 1h30–2h) — escolher uma das duas.",
+          "id": "stop-030",
+          "seq": 30,
+          "orderInDay": 1,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
           "done": false
         },
         {
-          "id": "act-2026-12-05-tarde",
-          "title": "DESCANSO/SONECA — Almoço no Dining Pavilion. Soneca (no carrinho ou no hotel, ~10–15 min).",
-          "notes": "😴 DESCANSO/SONECA — Almoço no Dining Pavilion. Soneca (no carrinho ou no hotel, ~10–15 min).",
-          "done": false,
-          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
+          "id": "stop-031",
+          "seq": 31,
+          "orderInDay": 2,
+          "placeId": "loc-7fc5c72dcd",
+          "status": "fixo",
+          "note": "Play Park (grátis) ou Crayola Experience — escolher uma das duas",
+          "done": false
         },
         {
-          "id": "act-2026-12-05-tarde-1",
-          "title": "COMPRAS — Revezamento: um adulto fica com a criança no shopping (Primark, Macy's, JCPenney, Uniql…",
-          "notes": "🛍️ COMPRAS — Revezamento: um adulto fica com a criança no shopping (Primark, Macy's, JCPenney, Uniqlo, Zara, American Girl, Build-A-Bear, Crayola Store) e o outro vai ao corredor da S Orange Blossom Trail: Burlington Florida Mall ⭐, Best Buy Florida Mall ⭐, Ross Florida Mall e Ulta Florida Mall.",
-          "done": false,
-          "location": "Burlington – 8204 S Orange Blossom Trl"
+          "id": "stop-032",
+          "seq": 32,
+          "orderInDay": 3,
+          "placeId": "loc-40d9706e6e",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-12-05-noite",
-          "title": "PASSEIO — Opcional: 'Now Snowing' no Celebration Town Center — neve artificial grátis às 18h (rep…",
-          "notes": "🎡 PASSEIO — Opcional: 'Now Snowing' no Celebration Town Center — neve artificial grátis às 18h (repete 19h, 20h, 21h). Jantar cedo em Celebration e volta.",
-          "done": false,
-          "location": "Celebration Town Center – Market St, Celebration, FL 34747"
+          "id": "stop-033",
+          "seq": 33,
+          "orderInDay": 4,
+          "placeId": "loc-e14f115ade",
+          "status": "fixo",
+          "note": null,
+          "done": false
+        },
+        {
+          "id": "stop-034",
+          "seq": 34,
+          "orderInDay": 5,
+          "placeId": "loc-a13b7c674f",
+          "status": "opcional",
+          "note": "Ir só a um dos dois Best Buy (Florida Mall ou Millenia)",
+          "done": false
+        },
+        {
+          "id": "stop-035",
+          "seq": 35,
+          "orderInDay": 6,
+          "placeId": "loc-a26a561305",
+          "status": "opcional",
+          "note": "Neve artificial grátis às 18h",
+          "done": false
+        },
+        {
+          "id": "stop-036",
+          "seq": 36,
+          "orderInDay": 7,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
+          "done": false
         }
       ]
     },
     {
       "id": "day-2026-12-06",
       "date": "2026-12-06",
-      "label": "🎢 Parque (festa)",
-      "dayNotes": "📍 Magic Kingdom\n\n🚗 ~25–35 min\n\n👶 Pijama no carro para a volta; casaco leve (noites de dezembro podem esfriar); capa de chuva para o carrinho.\n\n📝 Fixo.",
-      "activities": [
+      "weekday": "Dom",
+      "dayType": "Parque (festa)",
+      "driveFromHotel": "~25–35 min",
+      "kidNotes": "Pijama no carro para a volta; casaco leve (noites de dezembro podem esfriar); capa de chuva para o carrinho.",
+      "notes": "Fixo.",
+      "stops": [
         {
-          "id": "act-2026-12-06-manha",
-          "title": "DESCANSO/SONECA — Dormir até mais tarde; almoço cedo.",
-          "notes": "😴 DESCANSO/SONECA — Dormir até mais tarde; almoço cedo.",
+          "id": "stop-037",
+          "seq": 37,
+          "orderInDay": 1,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
           "done": false
         },
         {
-          "id": "act-2026-12-06-tarde",
-          "title": "DESCANSO/SONECA — Soneca longa ANTES da festa (13h–15h).",
-          "notes": "😴 DESCANSO/SONECA — Soneca longa ANTES da festa (13h–15h).",
+          "id": "stop-038",
+          "seq": 38,
+          "orderInDay": 2,
+          "placeId": "loc-69e4d26fbd",
+          "status": "fixo",
+          "note": "Estacionamento no Transportation & Ticket Center",
           "done": false
         },
         {
-          "id": "act-2026-12-06-tarde-1",
-          "title": "PARQUE — ⭐ Mickey's Very Merry Christmas Party a partir das 16h.",
-          "notes": "🎢 PARQUE — ⭐ Mickey's Very Merry Christmas Party a partir das 16h.",
+          "id": "stop-039",
+          "seq": 39,
+          "orderInDay": 3,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
           "done": false
-        },
-        {
-          "id": "act-2026-12-06-noite",
-          "title": "PARQUE — ⭐ Festa no Magic Kingdom (termina tarde).",
-          "notes": "🎢 PARQUE — ⭐ Festa no Magic Kingdom (termina tarde).",
-          "done": false,
-          "location": "Magic Kingdom"
         }
       ]
     },
     {
       "id": "day-2026-12-07",
       "date": "2026-12-07",
-      "label": "😴 Descanso",
-      "dayNotes": "📍 Harry P. Leu Gardens – 1920 N Forest Ave, Orlando, FL 32803 | Walmart Supercenter John Young – 8101 S John Young Pkwy, Orlando, FL 32819\n\n🚗 Leu Gardens: ~25 min | Walmart John Young: ~10–15 min\n\n👶 Dia de recuperação pós-festa: sem horário, sem compromisso.\n\n📝 Leu Gardens: 9h–16h (última entrada 15h) nesta época; dia grátis pode lotar. Atenção: os barcos-cisne do Lake Eola NÃO funcionam às segundas. Se for mercado, usar o Walmart John Young — não voltar ao de Turkey Lake.",
-      "activities": [
+      "weekday": "Seg",
+      "dayType": "Descanso + Compras leves (Outlet Marketplace)",
+      "driveFromHotel": "Leu Gardens: ~25 min | Outlet Marketplace: ~5–10 min | Walmart John Young / Target Sand Lake: ~10 min (estimativa)",
+      "kidNotes": "Dia de recuperação pós-festa: sem horário, sem compromisso.",
+      "notes": "Leu Gardens: 9h–16h (última entrada 15h) nesta época; dia grátis pode lotar. Atenção: os barcos-cisne do Lake Eola NÃO funcionam às segundas. Outlet Marketplace: seg–sáb 10h–21h (horário a confirmar); loja Carter's Clearance é apertada para carrinho.",
+      "stops": [
         {
-          "id": "act-2026-12-07-manha",
-          "title": "DESCANSO/SONECA — Dormir sem despertador, sem horário.",
-          "notes": "😴 DESCANSO/SONECA — Dormir sem despertador, sem horário.",
+          "id": "stop-040",
+          "seq": 40,
+          "orderInDay": 1,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
           "done": false
         },
         {
-          "id": "act-2026-12-07-manha-1",
-          "title": "PASSEIO — Opcional (só se a criança acordar bem), fim da manhã: Harry P. Leu Gardens — 07/12/2026…",
-          "notes": "🎡 PASSEIO — Opcional (só se a criança acordar bem), fim da manhã: Harry P. Leu Gardens — 07/12/2026 é dia de entrada gratuita.",
-          "done": false,
-          "location": "Harry P. Leu Gardens – 1920 N Forest Ave, Orlando, FL 32803"
-        },
-        {
-          "id": "act-2026-12-07-tarde",
-          "title": "DESCANSO/SONECA — Soneca.",
-          "notes": "😴 DESCANSO/SONECA — Soneca.",
+          "id": "stop-041",
+          "seq": 41,
+          "orderInDay": 2,
+          "placeId": "loc-adde9deaf7",
+          "status": "opcional",
+          "note": "Só se a criança acordar bem; 07/12 é dia de entrada gratuita",
           "done": false
         },
         {
-          "id": "act-2026-12-07-tarde-1",
-          "title": "MERCADO — Se precisar: reposição no Walmart Supercenter John Young (8101 S John Young Pkwy) — fil…",
-          "notes": "🛒 MERCADO — Se precisar: reposição no Walmart Supercenter John Young (8101 S John Young Pkwy) — filial diferente da chegada.",
-          "done": false,
-          "location": "Walmart Supercenter John Young – 8101 S John Young Pkwy, Orlando, FL 32819"
+          "id": "stop-042",
+          "seq": 42,
+          "orderInDay": 3,
+          "placeId": "loc-a9f543bdca",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-12-07-noite",
-          "title": "DESCANSO/SONECA — Jantar cedo perto do hotel.",
-          "notes": "😴 DESCANSO/SONECA — Jantar cedo perto do hotel.",
-          "done": false,
-          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
+          "id": "stop-043",
+          "seq": 43,
+          "orderInDay": 4,
+          "placeId": "loc-0d91748832",
+          "status": "opcional",
+          "note": "Se precisar; alternativa ao Target Sand Lake",
+          "done": false
+        },
+        {
+          "id": "stop-044",
+          "seq": 44,
+          "orderInDay": 5,
+          "placeId": "loc-c8a92df254",
+          "status": "opcional",
+          "note": "Se precisar; alternativa ao Walmart John Young",
+          "done": false
+        },
+        {
+          "id": "stop-045",
+          "seq": 45,
+          "orderInDay": 6,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
+          "done": false
         }
       ]
     },
     {
       "id": "day-2026-12-08",
       "date": "2026-12-08",
-      "label": "🛍️ Compras + 🛒 Mercado + 💄 Beleza",
-      "dayNotes": "📍 Target Millenia – 4750 Millenia Plaza Way, Orlando, FL 32839 | Best Buy – 4155 Millenia Blvd | Ross – 4661 Millenia Plaza Way | Marshalls – 4648 Millenia Plaza Way | Five Below – 4649 Millenia Plaza Way Unit 140 | Ulta – 4600 Millenia Plaza Way Ste 11 | The Mall at Millenia – 4200 Conroy Rd | Nordstrom Rack – 4036 Eastgate Dr, Orlando, FL 32839 (todos em Orlando, FL 32839)\n\n🚗 ~10–15 min (Nordstrom Rack: ~10 min, estimativa)\n\n👶 Tudo perto: dá para fazer só a parte da manhã e voltar. Target tem banheiro e lanches para a criança.\n\n📝 Mall at Millenia: seg–sex 11h–21h, sáb 10h–21h, dom 11h–19h (horário de feriado 2026 ainda não publicado). Target e Best Buy: conferir o horário no app. Nordstrom Rack Eastgate: seg–sáb 10h–21h, dom 11h–19h; loja menor que a média, e reviews alertam para devolução rígida (compre o que for ficar). Five Below Millenia fica no mesmo complexo — não repetir o da I-Drive.",
-      "activities": [
+      "weekday": "Ter",
+      "dayType": "Compras + Mercado + Beleza",
+      "driveFromHotel": "~10–15 min (Nordstrom Rack: ~10 min, estimativa)",
+      "kidNotes": "Tudo perto: dá para fazer só a parte da manhã e voltar. Target tem banheiro e lanches para a criança.",
+      "notes": "Mall at Millenia: seg–sex 11h–21h, sáb 10h–21h, dom 11h–19h (horário de feriado 2026 ainda não publicado). Target e Best Buy: conferir o horário no app. Nordstrom Rack Eastgate: seg–sáb 10h–21h, dom 11h–19h; loja menor que a média, e reviews alertam para devolução rígida (compre o que for ficar).",
+      "stops": [
         {
-          "id": "act-2026-12-08-manha",
-          "title": "MERCADO — 9h30: Millenia Plaza — Target Millenia ⭐ (mercado enorme, merch Disney).",
-          "notes": "🛒 MERCADO — 9h30: Millenia Plaza — Target Millenia ⭐ (mercado enorme, merch Disney).",
-          "done": false,
-          "location": "Target Millenia – 4750 Millenia Plaza Way, Orlando, FL 32839"
+          "id": "stop-046",
+          "seq": 46,
+          "orderInDay": 1,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-12-08-manha-1",
-          "title": "COMPRAS — Best Buy Millenia ⭐, Ross Millenia, Marshalls e Five Below Millenia no mesmo complexo.",
-          "notes": "🛍️ COMPRAS — Best Buy Millenia ⭐, Ross Millenia, Marshalls e Five Below Millenia no mesmo complexo.",
-          "done": false,
-          "location": "Five Below – 4649 Millenia Plaza Way Unit 140"
+          "id": "stop-047",
+          "seq": 47,
+          "orderInDay": 2,
+          "placeId": "loc-7f0127d404",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-12-08-manha-2",
-          "title": "BELEZA — Ulta Millenia (Millenia Plaza Way).",
-          "notes": "💄 BELEZA — Ulta Millenia (Millenia Plaza Way).",
-          "done": false,
-          "location": "Ulta – 4600 Millenia Plaza Way Ste 11"
+          "id": "stop-048",
+          "seq": 48,
+          "orderInDay": 3,
+          "placeId": "loc-c9f8231064",
+          "status": "opcional",
+          "note": "Ir só a um dos dois Best Buy (Florida Mall ou Millenia)",
+          "done": false
         },
         {
-          "id": "act-2026-12-08-manha-3",
-          "title": "COMPRAS — ~10h30: Nordstrom Rack Eastgate ⭐ (4036 Eastgate Dr, abre 10h) — poucos minutos de carr…",
-          "notes": "🛍️ COMPRAS — ~10h30: Nordstrom Rack Eastgate ⭐ (4036 Eastgate Dr, abre 10h) — poucos minutos de carro de Millenia Plaza. Depois, 11h30: The Mall at Millenia (Apple, Macy's, Bloomingdale's, Neiman Marcus). Almoço no shopping.",
-          "done": false,
-          "location": "The Mall at Millenia – 4200 Conroy Rd"
+          "id": "stop-049",
+          "seq": 49,
+          "orderInDay": 4,
+          "placeId": "loc-ef7334fadb",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-12-08-tarde",
-          "title": "DESCANSO/SONECA — ~13h30 volta ao hotel para a soneca.",
-          "notes": "😴 DESCANSO/SONECA — ~13h30 volta ao hotel para a soneca.",
-          "done": false,
-          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
+          "id": "stop-050",
+          "seq": 50,
+          "orderInDay": 5,
+          "placeId": "loc-5ad2d8dd59",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-12-08-noite",
-          "title": "DESCANSO/SONECA — Livre; preparar o dia do Epic Universe.",
-          "notes": "😴 DESCANSO/SONECA — Livre; preparar o dia do Epic Universe.",
+          "id": "stop-051",
+          "seq": 51,
+          "orderInDay": 6,
+          "placeId": "loc-15674e2a46",
+          "status": "fixo",
+          "note": null,
+          "done": false
+        },
+        {
+          "id": "stop-052",
+          "seq": 52,
+          "orderInDay": 7,
+          "placeId": "loc-32ef01d909",
+          "status": "fixo",
+          "note": null,
+          "done": false
+        },
+        {
+          "id": "stop-053",
+          "seq": 53,
+          "orderInDay": 8,
+          "placeId": "loc-c63fb64fdf",
+          "status": "fixo",
+          "note": null,
+          "done": false
+        },
+        {
+          "id": "stop-054",
+          "seq": 54,
+          "orderInDay": 9,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
           "done": false
         }
       ]
@@ -434,112 +1000,149 @@
     {
       "id": "day-2026-12-09",
       "date": "2026-12-09",
-      "label": "🎢 Parque",
-      "dayNotes": "📍 Epic Universe – Orlando, FL\n\n🚗 ~5–10 min\n\n👶 Muito perto do hotel: dá para voltar para a soneca e retornar.",
-      "activities": [
+      "weekday": "Qua",
+      "dayType": "Parque",
+      "driveFromHotel": "~5–10 min",
+      "kidNotes": "Muito perto do hotel: dá para voltar para a soneca e retornar.",
+      "notes": null,
+      "stops": [
         {
-          "id": "act-2026-12-09-manha",
-          "title": "PARQUE — ⭐ Epic Universe (fixo)",
-          "notes": "🎢 PARQUE — ⭐ Epic Universe (fixo)",
-          "done": false,
-          "location": "Epic Universe – Orlando, FL"
+          "id": "stop-055",
+          "seq": 55,
+          "orderInDay": 1,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-12-09-tarde",
-          "title": "PARQUE — ⭐ Epic Universe",
-          "notes": "🎢 PARQUE — ⭐ Epic Universe",
-          "done": false,
-          "location": "Epic Universe – Orlando, FL"
+          "id": "stop-056",
+          "seq": 56,
+          "orderInDay": 2,
+          "placeId": "loc-68be37f7c8",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-12-09-noite",
-          "title": "PARQUE — ⭐ Epic Universe",
-          "notes": "🎢 PARQUE — ⭐ Epic Universe",
-          "done": false,
-          "location": "Epic Universe – Orlando, FL"
+          "id": "stop-057",
+          "seq": 57,
+          "orderInDay": 3,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
+          "done": false
         }
       ]
     },
     {
       "id": "day-2026-12-10",
       "date": "2026-12-10",
-      "label": "🥞 Refeição especial (Chef Mickey's) + 🎡 Passeio + 🛍️ Compras leves",
-      "dayNotes": "📍 Disney's Contemporary Resort – 4600 N World Dr, Lake Buena Vista, FL 32830 | Disney Springs – Lake Buena Vista, FL 32830 (estacionamento grátis)\n\n🚗 Contemporary: ~25–35 min | Disney Springs: ~20–25 min\n\n👶 Chef Mickey's: menores de 3 anos não pagam (confirmar na reserva). Deixar a soneca no hotel entre as duas partes do dia. Custo estimado para vocês: ~US$147–150 (2 adultos + criança grátis); detalhes na aba \"Chef Mickey's (custos)\".\n\n📝 RESERVA: Disney libera reservas de restaurante 60 dias antes → para 10/12 isso é 11/10/2026 (AMANHÃ em relação a 10/10). Estacionamento no Contemporary: as fontes que achei dizem que é grátis com reserva de restaurante confirmada (mostrar a confirmação no portão), mas uma delas menciona tarifa de parque para visitantes — CONFIRMAR antes. Alternativa: Cape May Cafe (Beach Club) + carrossel de gingerbread. O Grand Floridian NÃO terá a casa gigante de gingerbread em 2026 (aposentada).",
-      "activities": [
+      "weekday": "Qui",
+      "dayType": "Descanso + Passeio + Compras leves (Disney Springs)",
+      "driveFromHotel": "Disney Springs: ~20–25 min",
+      "kidNotes": "Manhã de descanso entre o Epic Universe e o dia de outlets; a soneca no hotel antes de Disney Springs mantém a rotina da criança.",
+      "notes": "Disney Springs: Christmas Tree Stroll e Papai Noel (horários no app My Disney Experience). No fim da tarde costuma lotar: ir logo depois da soneca e voltar cedo.",
+      "stops": [
         {
-          "id": "act-2026-12-10-manha",
-          "title": "REFEIÇÃO ESPECIAL — Café da manhã com personagens no Chef Mickey's (Disney's Contemporary Resort)…",
-          "notes": "🥞 REFEIÇÃO ESPECIAL — Café da manhã com personagens no Chef Mickey's (Disney's Contemporary Resort) por volta das 9h — ver custos e decisão na aba \"Chef Mickey's (custos)\".",
-          "done": false,
-          "location": "Disney's Contemporary Resort – 4600 N World Dr, Lake Buena Vista, FL 32830"
-        },
-        {
-          "id": "act-2026-12-10-manha-1",
-          "title": "PASSEIO — Depois: castelo de gingerbread do Contemporary e monotrilho para ver a decoração de Nat…",
-          "notes": "🎡 PASSEIO — Depois: castelo de gingerbread do Contemporary e monotrilho para ver a decoração de Natal de outros hotéis (Polynesian / Grand Floridian).",
+          "id": "stop-058",
+          "seq": 58,
+          "orderInDay": 1,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
           "done": false
         },
         {
-          "id": "act-2026-12-10-tarde",
-          "title": "DESCANSO/SONECA — Volta ao hotel ~13h para a soneca.",
-          "notes": "😴 DESCANSO/SONECA — Volta ao hotel ~13h para a soneca.",
-          "done": false,
-          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
+          "id": "stop-059",
+          "seq": 59,
+          "orderInDay": 2,
+          "placeId": "loc-5b0981a66b",
+          "status": "fixo",
+          "note": "Estacionamento grátis",
+          "done": false
         },
         {
-          "id": "act-2026-12-10-tarde-1",
-          "title": "COMPRAS — ~16h30: Disney Springs — World of Disney, Christmas Tree Stroll (mapa grátis, troca por…",
-          "notes": "🛍️ COMPRAS — ~16h30: Disney Springs — World of Disney, Christmas Tree Stroll (mapa grátis, troca por um botton), Papai Noel (até 24/12, horários no app).",
-          "done": false,
-          "location": "Disney Springs – Lake Buena Vista, FL 32830 (estacionamento grátis)"
-        },
-        {
-          "id": "act-2026-12-10-noite",
-          "title": "PASSEIO — Jantar em Disney Springs; neve noturna no Town Center; volta.",
-          "notes": "🎡 PASSEIO — Jantar em Disney Springs; neve noturna no Town Center; volta.",
-          "done": false,
-          "location": "Disney Springs – Lake Buena Vista, FL 32830 (estacionamento grátis)"
+          "id": "stop-060",
+          "seq": 60,
+          "orderInDay": 3,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
+          "done": false
         }
       ]
     },
     {
       "id": "day-2026-12-11",
       "date": "2026-12-11",
-      "label": "🛍️ Compras (outlets)",
-      "dayNotes": "📍 Orlando Vineland Premium Outlets – 8200 Vineland Ave, Orlando, FL 32821 | Lake Buena Vista Factory Stores – 15657 State Rd 535, Orlando, FL 32821 | Walmart Supercenter Lake Buena Vista – 3250 Vineland Rd, Kissimmee, FL 34746\n\n🚗 Vineland: ~15–20 min | LBV Factory Stores: ~15–20 min\n\n👶 Vagas para famílias com crianças pequenas na entrada da adidas e no Promenade. Aluguel de carrinho disponível.\n\n📝 Domingo 11h–19h; seg–sáb: conferir no site. Sexta é bem melhor que sábado para a Character Warehouse.",
-      "activities": [
+      "weekday": "Sex",
+      "dayType": "Compras (outlets)",
+      "driveFromHotel": "Vineland: ~15–20 min | LBV Factory Stores: ~15–20 min",
+      "kidNotes": "Vagas para famílias com crianças pequenas na entrada da adidas e no Promenade. Aluguel de carrinho disponível.",
+      "notes": "Domingo 11h–19h; seg–sáb: conferir no site. Sexta é bem melhor que sábado para a Character Warehouse.",
+      "stops": [
         {
-          "id": "act-2026-12-11-manha",
-          "title": "COMPRAS — Chegar 9h30 (antes de abrir): Orlando Vineland Premium Outlets — Character Warehouse ⭐ …",
-          "notes": "🛍️ COMPRAS — Chegar 9h30 (antes de abrir): Orlando Vineland Premium Outlets — Character Warehouse ⭐ (fila; reposição às 10h), Carter's ⭐, RL Children's ⭐ (cadastro grátis dá 25–30% extra), adidas ⭐, Nike ⭐, Coach ⭐, BOSS ⭐ (abre 11h). Almoço na praça de alimentação.",
-          "done": false,
-          "location": "Orlando Vineland Premium Outlets – 8200 Vineland Ave, Orlando, FL 32821"
+          "id": "stop-061",
+          "seq": 61,
+          "orderInDay": 1,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-12-11-tarde",
-          "title": "DESCANSO/SONECA — Soneca no hotel (~15 min).",
-          "notes": "😴 DESCANSO/SONECA — Soneca no hotel (~15 min).",
-          "done": false,
-          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
+          "id": "stop-062",
+          "seq": 62,
+          "orderInDay": 2,
+          "placeId": "loc-1c240b65d6",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-12-11-tarde-1",
-          "title": "COMPRAS — Opcional no fim da tarde: Lake Buena Vista Factory Stores (Carter's + OshKosh grande, N…",
-          "notes": "🛍️ COMPRAS — Opcional no fim da tarde: Lake Buena Vista Factory Stores (Carter's + OshKosh grande, Nike, Levi's, Crocs; menos lotado).",
-          "done": false,
-          "location": "Lake Buena Vista Factory Stores – 15657 State Rd 535, Orlando, FL 32821"
+          "id": "stop-063",
+          "seq": 63,
+          "orderInDay": 3,
+          "placeId": "loc-9055574578",
+          "status": "opcional",
+          "note": "Se sobrar pique antes da soneca",
+          "done": false
         },
         {
-          "id": "act-2026-12-11-tarde-2",
-          "title": "MERCADO — Ou Walmart Supercenter Lake Buena Vista ⭐ (3250 Vineland Rd) — outra filial. Target Vin…",
-          "notes": "🛒 MERCADO — Ou Walmart Supercenter Lake Buena Vista ⭐ (3250 Vineland Rd) — outra filial. Target Vineland, Ross Vineland (Regency Village), T.J. Maxx Rolling Oaks e Best Buy Kissimmee são alternativas na aba Locais.",
-          "done": false,
-          "location": "Walmart Supercenter Lake Buena Vista – 3250 Vineland Rd, Kissimmee, FL 34746"
+          "id": "stop-064",
+          "seq": 64,
+          "orderInDay": 4,
+          "placeId": "loc-2a2d7e857d",
+          "status": "opcional",
+          "note": "Se sobrar pique antes da soneca",
+          "done": false
         },
         {
-          "id": "act-2026-12-11-noite",
-          "title": "DESCANSO/SONECA — Livre.",
-          "notes": "😴 DESCANSO/SONECA — Livre.",
+          "id": "stop-065",
+          "seq": 65,
+          "orderInDay": 5,
+          "placeId": "loc-cce91bc9ba",
+          "status": "opcional",
+          "note": "Opcional no fim da tarde",
+          "done": false
+        },
+        {
+          "id": "stop-066",
+          "seq": 66,
+          "orderInDay": 6,
+          "placeId": "loc-4bf92c4048",
+          "status": "opcional",
+          "note": "Alternativa ao Lake Buena Vista Factory Stores",
+          "done": false
+        },
+        {
+          "id": "stop-067",
+          "seq": 67,
+          "orderInDay": 7,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
           "done": false
         }
       ]
@@ -547,68 +1150,120 @@
     {
       "id": "day-2026-12-12",
       "date": "2026-12-12",
-      "label": "💄 Beleza + 🎡 Passeio (Winter Garden) + 🛍️ Compras finais",
-      "dayNotes": "📍 Beauty Master – 7175 W Colonial Dr, Orlando, FL 32818 | Winter Garden Farmers Market – 104 S Lakeview Ave, Winter Garden, FL 34787 | Plant St. Market – 426 W Plant St, Winter Garden, FL 34787 | Target Winter Garden Village – 3343 Daniels Rd, Winter Garden, FL 34787 | T.J. Maxx – 6716 Grand National Dr | Burlington – 6870 Grand National Dr\n\n🚗 Beauty Master: ~20 min | Winter Garden / Target Village: ~25–30 min (estimativa) | Grand National: ~5–10 min\n\n👶 Centro de Winter Garden é plano e bom para carrinho. Se a criança dormir no carro na ida, deixe o Beauty Master para a volta, em vez de acordá-la.\n\n📝 Farmers Market: sábado 8h–13h (dado do Google; confirmar no site da cidade, wgfl.gov). Beauty Master é uma loja grande de beleza com seção de K-beauty (não só coreana); reviews são mistos sobre atendimento. Os barcos-cisne do Lake Eola saíram do roteiro. Mercado deste dia: Target Winter Garden Village (e Marshalls no mesmo complexo) — não repetir o Walmart Turkey Lake. Perto do Beauty Master há Ross, Burlington e T.J. Maxx W Colonial; outras filiais de todas as redes estão na aba Locais.",
-      "activities": [
+      "weekday": "Sáb",
+      "dayType": "Beleza + Passeio (Winter Garden) + Compras finais",
+      "driveFromHotel": "Beauty Master: ~20 min | Winter Garden: ~25–30 min (estimativa) | Grand National: ~5–10 min",
+      "kidNotes": "Centro de Winter Garden é plano e bom para carrinho. Se a criança dormir no carro na ida, deixe o Beauty Master para a volta, em vez de acordá-la.",
+      "notes": "Farmers Market: sábado 8h–13h (dado do Google; confirmar no site da cidade, wgfl.gov). Beauty Master é uma loja grande de beleza com seção de K-beauty (não só coreana); reviews são mistos sobre atendimento. Os barcos-cisne do Lake Eola saíram do roteiro. Marshalls Winter Garden Village (3349 Daniels Rd), no mesmo complexo do Target, fica como opção se sobrar pique.",
+      "stops": [
         {
-          "id": "act-2026-12-12-manha",
-          "title": "BELEZA — 9h (abertura): Beauty Master W Colonial ⭐ (7175 W Colonial Dr; 4,6★, 743 avaliações) — n…",
-          "notes": "💄 BELEZA — 9h (abertura): Beauty Master W Colonial ⭐ (7175 W Colonial Dr; 4,6★, 743 avaliações) — no caminho para Winter Garden.",
-          "done": false,
-          "location": "Beauty Master – 7175 W Colonial Dr, Orlando, FL 32818"
+          "id": "stop-068",
+          "seq": 68,
+          "orderInDay": 1,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-12-12-manha-1",
-          "title": "PASSEIO — ~10h: Winter Garden — Farmers Market de sábado (8h–13h, perto da Lakeview Ave), passeio…",
-          "notes": "🎡 PASSEIO — ~10h: Winter Garden — Farmers Market de sábado (8h–13h, perto da Lakeview Ave), passeio pela Plant Street e splash pad da cidade (água pode estar fria em dezembro). Almoço no Plant St. Market (vários restaurantes, pedido pelo celular).",
-          "done": false,
-          "location": "Plant St. Market – 426 W Plant St, Winter Garden, FL 34787"
+          "id": "stop-069",
+          "seq": 69,
+          "orderInDay": 2,
+          "placeId": "loc-3000f23692",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-12-12-tarde",
-          "title": "DESCANSO/SONECA — ~13h30 volta ao hotel (~25–30 min) para a soneca. No caminho, Target Winter Gar…",
-          "notes": "😴 DESCANSO/SONECA — ~13h30 volta ao hotel (~25–30 min) para a soneca. No caminho, Target Winter Garden Village ⭐ (3343 Daniels Rd) para lembrancinhas, chocolates e lanches da volta — Marshalls fica no mesmo complexo.",
-          "done": false,
-          "location": "Target Winter Garden Village – 3343 Daniels Rd, Winter Garden, FL 34787"
+          "id": "stop-070",
+          "seq": 70,
+          "orderInDay": 3,
+          "placeId": "loc-a98de5ad4e",
+          "status": "opcional",
+          "note": "Olhada rápida, se quiser",
+          "done": false
         },
         {
-          "id": "act-2026-12-12-tarde-1",
-          "title": "COMPRAS — Fim da tarde perto do hotel: T.J. Maxx Grand National ⭐ e Burlington I-Drive (ao lado),…",
-          "notes": "🛍️ COMPRAS — Fim da tarde perto do hotel: T.J. Maxx Grand National ⭐ e Burlington I-Drive (ao lado), bons para malas extras.",
-          "done": false,
-          "location": "Burlington – 6870 Grand National Dr"
+          "id": "stop-071",
+          "seq": 71,
+          "orderInDay": 4,
+          "placeId": "loc-5174876eb1",
+          "status": "fixo",
+          "note": null,
+          "done": false
         },
         {
-          "id": "act-2026-12-12-noite",
-          "title": "DESCANSO/SONECA — Jantar de despedida perto do hotel; arrumar e pesar as malas; dormir cedo.",
-          "notes": "😴 DESCANSO/SONECA — Jantar de despedida perto do hotel; arrumar e pesar as malas; dormir cedo.",
-          "done": false,
-          "location": "Hotel – 10330 Turkey Lake Road, Orlando, FL 32819"
+          "id": "stop-072",
+          "seq": 72,
+          "orderInDay": 5,
+          "placeId": "loc-b860ced148",
+          "status": "fixo",
+          "note": "Food hall com vários restaurantes",
+          "done": false
+        },
+        {
+          "id": "stop-073",
+          "seq": 73,
+          "orderInDay": 6,
+          "placeId": "loc-acbe4d164a",
+          "status": "fixo",
+          "note": null,
+          "done": false
+        },
+        {
+          "id": "stop-074",
+          "seq": 74,
+          "orderInDay": 7,
+          "placeId": "loc-d11ac1cb4c",
+          "status": "fixo",
+          "note": null,
+          "done": false
+        },
+        {
+          "id": "stop-075",
+          "seq": 75,
+          "orderInDay": 8,
+          "placeId": "loc-817328c35d",
+          "status": "fixo",
+          "note": null,
+          "done": false
+        },
+        {
+          "id": "stop-076",
+          "seq": 76,
+          "orderInDay": 9,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
+          "done": false
         }
       ]
     },
     {
       "id": "day-2026-12-13",
       "date": "2026-12-13",
-      "label": "✈️ Viagem",
-      "dayNotes": "📍 Miami International Airport (MIA)\n\n🚗 Hotel → MIA: ~4h30 sem trânsito (~377 km), mais as paradas\n\n👶 Criança dorme no carro; almoço numa área de serviço da Turnpike.\n\n📝 Saindo ao meio-dia, a chegada ao MIA fica por volta de 16h30–17h30 SEM paradas, e para voo internacional o ideal é chegar 3h antes (~16h50). Ou seja: já fica apertado. Sawgrass Mills (43 min do MIA) ou Dolphin Mall (18 min do MIA) NÃO cabem saindo às 12h. Só cabem saindo de Orlando por volta de 6h30–7h (os dois abrem às 11h no domingo), com compras até ~14h30.",
-      "activities": [
+      "weekday": "Dom",
+      "dayType": "Viagem",
+      "driveFromHotel": "Hotel → MIA: ~4h30 sem trânsito (~377 km), mais as paradas",
+      "kidNotes": "Criança dorme no carro; almoço numa área de serviço da Turnpike.",
+      "notes": "Saindo ao meio-dia, a chegada ao MIA fica por volta de 16h30–17h30 SEM paradas, e para voo internacional o ideal é chegar 3h antes (~16h50). Ou seja: já fica apertado. Sawgrass Mills (43 min do MIA) ou Dolphin Mall (18 min do MIA) NÃO cabem saindo às 12h. Só cabem saindo de Orlando por volta de 6h30–7h (os dois abrem às 11h no domingo), com compras até ~14h30.",
+      "stops": [
         {
-          "id": "act-2026-12-13-manha",
-          "title": "VIAGEM — RECOMENDO sair às 9h–10h (e não ao meio-dia).",
-          "notes": "✈️ VIAGEM — RECOMENDO sair às 9h–10h (e não ao meio-dia).",
+          "id": "stop-077",
+          "seq": 77,
+          "orderInDay": 1,
+          "placeId": "loc-9c4ba7d047",
+          "status": "fixo",
+          "note": null,
           "done": false
         },
         {
-          "id": "act-2026-12-13-tarde",
-          "title": "VIAGEM — Viagem Orlando → Miami (Turnpike). Devolução do carro no Rental Car Center do MIA + MIA …",
-          "notes": "✈️ VIAGEM — Viagem Orlando → Miami (Turnpike). Devolução do carro no Rental Car Center do MIA + MIA Mover até o terminal.",
-          "done": false
-        },
-        {
-          "id": "act-2026-12-13-noite",
-          "title": "VIAGEM — Voo às 19:50.",
-          "notes": "✈️ VIAGEM — Voo às 19:50.",
+          "id": "stop-078",
+          "seq": 78,
+          "orderInDay": 2,
+          "placeId": "loc-9f93c3422e",
+          "status": "fixo",
+          "note": null,
           "done": false
         }
       ]
@@ -616,13 +1271,19 @@
     {
       "id": "day-2026-12-14",
       "date": "2026-12-14",
-      "label": "✈️ Viagem",
-      "dayNotes": "📍 GIG",
-      "activities": [
+      "weekday": "Seg",
+      "dayType": "Viagem",
+      "driveFromHotel": null,
+      "kidNotes": null,
+      "notes": null,
+      "stops": [
         {
-          "id": "act-2026-12-14-manha",
-          "title": "VIAGEM — Chegada no Rio às 06:15.",
-          "notes": "✈️ VIAGEM — Chegada no Rio às 06:15.",
+          "id": "stop-079",
+          "seq": 79,
+          "orderInDay": 1,
+          "placeId": "loc-293034fbe3",
+          "status": "fixo",
+          "note": null,
           "done": false
         }
       ]
@@ -636,7 +1297,7 @@
     },
     {
       "tema": "Reservas para fazer já",
-      "texto": "Chef Mickey's / Cape May Cafe para 10/12: as reservas abrem 60 dias antes = 11/10/2026 (amanhã em relação a 10/10). Antes, decida com a aba \"Chef Mickey's (custos)\". Gaylord ice! (se for): só online, com horário marcado."
+      "texto": "Gaylord ice! (se for): só online, com horário marcado."
     },
     {
       "tema": "Black Friday 2026",
@@ -659,428 +1320,19 @@
       "texto": "Shoppings e outlets abrem às 11h aos domingos. Barcos do Lake Eola fecham às segundas. O Orlando Science Center fecha às quartas (fora das férias escolares)."
     },
     {
-      "tema": "Disney 2026",
-      "texto": "Para estacionar em hotel Disney é preciso estar hospedado ou ter reserva de restaurante. Ônibus de Disney Springs para os hotéis também exigem reserva. Vá de carro direto ao hotel onde for comer, com a confirmação aberta no My Disney Experience."
-    },
-    {
       "tema": "Horários",
       "texto": "Horários de feriado de 2026 da maioria dos shoppings ainda não foram publicados; confira na véspera (sites oficiais/app Simon)."
     },
     {
       "tema": "Premissas desta versão",
-      "texto": "\"Interpark\" foi interpretado como ICON Park. Disney Springs aparece em 29/11 e 10/12 (propositalmente: uma vez p/ ingressos+compras, outra p/ Natal). Best Buy aparece no Florida Mall (05/12) e no Millenia (08/12): vá só a um, o que tiver o produto. Mercados não repetem a mesma loja: 28/11 Walmart Turkey Lake, 04/12 Target Sand Lake, 07/12 Walmart John Young, 08/12 Target Millenia, 11/12 Walmart Lake Buena Vista, 12/12 Target Winter Garden Village. Outras redes também mudam de filial: Ross 01/12 I-Drive, 04/12 Turkey Lake, 05/12 Florida Mall, 08/12 Millenia; Ulta I-Drive e Millenia/Florida Mall; Five Below I-Drive e Millenia; Burlington Florida Mall e Grand National; T.J. Maxx I-Drive e Grand National. Tempos de carro novos são estimativas. A loja coreana é a Beauty Master (W Colonial); a moida K-Beauty saiu. Nordstrom Rack: só a de Eastgate (08/12); a de Winter Park é longe demais. Todas as filiais extras estão na aba Locais, cada uma com endereço próprio."
+      "texto": "\"Interpark\" foi interpretado como ICON Park. Disney Springs aparece em 29/11 e 10/12 (propositalmente: uma vez p/ ingressos+compras, outra p/ Natal). Best Buy aparece no Florida Mall (05/12) e no Millenia (08/12): vá só a um, o que tiver o produto. Tempos de carro novos são estimativas. A loja coreana é a Beauty Master (W Colonial); a moida K-Beauty saiu. Nordstrom Rack: só a de Eastgate (08/12); a de Winter Park é longe demais."
     }
   ],
-  "locations": [
-    {
-      "name": "Cape May Cafe",
-      "address": "Minnie's Beach Bash (Beach Club) – Disney's Beach Club Resort, 1800 Epcot Resorts Blvd, Lake Buena Vista, FL 32830",
-      "category": "Alimentação"
-    },
-    {
-      "name": "Chef Mickey's (Contemporary)",
-      "address": "Disney's Contemporary Resort, 4600 N World Dr, Lake Buena Vista, FL 32830",
-      "category": "Alimentação"
-    },
-    {
-      "name": "Disney's Contemporary Resort",
-      "address": "4600 N World Dr, Lake Buena Vista, FL 32830",
-      "category": "Alimentação"
-    },
-    {
-      "name": "buybuy BABY",
-      "address": "(antiga loja: 3206 E Colonial Dr)",
-      "category": "Bebê"
-    },
-    {
-      "name": "Beauty Master Florida Mall",
-      "address": "1631 Florida Mall Ave, Orlando, FL 32809",
-      "category": "Beleza (alternativa)"
-    },
-    {
-      "name": "Beauty Master W Colonial",
-      "address": "7175 W Colonial Dr, Orlando, FL 32818",
-      "category": "Compras"
-    },
-    {
-      "name": "Best Buy Florida Mall",
-      "address": "8350 S Orange Blossom Trl, Orlando, FL 32809",
-      "category": "Compras"
-    },
-    {
-      "name": "Best Buy Kissimmee",
-      "address": "1610 W Osceola Pkwy, Kissimmee, FL 34741",
-      "category": "Compras"
-    },
-    {
-      "name": "Best Buy Millenia",
-      "address": "4155 Millenia Blvd, Orlando, FL 32839",
-      "category": "Compras"
-    },
-    {
-      "name": "Burlington Florida Mall",
-      "address": "8204 S Orange Blossom Trl, Orlando, FL 32809",
-      "category": "Compras"
-    },
-    {
-      "name": "Burlington Grand National",
-      "address": "6870 Grand National Dr, Orlando, FL 32819",
-      "category": "Compras"
-    },
-    {
-      "name": "Burlington W Colonial",
-      "address": "7475 W Colonial Dr, Orlando, FL 32818",
-      "category": "Compras"
-    },
-    {
-      "name": "Five Below I-Drive",
-      "address": "I-Drive – 5295 International Dr, Ste 660, Orlando, FL 32819",
-      "category": "Compras"
-    },
-    {
-      "name": "Five Below Millenia",
-      "address": "4649 Millenia Plaza Way Unit 140, Orlando, FL 32839",
-      "category": "Compras"
-    },
-    {
-      "name": "Lake Buena Vista Factory Stores",
-      "address": "15657 State Rd 535, Orlando, FL 32821",
-      "category": "Compras"
-    },
-    {
-      "name": "Marshalls Millenia",
-      "address": "4648 Millenia Plaza Way, Orlando, FL 32839",
-      "category": "Compras"
-    },
-    {
-      "name": "Marshalls Winter Garden Village",
-      "address": "3349 Daniels Rd, Winter Garden, FL 34787",
-      "category": "Compras"
-    },
-    {
-      "name": "Nordstrom Rack Eastgate",
-      "address": "4036 Eastgate Dr, Orlando, FL 32839",
-      "category": "Compras"
-    },
-    {
-      "name": "Orlando International Premium Outlets",
-      "address": "4951 International Dr, Orlando, FL 32819",
-      "category": "Compras"
-    },
-    {
-      "name": "Orlando Outlet Marketplace",
-      "address": "5269 International Dr",
-      "category": "Compras"
-    },
-    {
-      "name": "Orlando Vineland Premium Outlets",
-      "address": "8200 Vineland Ave, Orlando, FL 32821",
-      "category": "Compras"
-    },
-    {
-      "name": "Play Park do Florida Mall",
-      "address": "The Florida Mall, 8001 S Orange Blossom Trl, Orlando, FL 32809",
-      "category": "Compras"
-    },
-    {
-      "name": "Ross Florida Mall",
-      "address": "1736 Sand Lake Rd, Orlando, FL 32809",
-      "category": "Compras"
-    },
-    {
-      "name": "Ross I-Drive",
-      "address": "5295 International Dr, Orlando, FL 32819",
-      "category": "Compras"
-    },
-    {
-      "name": "Ross Millenia",
-      "address": "4661 Millenia Plaza Way, Orlando, FL 32839",
-      "category": "Compras"
-    },
-    {
-      "name": "Ross Turkey Lake",
-      "address": "7603 Turkey Lake Rd, Orlando, FL 32819",
-      "category": "Compras"
-    },
-    {
-      "name": "Ross Vineland",
-      "address": "11625 Regency Village Dr, Orlando, FL 32821",
-      "category": "Compras"
-    },
-    {
-      "name": "Ross W Colonial",
-      "address": "7445 W Colonial Dr, Orlando, FL 32818",
-      "category": "Compras"
-    },
-    {
-      "name": "T.J. Maxx Grand National",
-      "address": "6716 Grand National Dr, Orlando, FL 32819",
-      "category": "Compras"
-    },
-    {
-      "name": "T.J. Maxx I-Drive",
-      "address": "5295 International Dr, Suite 500, Orlando, FL 32819",
-      "category": "Compras"
-    },
-    {
-      "name": "T.J. Maxx Rolling Oaks",
-      "address": "3219 Rolling Oaks Blvd, Kissimmee, FL 34747",
-      "category": "Compras"
-    },
-    {
-      "name": "T.J. Maxx W Colonial",
-      "address": "7649 W Colonial Dr, Suite 100, Orlando, FL 32818",
-      "category": "Compras"
-    },
-    {
-      "name": "Target Millenia",
-      "address": "4750 Millenia Plaza Way, Orlando, FL 32839",
-      "category": "Compras"
-    },
-    {
-      "name": "Target Sand Lake",
-      "address": "880 Sand Lake Rd, Orlando, FL 32809",
-      "category": "Compras"
-    },
-    {
-      "name": "Target Vineland",
-      "address": "11619 Daryl Carter Pkwy, Orlando, FL 32821",
-      "category": "Compras"
-    },
-    {
-      "name": "Target Winter Garden Village",
-      "address": "3343 Daniels Rd, Winter Garden, FL 34787",
-      "category": "Compras"
-    },
-    {
-      "name": "The Mall at Millenia",
-      "address": "4200 Conroy Rd, Orlando, FL 32839",
-      "category": "Compras"
-    },
-    {
-      "name": "Ulta Florida Mall",
-      "address": "8001 S Orange Blossom Trl, Orlando, FL 32809",
-      "category": "Compras"
-    },
-    {
-      "name": "Ulta I-Drive",
-      "address": "5295 International Blvd, Ste 100-A, Orlando, FL 32819",
-      "category": "Compras"
-    },
-    {
-      "name": "Ulta Millenia",
-      "address": "4600 Millenia Plaza Way Ste 11, Orlando, FL 32839",
-      "category": "Compras"
-    },
-    {
-      "name": "Walmart Supercenter John Young",
-      "address": "8101 S John Young Pkwy, Orlando, FL 32819",
-      "category": "Compras"
-    },
-    {
-      "name": "Walmart Supercenter Kirkman",
-      "address": "2500 S Kirkman Rd, Orlando, FL 32811",
-      "category": "Compras"
-    },
-    {
-      "name": "Walmart Supercenter Lake Buena Vista",
-      "address": "3250 Vineland Rd, Kissimmee, FL 34746",
-      "category": "Compras"
-    },
-    {
-      "name": "Walmart Supercenter Turkey Lake",
-      "address": "8990 Turkey Lake Rd, Orlando, FL 32819",
-      "category": "Compras"
-    },
-    {
-      "name": "Hotéis Disney com gingerbread (resort hopping)",
-      "address": "Contemporary: 4600 N World Dr",
-      "category": "Hospedagem"
-    },
-    {
-      "name": "Aeroporto do Galeão (GIG)",
-      "address": "",
-      "category": "Lazer"
-    },
-    {
-      "name": "Celebration Town Center",
-      "address": "Market St, Celebration, FL 34747",
-      "category": "Lazer"
-    },
-    {
-      "name": "Disney Springs",
-      "address": "Lake Buena Vista, FL 32830 (estacionamento grátis)",
-      "category": "Lazer"
-    },
-    {
-      "name": "Disney Ticket Center",
-      "address": "Town Center de Disney Springs",
-      "category": "Lazer"
-    },
-    {
-      "name": "Disney's Animal Kingdom",
-      "address": "",
-      "category": "Lazer"
-    },
-    {
-      "name": "Disney's Hollywood Studios",
-      "address": "",
-      "category": "Lazer"
-    },
-    {
-      "name": "Epic Universe",
-      "address": "Orlando, FL",
-      "category": "Lazer"
-    },
-    {
-      "name": "GIG",
-      "address": "",
-      "category": "Lazer"
-    },
-    {
-      "name": "Harry P. Leu Gardens",
-      "address": "1920 N Forest Ave, Orlando, FL 32803",
-      "category": "Lazer"
-    },
-    {
-      "name": "ICON Park",
-      "address": "8375 International Dr, Orlando, FL 32819",
-      "category": "Lazer"
-    },
-    {
-      "name": "Magic Kingdom",
-      "address": "estacionamento no Transportation & Ticket Center",
-      "category": "Lazer"
-    },
-    {
-      "name": "Miami International Airport (MIA)",
-      "address": "",
-      "category": "Lazer"
-    },
-    {
-      "name": "Plant St. Market",
-      "address": "426 W Plant St, Winter Garden, FL 34787",
-      "category": "Lazer"
-    },
-    {
-      "name": "The Florida Mall (Play Park, Crayola)",
-      "address": "8001 S Orange Blossom Trl, Orlando, FL 32809",
-      "category": "Lazer"
-    },
-    {
-      "name": "Winter Garden Farmers Market",
-      "address": "104 S Lakeview Ave, Winter Garden, FL 34787",
-      "category": "Lazer"
-    },
-    {
-      "name": "Crayola Store (Florida Mall)",
-      "address": "8001 S Orange Blossom Trl, Orlando, FL 32809",
-      "category": "Loja de atração"
-    },
-    {
-      "name": "World of Disney (Disney Springs)",
-      "address": "Disney Springs, Lake Buena Vista, FL 32830",
-      "category": "Loja Disney"
-    },
-    {
-      "name": "Sawgrass Mills",
-      "address": "12801 W Sunrise Blvd, Sunrise, FL 33323",
-      "category": "Outlet (Miami)"
-    },
-    {
-      "name": "Dolphin Mall",
-      "address": "11401 NW 12th St, Miami, FL 33172",
-      "category": "Outlet/shopping (Miami)"
-    },
-    {
-      "name": "Cocoa Beach (Pier)",
-      "address": "401 Meade Ave, Cocoa Beach, FL 32931",
-      "category": "Outros"
-    },
-    {
-      "name": "Gaylord Palms",
-      "address": "ice! featuring The Polar Express – 6000 W Osceola Pkwy, Kissimmee, FL 34746",
-      "category": "Outros"
-    },
-    {
-      "name": "Kennedy Space Center Visitor Complex",
-      "address": "Space Commerce Way, Merritt Island, FL 32953",
-      "category": "Outros"
-    },
-    {
-      "name": "Now Snowing",
-      "address": "Celebration Town Center – Market St, Celebration Town Center, Celebration, FL 34747",
-      "category": "Outros"
-    },
-    {
-      "name": "Orlando Science Center",
-      "address": "KidsTown – 777 E Princeton St, Orlando, FL 32803",
-      "category": "Outros"
-    },
-    {
-      "name": "SEA LIFE Orlando Aquarium",
-      "address": "8449 International Dr, Orlando, FL 32819 (garagem do ICON Park grátis, andares 4–7)",
-      "category": "Outros"
-    },
-    {
-      "name": "Splash pads / parques aquáticos",
-      "address": "—",
-      "category": "Outros"
-    },
-    {
-      "name": "Crayola Experience Orlando",
-      "address": "The Florida Mall, 8001 S Orange Blossom Trl, Orlando, FL 32809",
-      "category": "Parques"
-    },
-    {
-      "name": "Gatorland",
-      "address": "14501 S Orange Blossom Trl, Orlando, FL 32837",
-      "category": "Parques"
-    },
-    {
-      "name": "Peppa Pig Theme Park Florida",
-      "address": "Winter Haven, FL (ao lado do LEGOLAND Florida)",
-      "category": "Parques"
-    },
-    {
-      "name": "Winter Garden",
-      "address": "Farmers Market (4,8), Plant St. Market (4,8) e splash pad – 104 S Lakeview Ave e 426 W Plant St, Winter Garden, FL 34787",
-      "category": "Passeio/centrinho"
-    },
-    {
-      "name": "Disney Springs + Christmas Tree Stroll",
-      "address": "Lake Buena Vista, FL 32830",
-      "category": "Passeios"
-    },
-    {
-      "name": "ICON Park / The Wheel",
-      "address": "8375 International Dr, Orlando, FL 32819",
-      "category": "Passeios"
-    },
-    {
-      "name": "Lake Eola Park",
-      "address": "barcos-cisne – E Central Blvd x N Eola Dr, Orlando, FL 32801",
-      "category": "Passeios"
-    },
-    {
-      "name": "Winter Garden (Farmers Market + Plant Street + splash pad)",
-      "address": "104 S Lakeview Ave, Winter Garden, FL 34787",
-      "category": "Passeios"
-    },
-    {
-      "name": "Winter Park Scenic Boat Tour",
-      "address": "312 E Morse Blvd, Winter Park, FL 32789",
-      "category": "Passeios"
-    },
-    {
-      "name": "Old Town Kissimmee",
-      "address": "5770 W Irlo Bronson Memorial Hwy, Kissimmee, FL 34746",
-      "category": "Rua de lojas"
-    },
-    {
-      "name": "The Florida Mall",
-      "address": "8001 S Orange Blossom Trl, Orlando, FL 32809",
-      "category": "Shopping"
-    }
-  ]
+  "budgetLimits": {
+    "marcos": 5000,
+    "dielen": 5000,
+    "helena": 5000,
+    "alimentacao": 5000,
+    "outros": 5000
+  }
 }

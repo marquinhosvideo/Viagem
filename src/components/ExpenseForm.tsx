@@ -55,7 +55,7 @@ export function ExpenseForm({ days, defaultDayId, onSubmit }: Props) {
         <select id="exp-day" value={dayId} onChange={(e) => setDayId(e.target.value)}>
           {days.map((day, i) => (
             <option key={day.id} value={day.id}>
-              D{i + 1} · {formatShortDate(day.date)} · {stripEmoji(day.label)}
+              D{i + 1} · {formatShortDate(day.date)} · {stripEmoji(day.dayType)}
             </option>
           ))}
         </select>

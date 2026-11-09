@@ -25,11 +25,7 @@ const QUEUE_CREDIT = 'https://queue-times.com/'
 
 export function ParksView({ trip }: Props) {
   const parks = useMemo(
-    () =>
-      parksInTrip({
-        ...trip,
-        locations: trip.locations?.length ? trip.locations : sampleTrip.locations,
-      }),
+    () => parksInTrip(trip.places.length ? trip : sampleTrip),
     [trip],
   )
   const [selectedId, setSelectedId] = useState<number | null>(null)

@@ -1,4 +1,6 @@
 -- Roteiro Orlando — rode isto no SQL Editor do Supabase (uma vez)
+-- Schema normalizado (viagem/local/dia/parada): supabase/roteiro_paradas.sql
+-- O app sincroniza o JSON do roteiro em trip_document; checks usam id da parada.
 
 create table if not exists public.activity_checks (
   activity_id text primary key,

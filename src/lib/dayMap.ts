@@ -1,7 +1,7 @@
 import { PLACE_COORDS } from '../data/placeCoords'
-import type { Day, Hotel, Trip } from '../types'
-import { parseDayMeta, type DayPlace } from './dayMeta'
+import type { Day, Hotel, Place, Trip } from '../types'
 import { applyCanonicalHotel, CANONICAL_HOTEL } from './hotel'
+import { mapsSearchQuery, placeOf, sortStops } from './places'
 
 export const DEFAULT_HOTEL: Hotel = CANONICAL_HOTEL
 
@@ -20,6 +20,7 @@ export type MapStop = {
   label: string
   query: string
   kind: 'hotel' | 'place'
+  optional?: boolean
 }
 
 export type Coords = { lat: number; lng: number }
@@ -52,23 +53,11 @@ export function hotelOf(trip: Pick<Trip, 'hotel'>): Hotel {
   }
 }
 
-export function mapsQuery(name: string, address?: string): string {
-  const addr = sanitizeAddress(address ?? '')
-  if (/^\d+\s/.test(addr)) {
-    return `${name}, ${addr}`
-  }
-  if (
-    addr &&
-    !/^buscar pelo nome$/i.test(addr) &&
-    !/^estacionamento\b/i.test(addr) &&
-    !/^town center\b/i.test(addr)
-  ) {
-    return `${name}, ${addr}`
-  }
-  return `${name}, Orlando, FL`
+export function mapsQuery(name: string, address?: string | null): string {
+  return mapsSearchQuery({ name, address })
 }
 
-export function stopKey(name: string, address?: string): string {
+export function stopKey(name: string, address?: string | null): string {
   const text = fold(sanitizeAddress(address || name))
     .replace(/[.,#]/g, ' ')
     .replace(/\b(ste|suite|unit|apt)\b.*$/, ' ')
@@ -82,14 +71,11 @@ export function stopKey(name: string, address?: string): string {
   return fold(name)
 }
 
-function isMappablePlace(place: DayPlace): boolean {
-  const blob = `${place.name} ${place.addr}`
+function isMappablePlace(place: Place): boolean {
+  const blob = `${place.name} ${place.address ?? ''}`
   if (SKIP_PLACE.test(blob)) return false
-  return ORLANDO_AREA.test(blob) || /^\d+\s/.test(sanitizeAddress(place.addr))
-}
-
-export function dayPlacesForMap(day: Pick<Day, 'dayNotes'>): DayPlace[] {
-  return parseDayMeta(day.dayNotes).places.filter(isMappablePlace)
+  const addr = sanitizeAddress(place.address ?? '')
+  return ORLANDO_AREA.test(blob) || /^\d+\s/.test(addr)
 }
 
 function joinLabels(names: string[]): string {
@@ -98,20 +84,28 @@ function joinLabels(names: string[]): string {
   return `${unique.slice(0, 2).join(' · ')} +${unique.length - 2}`
 }
 
+/**
+ * Rota principal do dia: hotel + paradas fixas (opcionais ficam de fora).
+ */
 export function buildDayMapStops(
-  trip: Pick<Trip, 'hotel'>,
-  day: Pick<Day, 'dayNotes'>,
+  trip: Pick<Trip, 'hotel' | 'places'>,
+  day: Pick<Day, 'stops'>,
 ): MapStop[] {
   const hotel = hotelOf(trip)
   const grouped = new Map<string, { names: string[]; query: string }>()
 
-  const rawPlaces = dayPlacesForMap(day)
+  const rawPlaces = sortStops(day.stops)
+    .filter((stop) => stop.status === 'fixo')
+    .map((stop) => placeOf(trip, stop.placeId))
+    .filter((place): place is Place => place != null && isMappablePlace(place))
+
   const hasDisneySprings = rawPlaces.some((place) => /disney springs/i.test(place.name))
 
   for (const place of rawPlaces) {
     if (hasDisneySprings && /ticket center/i.test(place.name)) continue
-    const key = stopKey(place.name, place.addr)
-    const query = mapsQuery(place.name, place.addr)
+    if (/^hotel\b/i.test(place.name)) continue
+    const key = stopKey(place.name, place.address)
+    const query = mapsQuery(place.name, place.address)
     const existing = grouped.get(key)
     if (existing) {
       existing.names.push(place.name)

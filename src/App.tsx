@@ -40,7 +40,7 @@ export default function App() {
     replaceTrip,
     restoreTripSnapshot,
     resetToSample,
-    toggleActivity,
+    toggleStop,
     addExpense,
     removeExpense,
   } = useTrip(remoteEnabled)
@@ -107,14 +107,14 @@ export default function App() {
         </div>
 
         {tab === 'hoje' && activeDay ? (
-          <TodayView trip={trip} day={activeDay} onToggle={toggleActivity} />
+          <TodayView trip={trip} day={activeDay} onToggle={toggleStop} />
         ) : null}
         {tab === 'roteiro' ? (
           <ItineraryView
             trip={trip}
             initialDayId={roteiroDayId ?? activeDay?.id}
             focusDayId={roteiroDayId}
-            onToggle={toggleActivity}
+            onToggle={toggleStop}
             onChange={restoreTripSnapshot}
           />
         ) : null}
@@ -142,16 +142,16 @@ export default function App() {
             onImported={async (next) => {
               const checkMap = new Map<string, boolean>()
               for (const day of trip.days) {
-                for (const act of day.activities) checkMap.set(act.id, act.done)
+                for (const stop of day.stops) checkMap.set(stop.id, stop.done)
               }
               await replaceTrip({
                 ...next,
                 expenses: trip.expenses,
                 days: next.days.map((day) => ({
                   ...day,
-                  activities: day.activities.map((act) => ({
-                    ...act,
-                    done: checkMap.get(act.id) ?? act.done,
+                  stops: day.stops.map((stop) => ({
+                    ...stop,
+                    done: checkMap.get(stop.id) ?? stop.done,
                   })),
                 })),
               })

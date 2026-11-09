@@ -1,51 +1,23 @@
-/** Extrai endereços úteis para colar no Waze a partir do dia/atividades */
+import type { Place, Stop, Trip } from '../types'
+import { placeDisplayLine, placeOf, sortStops } from './places'
 
-export function extractDayAddresses(input: {
-  dayNotes?: string
-  activityLocations?: Array<string | undefined>
-}): string[] {
-  const found: string[] = []
-
-  const pinLine = input.dayNotes
-    ?.split('\n')
-    .map((l) => l.trim())
-    .find((l) => l.startsWith('📍'))
-
-  if (pinLine) {
-    const raw = pinLine.replace(/^📍\s*/, '')
-    for (const part of splitLocations(raw)) found.push(part)
-  }
-
-  for (const loc of input.activityLocations ?? []) {
-    if (!loc) continue
-    for (const part of splitLocations(loc)) found.push(part)
-  }
-
-  return unique(found.map(cleanAddress).filter((a) => a.length >= 8))
+/** Endereços do dia a partir das paradas ordenadas. */
+export function extractDayAddresses(
+  trip: Pick<Trip, 'places'>,
+  stops: Stop[],
+): string[] {
+  return unique(
+    sortStops(stops).flatMap((stop) => {
+      const place = placeOf(trip, stop.placeId)
+      if (!place) return []
+      const line = placeDisplayLine(place)
+      return line.length >= 3 ? [line] : []
+    }),
+  )
 }
 
-function splitLocations(raw: string): string[] {
-  const parts: string[] = []
-  // "A | B" ou "A (alternativa: B)"
-  const byPipe = raw.split('|').map((s) => s.trim())
-  for (const chunk of byPipe) {
-    const alt = chunk.match(/^(.*?)\s*\((?:alternativa|alt\.?):\s*(.+?)\)\s*$/i)
-    if (alt) {
-      parts.push(alt[1].trim())
-      parts.push(alt[2].trim())
-    } else {
-      parts.push(chunk)
-    }
-  }
-  return parts.filter(Boolean)
-}
-
-function cleanAddress(value: string): string {
-  return value
-    .replace(/[⭐*]+/g, '')
-    .replace(/\s+/g, ' ')
-    .replace(/\s*[–—-]\s*/g, ' – ')
-    .trim()
+export function formatPlaceAddress(place: Place): string {
+  return placeDisplayLine(place)
 }
 
 function unique(list: string[]): string[] {

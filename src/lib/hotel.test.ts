@@ -2,7 +2,6 @@ import assert from 'node:assert/strict'
 import {
   applyCanonicalHotel,
   CANONICAL_HOTEL,
-  hotelLabel,
   isCanonicalHotelAddress,
   resolveHotelFromMeta,
 } from './hotel'
@@ -22,47 +21,48 @@ import type { Trip } from '../types'
     endDate: '2026-11-28',
     currency: 'BRL',
     hotel: { name: 'Hotel', address: '8600 International Dr, Orlando, FL 32819' },
+    places: [
+      {
+        id: 'loc-hotel',
+        name: 'Hotel',
+        address: '8600 International Dr, Orlando, FL 32819',
+        category: 'hotel',
+      },
+      {
+        id: 'loc-old',
+        name: 'Loja antiga',
+        address: '7389 Universal Boulevard, Orlando, FL 32819',
+        category: 'compras',
+      },
+    ],
     days: [
       {
         id: 'day-1',
         date: '2026-11-28',
-        label: 'Chegada',
-        dayNotes: '📍 Hotel – 8600 International Dr, Orlando, FL 32819',
-        activities: [
+        weekday: 'Sáb',
+        dayType: 'Chegada',
+        driveFromHotel: 'Perto do hotel em 8600 International Dr',
+        stops: [
           {
-            id: 'a1',
-            title: 'Soneca',
-            location: 'Hotel – 8600 International Dr, Orlando, FL 32819',
-            notes: '😴 DESCANSO/SONECA — Soneca no hotel.',
-            done: false,
-          },
-          {
-            id: 'a2',
-            title: 'Jantar',
-            location: 'Hotel — 7389 Universal Boulevard, Orlando, FL 32819',
-            notes: 'Jantar perto do hotel',
+            id: 'stop-1',
+            seq: 1,
+            orderInDay: 1,
+            placeId: 'loc-hotel',
+            status: 'fixo',
             done: false,
           },
         ],
       },
     ],
     expenses: [],
-    locations: [
-      {
-        name: 'Hotel',
-        address: '8600 International Dr, Orlando, FL 32819',
-        category: 'Hospedagem',
-      },
-    ],
   }
 
   const next = applyCanonicalHotel(trip)
   assert.equal(next.hotel?.address, CANONICAL_HOTEL.address)
-  assert.equal(next.days[0].activities[0].location, hotelLabel())
-  assert.equal(next.days[0].activities[1].location, hotelLabel())
-  assert.match(next.days[0].dayNotes ?? '', /10330 Turkey Lake Road/)
+  assert.equal(next.places[0].address, CANONICAL_HOTEL.address)
+  assert.match(next.places[1].address ?? '', /10330 Turkey Lake Road/)
+  assert.match(next.days[0].driveFromHotel ?? '', /10330 Turkey Lake Road/)
   assert.ok(!/8600|7389/.test(JSON.stringify(next)))
-  assert.equal(next.locations?.[0].address, CANONICAL_HOTEL.address)
 }
 
 {

@@ -2183,6 +2183,69 @@ body, .app-shell { letter-spacing: 0.16px; }
 .activity__details { background: var(--color-canvas); border-radius: 12px; }
 .activity__check { border-color: var(--color-ink); }
 .activity--done .activity__check { background: var(--color-ink); border-color: var(--color-ink); }
+
+.stop--optional {
+  opacity: 0.72;
+  border-style: dashed;
+}
+
+.stop__order {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.stop__category {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-muted, #6b645c);
+}
+
+.stop__category--hotel { color: #6b5b4a; }
+.stop__category--alimentacao { color: #7a4e2d; }
+.stop__category--compras { color: #355f4a; }
+.stop__category--lazer { color: #3d5a80; }
+.stop__category--transporte { color: #5a4d7a; }
+
+.stop__badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #7a5c2e;
+  border: 1px solid #d7c29a;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+}
+
+.stop__badge--inline {
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+
+.stop__note {
+  margin: 0.45rem 0 0;
+  color: var(--color-muted, #6b645c);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.stop__no-address {
+  margin: 0.35rem 0 0;
+  font-size: 0.88rem;
+}
+
+.stop__map-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.55rem;
+}
 .activity--done { opacity: 0.6; }
 .itinerary-editor { background: #fff; border-radius: 16px; }
 .hairline-pill { background: #fff; }

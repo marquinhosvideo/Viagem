@@ -1,6 +1,7 @@
 import type { Day } from '../types'
 import { dayTitleParts } from '../lib/display'
 import { formatDayLabel } from '../lib/format'
+import { fixedStops } from '../lib/places'
 
 type Props = {
   day: Day
@@ -9,16 +10,20 @@ type Props = {
 }
 
 export function DayHero({ day, dayIndex, dayCount }: Props) {
-  const done = day.activities.filter((a) => a.done).length
-  const total = day.activities.length
+  const visitStops = fixedStops(day.stops)
+  const done = visitStops.filter((stop) => stop.done).length
+  const total = visitStops.length
   const pct = total ? Math.round((done / total) * 100) : 0
-  const tags = dayTitleParts(day.label)
+  const tags = dayTitleParts(day.dayType)
   const title = tags.map((t) => t.text).join(' + ')
 
   return (
     <section className="day-hero">
       <div className="day-hero__body">
-        <p className="day-hero__eyebrow">{formatDayLabel(day.date)}</p>
+        <p className="day-hero__eyebrow">
+          {formatDayLabel(day.date)}
+          {day.weekday ? ` · ${day.weekday}` : ''}
+        </p>
         <h1 className="day-hero__title">{title}</h1>
         <div className="day-hero__tags">
           {tags.map((tag) => {
@@ -35,7 +40,11 @@ export function DayHero({ day, dayIndex, dayCount }: Props) {
           <div>
             <p className="day-hero__pct">{pct}%</p>
             <p className="day-hero__progress-label">
-              {done} de {total} eventos concluídos.
+              {done} de {total} paradas concluídas
+              {day.stops.length > total
+                ? ` · ${day.stops.length - total} opcionais`
+                : ''}
+              .
             </p>
           </div>
           <p className="day-hero__index">

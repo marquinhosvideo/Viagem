@@ -1,4 +1,4 @@
-import type { Activity, Day, Hotel, Trip } from '../types'
+import type { Hotel, Place, Trip } from '../types'
 
 /** Canonical hotel for this family trip — single source of truth. */
 export const CANONICAL_HOTEL: Hotel = {
@@ -22,7 +22,7 @@ export function hotelLabel(hotel: Hotel = CANONICAL_HOTEL): string {
   return `${hotel.name} – ${hotel.address}`
 }
 
-export function isCanonicalHotelAddress(address?: string): boolean {
+export function isCanonicalHotelAddress(address?: string | null): boolean {
   if (!address?.trim()) return false
   return fold(address).includes('10330 turkey lake')
 }
@@ -36,33 +36,22 @@ function rewriteHotelText(value: string): string {
   return next
 }
 
-function looksLikeHotelLocation(value: string): boolean {
-  return (
-    /^Hotel\b/i.test(value.trim()) ||
-    OLD_HOTEL_STREET.test(value) ||
-    /10330\s+turkey\s+lake/i.test(value)
-  )
-}
-
-function rewriteActivity(activity: Activity): Activity {
-  const next: Activity = {
-    ...activity,
-    title: rewriteHotelText(activity.title),
+function rewritePlace(place: Place): Place {
+  if (/^hotel\b/i.test(place.name) || OLD_HOTEL_STREET.test(place.address ?? '')) {
+    return {
+      ...place,
+      name: place.name.trim() || CANONICAL_HOTEL.name,
+      address: CANONICAL_HOTEL.address,
+      category: 'hotel',
+    }
   }
-  if (activity.notes) next.notes = rewriteHotelText(activity.notes)
-  if (activity.location) {
-    next.location = looksLikeHotelLocation(activity.location)
-      ? hotelLabel()
-      : rewriteHotelText(activity.location)
-  }
-  return next
-}
-
-function rewriteDay(day: Day): Day {
+  if (!place.address) return place
   return {
-    ...day,
-    dayNotes: day.dayNotes ? rewriteHotelText(day.dayNotes) : day.dayNotes,
-    activities: day.activities.map(rewriteActivity),
+    ...place,
+    address: place.address.replace(
+      /8600\s+international\s+dr(?:ive)?|7389\s+universal\s+boulevard/gi,
+      '10330 Turkey Lake Road',
+    ),
   }
 }
 
@@ -77,23 +66,15 @@ export function applyCanonicalHotel(trip: Trip): Trip {
       name: trip.hotel?.name?.trim() || CANONICAL_HOTEL.name,
       address: CANONICAL_HOTEL.address,
     },
-    days: trip.days.map(rewriteDay),
-    locations: (trip.locations ?? []).map((place) => {
-      if (/^hotel\b/i.test(place.name) || OLD_HOTEL_STREET.test(place.address)) {
-        return {
-          ...place,
-          name: place.name.trim() || CANONICAL_HOTEL.name,
-          address: CANONICAL_HOTEL.address,
-        }
-      }
-      return {
-        ...place,
-        address: place.address.replace(
-          /8600\s+international\s+dr(?:ive)?|7389\s+universal\s+boulevard/gi,
-          '10330 Turkey Lake Road',
-        ),
-      }
-    }),
+    places: (trip.places ?? []).map(rewritePlace),
+    days: trip.days.map((day) => ({
+      ...day,
+      driveFromHotel: day.driveFromHotel
+        ? rewriteHotelText(day.driveFromHotel)
+        : day.driveFromHotel,
+      kidNotes: day.kidNotes ? rewriteHotelText(day.kidNotes) : day.kidNotes,
+      notes: day.notes ? rewriteHotelText(day.notes) : day.notes,
+    })),
   }
 }
 

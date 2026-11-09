@@ -7,16 +7,17 @@ import { BudgetWidgets } from '../components/BudgetWidgets'
 import { DayHero } from '../components/DayHero'
 import { DayInfo } from '../components/DayInfo'
 import { FxRatesBand } from '../components/FxRatesBand'
-import { parseDayMeta } from '../lib/dayMeta'
+import { dayHeaderNotes, dayPlaces } from '../lib/dayMeta'
 import { formatMoneyPair } from '../lib/format'
 import { spentByBudget } from '../lib/budgets'
+import { placeOf, sortStops } from '../lib/places'
 import { BUDGET_LABELS, BUDGET_ORDER } from '../types'
 import { MoneyPair } from '../components/MoneyPair'
 
 type Props = {
   trip: Trip
   day: Day
-  onToggle: (dayId: string, activityId: string) => void
+  onToggle: (dayId: string, stopId: string) => void
 }
 
 export function TodayView({ trip, day, onToggle }: Props) {
@@ -27,7 +28,9 @@ export function TodayView({ trip, day, onToggle }: Props) {
   const dayExpenses = trip.expenses.filter((e) => e.dayId === day.id)
   const dayTotal = dayExpenses.reduce((s, e) => s + e.amount, 0)
   const byBudget = spentByBudget(dayExpenses)
-  const { notes, places } = useMemo(() => parseDayMeta(day.dayNotes), [day.dayNotes])
+  const notes = useMemo(() => dayHeaderNotes(day), [day])
+  const places = useMemo(() => dayPlaces(trip, day), [trip, day])
+  const stops = useMemo(() => sortStops(day.stops), [day.stops])
 
   return (
     <section className="view today-view">
@@ -58,13 +61,14 @@ export function TodayView({ trip, day, onToggle }: Props) {
 
       <section className="band">
         <div className="band__inner">
-          <h2 className="section-title">Programação.</h2>
+          <h2 className="section-title">Paradas.</h2>
           <div className="activity-stack">
-            {day.activities.map((activity) => (
+            {stops.map((stop) => (
               <ActivityItem
-                key={activity.id}
-                activity={activity}
-                onToggle={() => onToggle(day.id, activity.id)}
+                key={stop.id}
+                stop={stop}
+                place={placeOf(trip, stop.placeId)}
+                onToggle={() => onToggle(day.id, stop.id)}
               />
             ))}
           </div>

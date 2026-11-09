@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { BudgetId, Expense, Trip } from '../types'
-import { repairTripActivityLocations } from '../lib/activityLocation'
 import { ensureCurrentHotel } from '../lib/dayMap'
 import { loadTrip, resetTrip, saveTrip } from '../lib/storage'
 import { uid } from '../lib/format'
@@ -31,7 +30,6 @@ export function useTrip(enabled = true) {
     saveTrip(trip)
   }, [trip])
 
-  // Pull + realtime when logged in / enabled
   useEffect(() => {
     if (!enabled || !isSupabaseConfigured) {
       setSyncState(isSupabaseConfigured ? 'loading' : 'local')
@@ -61,20 +59,17 @@ export function useTrip(enabled = true) {
     const unsubscribe = subscribeRemote((change) => {
       setTrip((prev) => {
         if (change.type === 'trip_document') {
-          const incoming = ensureCurrentHotel(
-            repairTripActivityLocations(ensureCurrentHotel(change.trip)),
-          )
+          const incoming = ensureCurrentHotel(change.trip)
           return {
             ...incoming,
-            // Prefer live checks/expenses overlays when document arrives without them
             expenses: incoming.expenses?.length ? incoming.expenses : prev.expenses,
             days: incoming.days.map((day) => {
               const prevDay = prev.days.find((d) => d.id === day.id)
               return {
                 ...day,
-                activities: day.activities.map((act) => {
-                  const prevAct = prevDay?.activities.find((a) => a.id === act.id)
-                  return prevAct ? { ...act, done: prevAct.done } : act
+                stops: day.stops.map((stop) => {
+                  const prevStop = prevDay?.stops.find((s) => s.id === stop.id)
+                  return prevStop ? { ...stop, done: prevStop.done } : stop
                 }),
               }
             }),
@@ -85,8 +80,8 @@ export function useTrip(enabled = true) {
             ...prev,
             days: prev.days.map((day) => ({
               ...day,
-              activities: day.activities.map((act) =>
-                act.id === change.activityId ? { ...act, done: change.done } : act,
+              stops: day.stops.map((stop) =>
+                stop.id === change.activityId ? { ...stop, done: change.done } : stop,
               ),
             })),
           }
@@ -159,10 +154,10 @@ export function useTrip(enabled = true) {
     }
   }, [enabled])
 
-  const toggleActivity = useCallback(async (dayId: string, activityId: string) => {
+  const toggleStop = useCallback(async (dayId: string, stopId: string) => {
     const current = tripRef.current.days
       .find((d) => d.id === dayId)
-      ?.activities.find((a) => a.id === activityId)
+      ?.stops.find((s) => s.id === stopId)
     if (!current) return
     const nextDone = !current.done
 
@@ -173,8 +168,8 @@ export function useTrip(enabled = true) {
           ? day
           : {
               ...day,
-              activities: day.activities.map((act) =>
-                act.id === activityId ? { ...act, done: nextDone } : act,
+              stops: day.stops.map((stop) =>
+                stop.id === stopId ? { ...stop, done: nextDone } : stop,
               ),
             },
       ),
@@ -183,7 +178,7 @@ export function useTrip(enabled = true) {
     if (!isSupabaseConfigured || !enabled) return
     setSyncState('saving')
     try {
-      await upsertCheck(activityId, nextDone)
+      await upsertCheck(stopId, nextDone)
       setSyncState('synced')
       setSyncError(null)
     } catch (err) {
@@ -255,7 +250,9 @@ export function useTrip(enabled = true) {
   const activeDay = useMemo(() => {
     const match = trip.days.find((d) => d.date === todayIso)
     if (match) return match
-    const unfinished = trip.days.find((d) => d.activities.some((a) => !a.done))
+    const unfinished = trip.days.find((d) =>
+      d.stops.some((s) => s.status === 'fixo' && !s.done),
+    )
     return unfinished ?? trip.days[0]
   }, [trip.days, todayIso])
 
@@ -268,7 +265,9 @@ export function useTrip(enabled = true) {
     replaceTrip,
     restoreTripSnapshot,
     resetToSample,
-    toggleActivity,
+    toggleStop,
+    /** @deprecated use toggleStop */
+    toggleActivity: toggleStop,
     addExpense,
     removeExpense,
   }

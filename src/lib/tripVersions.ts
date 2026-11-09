@@ -15,6 +15,7 @@ export type TripVersion = {
   stats: {
     days: number
     activities: number
+    stops: number
     tips: number
     expenses: number
   }
@@ -35,9 +36,11 @@ type TripVersionRow = {
 }
 
 function tripStats(trip: Trip): TripVersion['stats'] {
+  const stops = trip.days.reduce((sum, d) => sum + d.stops.length, 0)
   return {
     days: trip.days.length,
-    activities: trip.days.reduce((sum, d) => sum + d.activities.length, 0),
+    activities: stops,
+    stops,
     tips: trip.tips?.length ?? 0,
     expenses: trip.expenses?.length ?? 0,
   }
@@ -64,6 +67,7 @@ function rowToVersion(row: TripVersionRow): TripVersion | null {
     stats: {
       days: row.days_count,
       activities: row.activities_count,
+      stops: row.activities_count,
       tips: row.tips_count,
       expenses: row.expenses_count,
     },

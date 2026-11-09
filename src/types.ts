@@ -29,21 +29,50 @@ export const BUDGET_ORDER: BudgetId[] = BUDGETS.map((b) => b.id)
 /** @deprecated use BudgetId — mantido para leitura de dados antigos */
 export type ExpenseCategory = BudgetId
 
-export type Activity = {
+/** Slug sem acento; a UI exibe o rótulo com acento. */
+export type PlaceCategory =
+  | 'hotel'
+  | 'alimentacao'
+  | 'compras'
+  | 'lazer'
+  | 'transporte'
+
+export type StopStatus = 'fixo' | 'opcional'
+
+/** Local físico único (sem duplicatas). */
+export type Place = {
   id: string
-  time?: string
-  title: string
-  location?: string
-  notes?: string
+  name: string
+  /** null quando o endereço ainda não foi preenchido */
+  address?: string | null
+  category: PlaceCategory
+  lat?: number | null
+  lng?: number | null
+}
+
+/** Parada ordenada do dia — aponta para um local. */
+export type Stop = {
+  id: string
+  /** Sequência global na viagem (1..n) */
+  seq: number
+  /** Ordem dentro do dia (1..n) */
+  orderInDay: number
+  placeId: string
+  status: StopStatus
+  note?: string | null
   done: boolean
 }
 
 export type Day = {
   id: string
   date: string
-  label: string
-  dayNotes?: string
-  activities: Activity[]
+  weekday: string
+  /** Tipo do dia (ex.: Parque, Compras) */
+  dayType: string
+  driveFromHotel?: string | null
+  kidNotes?: string | null
+  notes?: string | null
+  stops: Stop[]
 }
 
 export type Expense = {
@@ -65,12 +94,6 @@ export type Tip = {
   texto: string
 }
 
-export type SavedPlace = {
-  name: string
-  address: string
-  category: string
-}
-
 export type Hotel = {
   name: string
   address: string
@@ -82,13 +105,13 @@ export type Trip = {
   startDate: string
   endDate: string
   currency: string
+  /** Catálogo único de locais da viagem */
+  places: Place[]
   days: Day[]
   expenses: Expense[]
   tips?: Tip[]
-  /** Ponto de partida dos deslocamentos do dia (I-Drive / Sand Lake). */
+  /** Ponto de partida dos deslocamentos do dia. */
   hotel?: Hotel
-  /** Locais importados da planilha; dados antigos são derivados do roteiro. */
-  locations?: SavedPlace[]
   /** Overrides opcionais dos tetos (R$) — senão usa BUDGETS */
   budgetLimits?: Partial<Record<BudgetId, number>>
 }
@@ -98,3 +121,19 @@ export type TabId = 'hoje' | 'roteiro' | 'gastos' | 'locais' | 'parques' | 'impo
 /** Compat: labels antigos de categoria → orçamento */
 export const CATEGORY_LABELS = BUDGET_LABELS
 export const CATEGORY_ORDER = BUDGET_ORDER
+
+export const PLACE_CATEGORY_LABELS: Record<PlaceCategory, string> = {
+  hotel: 'Hotel',
+  alimentacao: 'Alimentação',
+  compras: 'Compras',
+  lazer: 'Lazer',
+  transporte: 'Transporte',
+}
+
+export const PLACE_CATEGORY_ORDER: PlaceCategory[] = [
+  'hotel',
+  'alimentacao',
+  'compras',
+  'lazer',
+  'transporte',
+]

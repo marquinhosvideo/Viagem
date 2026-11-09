@@ -66,18 +66,20 @@ function mentions(text: string, aliases: string[]): boolean {
   })
 }
 
-function dayText(day: Day): string {
-  const pin = (day.dayNotes ?? '').split(/\n\n+/)[0] ?? ''
-  const places = pin.includes('📍') ? pin : ''
-  return [places, ...day.activities.map((activity) => activity.location ?? '')].join('\n')
+function dayText(trip: Trip, day: Day): string {
+  const names = day.stops.map((stop) => {
+    const place = trip.places.find((item) => item.id === stop.placeId)
+    return place?.name ?? ''
+  })
+  return names.join('\n')
 }
 
 export function parksInTrip(trip: Trip): PlanPark[] {
-  const locationNames = (trip.locations ?? []).map((place) => place.name).join('\n')
+  const locationNames = trip.places.map((place) => place.name).join('\n')
 
   return QUEUE_PARKS.flatMap((park) => {
     const dates = trip.days
-      .filter((day) => mentions(dayText(day), park.aliases))
+      .filter((day) => mentions(dayText(trip, day), park.aliases))
       .map((day) => day.date)
     const inPlaces = mentions(locationNames, park.aliases)
     if (!dates.length && !inPlaces) return []

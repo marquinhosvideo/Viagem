@@ -1,11 +1,24 @@
 import { useState, type DragEvent } from 'react'
-import { Check, Clock, GripVertical, MapPin, Pencil, Trash2 } from 'lucide-react'
-import type { Activity } from '../types'
+import {
+  Check,
+  ExternalLink,
+  GripVertical,
+  MapPin,
+  Pencil,
+  Trash2,
+} from 'lucide-react'
+import type { Place, Stop } from '../types'
 import { copyText } from '../lib/addresses'
-import { parseActivityLines } from '../lib/display'
+import {
+  hasAddress,
+  mapsSearchQuery,
+  PLACE_CATEGORY_ICONS,
+  placeCategoryLabel,
+} from '../lib/places'
 
 type Props = {
-  activity: Activity
+  stop: Stop
+  place?: Place
   onToggle: () => void
   onEdit?: () => void
   onDelete?: () => void
@@ -18,7 +31,8 @@ type Props = {
 }
 
 export function ActivityItem({
-  activity,
+  stop,
+  place,
   onToggle,
   onEdit,
   onDelete,
@@ -29,17 +43,17 @@ export function ActivityItem({
   onDragEnd,
   dragging = false,
 }: Props) {
-  const [expanded, setExpanded] = useState(false)
   const [copied, setCopied] = useState(false)
-  const source = activity.notes || activity.title
-  const lines = parseActivityLines(source)
-  const headline = lines[0]?.text || activity.title
-  const cats = lines.filter((l) => l.cat)
-  const hasDetails = lines.length > 1
+  const optional = stop.status === 'opcional'
+  const category = place?.category
+  const CategoryIcon = category ? PLACE_CATEGORY_ICONS[category] : MapPin
+  const address = place?.address?.trim() || ''
+  const canOpenMap = hasAddress(place)
 
   async function handleCopyAddress() {
-    if (!activity.location) return
-    const ok = await copyText(activity.location)
+    if (!place) return
+    const text = address ? `${place.name} – ${address}` : place.name
+    const ok = await copyText(text)
     if (!ok) return
     setCopied(true)
     window.setTimeout(() => setCopied(false), 1600)
@@ -47,7 +61,17 @@ export function ActivityItem({
 
   return (
     <article
-      className={`activity ${activity.done ? 'activity--done' : ''} ${dragging ? 'activity--dragging' : ''} ${draggable ? 'activity--sortable' : ''}`}
+      className={[
+        'activity',
+        'stop',
+        stop.done ? 'activity--done' : '',
+        optional ? 'stop--optional' : '',
+        dragging ? 'activity--dragging' : '',
+        draggable ? 'activity--sortable' : '',
+        category ? `stop--${category}` : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
       draggable={draggable}
       onDragStart={onDragStart}
       onDragOver={onDragOver}
@@ -65,8 +89,8 @@ export function ActivityItem({
           type="button"
           className="activity__check-btn"
           onClick={onToggle}
-          aria-pressed={activity.done}
-          aria-label="Concluir evento"
+          aria-pressed={stop.done}
+          aria-label="Concluir parada"
         >
           <span className="activity__check" aria-hidden>
             <Check size={16} strokeWidth={2.5} />
@@ -75,14 +99,16 @@ export function ActivityItem({
 
         <div className="activity__body">
           <div className="activity__meta">
-            {activity.time ? (
-              <span className="activity__time">
-                <Clock size={16} aria-hidden />
-                {activity.time}
+            <span className="activity__time stop__order">
+              {stop.orderInDay}º
+            </span>
+            {category ? (
+              <span className={`stop__category stop__category--${category}`}>
+                <CategoryIcon size={14} aria-hidden />
+                {placeCategoryLabel(category)}
               </span>
-            ) : (
-              <span className="activity__time activity__time--muted">Evento</span>
-            )}
+            ) : null}
+            {optional ? <span className="stop__badge">Opcional</span> : null}
             {onEdit || onDelete ? (
               <span className="activity__actions">
                 {onEdit ? (
@@ -90,7 +116,7 @@ export function ActivityItem({
                     type="button"
                     className="icon-btn"
                     onClick={onEdit}
-                    aria-label={`Editar ${headline}`}
+                    aria-label={`Editar ${place?.name ?? 'parada'}`}
                     title="Editar"
                   >
                     <Pencil size={16} aria-hidden />
@@ -101,7 +127,7 @@ export function ActivityItem({
                     type="button"
                     className="icon-btn icon-btn--danger"
                     onClick={onDelete}
-                    aria-label={`Excluir ${headline}`}
+                    aria-label={`Excluir ${place?.name ?? 'parada'}`}
                     title="Excluir"
                   >
                     <Trash2 size={16} aria-hidden />
@@ -110,26 +136,14 @@ export function ActivityItem({
               </span>
             ) : null}
           </div>
-          <p className="activity__title">{headline}</p>
-          {cats.length > 0 ? (
-            <div className="activity__cats">
-              {cats.map((cat) => {
-                const Icon = cat.icon
-                return (
-                  <span key={`${cat.cat}-${cat.text.slice(0, 12)}`} className="activity__cat">
-                    <Icon size={14} aria-hidden />
-                    {cat.cat}
-                  </span>
-                )
-              })}
-            </div>
-          ) : null}
 
-          {activity.location ? (
+          <p className="activity__title">{place?.name ?? 'Local'}</p>
+
+          {address ? (
             <div className="activity__address activity__address--inline">
               <div className="activity__address-text">
                 <MapPin size={18} aria-hidden />
-                <p>{activity.location}</p>
+                <p>{address}</p>
               </div>
               <button
                 type="button"
@@ -139,34 +153,22 @@ export function ActivityItem({
                 {copied ? 'Copiado.' : 'Copiar'}
               </button>
             </div>
-          ) : null}
+          ) : (
+            <p className="stop__no-address muted">Endereço a completar</p>
+          )}
 
-          {hasDetails ? (
-            <button
-              type="button"
-              className="text-link"
-              onClick={() => setExpanded((v) => !v)}
-              aria-expanded={expanded}
+          {stop.note ? <p className="stop__note">{stop.note}</p> : null}
+
+          {canOpenMap && place ? (
+            <a
+              className="text-link stop__map-link"
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapsSearchQuery(place))}`}
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              {expanded ? 'Ocultar detalhes' : 'Detalhes ›'}
-            </button>
-          ) : null}
-
-          {expanded ? (
-            <div className="activity__details">
-              {lines.map((line, i) => {
-                const Icon = line.icon
-                return (
-                  <div key={`${i}-${line.text.slice(0, 20)}`} className="activity__detail-row">
-                    <Icon size={18} aria-hidden />
-                    <div>
-                      {line.cat ? <p className="activity__detail-cat">{line.cat}</p> : null}
-                      <p className="activity__detail-text">{line.text}</p>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+              Abrir no mapa
+              <ExternalLink size={14} aria-hidden />
+            </a>
           ) : null}
         </div>
       </div>

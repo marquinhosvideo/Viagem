@@ -1,39 +1,39 @@
 import { useState, type FormEvent } from 'react'
-import type { Activity, Day } from '../types'
-import { parseDayMeta, replaceDayPlaces } from '../lib/dayMeta'
-
-function notesOnlyText(dayNotes?: string): string {
-  return parseDayMeta(dayNotes)
-    .notes.map((note) => {
-      if (note.label === 'Deslocamento') return `🚗 ${note.text}`
-      if (note.label === 'Com a criança') return `👶 ${note.text}`
-      if (note.label === 'Onde') return `📍 ${note.text}`
-      return `📝 ${note.text}`
-    })
-    .join('\n\n')
-}
+import type { Day, Place, PlaceCategory, Stop, StopStatus, Trip } from '../types'
+import { PLACE_CATEGORY_LABELS, PLACE_CATEGORY_ORDER } from '../types'
+import { normalizePlaceCategory, normalizeStopStatus } from '../lib/places'
 
 type DayFormProps = {
   day?: Day
-  onSave: (input: { date: string; label: string; dayNotes?: string }) => void
+  onSave: (input: {
+    date: string
+    dayType: string
+    weekday?: string
+    driveFromHotel?: string | null
+    kidNotes?: string | null
+    notes?: string | null
+  }) => void
   onCancel: () => void
 }
 
 export function DayForm({ day, onSave, onCancel }: DayFormProps) {
   const [date, setDate] = useState(day?.date ?? '')
-  const [label, setLabel] = useState(day?.label ?? '')
-  const [dayNotes, setDayNotes] = useState(notesOnlyText(day?.dayNotes))
+  const [dayType, setDayType] = useState(day?.dayType ?? '')
+  const [driveFromHotel, setDriveFromHotel] = useState(day?.driveFromHotel ?? '')
+  const [kidNotes, setKidNotes] = useState(day?.kidNotes ?? '')
+  const [notes, setNotes] = useState(day?.notes ?? '')
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
-    const cleanLabel = label.trim()
-    if (!date || !cleanLabel) return
-    const places = parseDayMeta(day?.dayNotes).places
-    const merged = replaceDayPlaces(dayNotes.trim().slice(0, 10_000) || undefined, places)
+    const cleanType = dayType.trim()
+    if (!date || !cleanType) return
     onSave({
       date,
-      label: cleanLabel.slice(0, 200),
-      dayNotes: merged,
+      dayType: cleanType.slice(0, 200),
+      weekday: day?.weekday,
+      driveFromHotel: driveFromHotel.trim() || null,
+      kidNotes: kidNotes.trim() || null,
+      notes: notes.trim() || null,
     })
   }
 
@@ -52,11 +52,11 @@ export function DayForm({ day, onSave, onCancel }: DayFormProps) {
           />
         </div>
         <div className="field">
-          <label htmlFor="day-label">Título do dia</label>
+          <label htmlFor="day-type">Tipo do dia</label>
           <input
-            id="day-label"
-            value={label}
-            onChange={(event) => setLabel(event.target.value)}
+            id="day-type"
+            value={dayType}
+            onChange={(event) => setDayType(event.target.value)}
             placeholder="Parque + compras"
             maxLength={200}
             required
@@ -64,14 +64,33 @@ export function DayForm({ day, onSave, onCancel }: DayFormProps) {
         </div>
       </div>
       <div className="field">
-        <label htmlFor="day-notes">Observações do dia</label>
+        <label htmlFor="day-drive">Carro a partir do hotel</label>
+        <textarea
+          id="day-drive"
+          value={driveFromHotel}
+          onChange={(event) => setDriveFromHotel(event.target.value)}
+          maxLength={10_000}
+          rows={2}
+        />
+      </div>
+      <div className="field">
+        <label htmlFor="day-kid">Criança</label>
+        <textarea
+          id="day-kid"
+          value={kidNotes}
+          onChange={(event) => setKidNotes(event.target.value)}
+          maxLength={10_000}
+          rows={2}
+        />
+      </div>
+      <div className="field">
+        <label htmlFor="day-notes">Observações / horários</label>
         <textarea
           id="day-notes"
-          value={dayNotes}
-          onChange={(event) => setDayNotes(event.target.value)}
-          placeholder={'🚗 Deslocamento\n\n📝 Observações'}
+          value={notes}
+          onChange={(event) => setNotes(event.target.value)}
           maxLength={10_000}
-          rows={5}
+          rows={3}
         />
       </div>
       <EditorActions onCancel={onCancel} />
@@ -79,83 +98,149 @@ export function DayForm({ day, onSave, onCancel }: DayFormProps) {
   )
 }
 
-type ActivityFormProps = {
-  activity?: Activity
+type StopFormProps = {
+  trip: Trip
+  stop?: Stop
+  place?: Place
+  nextOrder: number
+  nextSeq: number
   onSave: (input: {
-    time?: string
-    title: string
-    location?: string
-    notes?: string
+    placeName: string
+    address?: string | null
+    category: PlaceCategory
+    status: StopStatus
+    note?: string | null
+    orderInDay: number
   }) => void
   onCancel: () => void
 }
 
-export function ActivityForm({ activity, onSave, onCancel }: ActivityFormProps) {
-  const [time, setTime] = useState(activity?.time ?? '')
-  const [title, setTitle] = useState(activity?.title ?? '')
-  const [location, setLocation] = useState(activity?.location ?? '')
-  const [notes, setNotes] = useState(activity?.notes ?? '')
+export function StopForm({
+  trip,
+  stop,
+  place,
+  nextOrder,
+  nextSeq: _nextSeq,
+  onSave,
+  onCancel,
+}: StopFormProps) {
+  void _nextSeq
+  const [placeName, setPlaceName] = useState(place?.name ?? '')
+  const [address, setAddress] = useState(place?.address ?? '')
+  const [category, setCategory] = useState<PlaceCategory>(place?.category ?? 'lazer')
+  const [status, setStatus] = useState<StopStatus>(stop?.status ?? 'fixo')
+  const [note, setNote] = useState(stop?.note ?? '')
+  const [orderInDay, setOrderInDay] = useState(stop?.orderInDay ?? nextOrder)
+
+  function handlePlacePick(name: string) {
+    setPlaceName(name)
+    const existing = trip.places.find(
+      (item) => item.name.toLocaleLowerCase('pt-BR') === name.toLocaleLowerCase('pt-BR'),
+    )
+    if (!existing) return
+    setAddress(existing.address ?? '')
+    setCategory(existing.category)
+  }
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
-    const cleanTitle = title.trim()
-    if (!cleanTitle) return
+    const cleanName = placeName.trim()
+    if (!cleanName) return
     onSave({
-      time: time || undefined,
-      title: cleanTitle.slice(0, 1000),
-      location: location.trim().slice(0, 500) || undefined,
-      notes: notes.trim().slice(0, 10_000) || undefined,
+      placeName: cleanName.slice(0, 160),
+      address: address.trim() || null,
+      category: normalizePlaceCategory(category) ?? 'lazer',
+      status: normalizeStopStatus(status),
+      note: note.trim() || null,
+      orderInDay: Math.max(1, Number(orderInDay) || nextOrder),
     })
   }
 
   return (
     <form className="itinerary-editor" onSubmit={handleSubmit}>
-      <h3>{activity ? 'Editar evento.' : 'Adicionar evento.'}</h3>
-      <div className="field">
-        <label htmlFor="activity-time">Horário (opcional)</label>
-        <input
-          id="activity-time"
-          type="time"
-          value={time}
-          onChange={(event) => setTime(event.target.value)}
-        />
+      <h3>{stop ? 'Editar parada.' : 'Adicionar parada.'}</h3>
+      <div className="itinerary-editor__grid">
+        <div className="field">
+          <label htmlFor="stop-order">Ordem no dia</label>
+          <input
+            id="stop-order"
+            type="number"
+            min={1}
+            value={orderInDay}
+            onChange={(event) => setOrderInDay(Number(event.target.value))}
+            required
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="stop-status">Status</label>
+          <select
+            id="stop-status"
+            value={status}
+            onChange={(event) => setStatus(event.target.value as StopStatus)}
+          >
+            <option value="fixo">Fixo</option>
+            <option value="opcional">Opcional</option>
+          </select>
+        </div>
       </div>
       <div className="field">
-        <label htmlFor="activity-title">Evento</label>
+        <label htmlFor="stop-place">Local</label>
         <input
-          id="activity-title"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          placeholder="Nome do evento"
-          maxLength={1000}
+          id="stop-place"
+          list="trip-places"
+          value={placeName}
+          onChange={(event) => handlePlacePick(event.target.value)}
+          placeholder="Nome do local"
+          maxLength={160}
           required
         />
+        <datalist id="trip-places">
+          {trip.places.map((item) => (
+            <option key={item.id} value={item.name} />
+          ))}
+        </datalist>
       </div>
       <div className="field">
-        <label htmlFor="activity-location">Local ou endereço</label>
+        <label htmlFor="stop-address">Endereço</label>
         <input
-          id="activity-location"
-          value={location}
-          onChange={(event) => setLocation(event.target.value)}
-          placeholder="Nome – endereço"
-          maxLength={500}
+          id="stop-address"
+          value={address}
+          onChange={(event) => setAddress(event.target.value)}
+          placeholder="Opcional — deixe vazio se ainda não souber"
+          maxLength={300}
         />
       </div>
       <div className="field">
-        <label htmlFor="activity-notes">Detalhes</label>
+        <label htmlFor="stop-category">Categoria</label>
+        <select
+          id="stop-category"
+          value={category}
+          onChange={(event) => setCategory(event.target.value as PlaceCategory)}
+        >
+          {PLACE_CATEGORY_ORDER.map((value) => (
+            <option key={value} value={value}>
+              {PLACE_CATEGORY_LABELS[value]}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="field">
+        <label htmlFor="stop-note">Observação</label>
         <textarea
-          id="activity-notes"
-          value={notes}
-          onChange={(event) => setNotes(event.target.value)}
-          placeholder="Informações úteis"
+          id="stop-note"
+          value={note}
+          onChange={(event) => setNote(event.target.value)}
           maxLength={10_000}
-          rows={4}
+          rows={3}
         />
       </div>
       <EditorActions onCancel={onCancel} />
     </form>
   )
 }
+
+/** @deprecated use StopForm */
+export const ActivityForm = StopForm
 
 function EditorActions({ onCancel }: { onCancel: () => void }) {
   return (

@@ -1,20 +1,24 @@
 import type { Expense, Trip } from '../types'
 import { sampleTrip } from '../data/sampleTrip'
-import { repairTripActivityLocations } from './activityLocation'
 import { ensureCurrentHotel } from './dayMap'
 import { normalizeBudgetId } from './budgets'
 
-const STORAGE_KEY = 'roteiro-orlando-2026-v3-budgets'
+const STORAGE_KEY = 'roteiro-orlando-2026-v4-paradas'
+const LEGACY_KEYS = [
+  'roteiro-orlando-2026-v3-budgets',
+  'roteiro-orlando-2026-v2',
+]
 
 export function loadTrip(): Trip {
   try {
-    const raw =
-      localStorage.getItem(STORAGE_KEY) ??
-      localStorage.getItem('roteiro-orlando-2026-v2')
-    if (!raw) return withBudgets(structuredClone(sampleTrip))
-    const parsed = JSON.parse(raw) as Trip
-    if (!parsed?.days?.length) return withBudgets(structuredClone(sampleTrip))
-    return withBudgets(migrateTrip(parsed))
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (raw) {
+      const parsed = JSON.parse(raw) as Trip
+      if (isNewTripShape(parsed)) return withBudgets(parsed)
+    }
+    // Modelo antigo (manhã/tarde/noite + " | ") — descarta e usa a planilha revisada.
+    for (const key of LEGACY_KEYS) localStorage.removeItem(key)
+    return withBudgets(structuredClone(sampleTrip))
   } catch {
     return withBudgets(structuredClone(sampleTrip))
   }
@@ -30,11 +34,23 @@ export function resetTrip(): Trip {
   return trip
 }
 
+function isNewTripShape(value: unknown): value is Trip {
+  if (!value || typeof value !== 'object') return false
+  const trip = value as Trip & { days?: Array<{ stops?: unknown; activities?: unknown }> }
+  if (!Array.isArray(trip.places) || !Array.isArray(trip.days) || !trip.days.length) {
+    return false
+  }
+  return trip.days.every(
+    (day) => Array.isArray(day.stops) && !('activities' in day && day.activities),
+  )
+}
+
 function withBudgets(trip: Trip): Trip {
-  const repaired = ensureCurrentHotel(repairTripActivityLocations(ensureCurrentHotel(trip)))
+  const repaired = ensureCurrentHotel(trip)
   return {
     ...repaired,
     currency: 'BRL',
+    places: repaired.places ?? [],
     budgetLimits: repaired.budgetLimits ?? {
       marcos: 5000,
       dielen: 5000,
@@ -44,10 +60,6 @@ function withBudgets(trip: Trip): Trip {
     },
     expenses: (repaired.expenses ?? []).map(migrateExpense).filter(Boolean) as Expense[],
   }
-}
-
-function migrateTrip(trip: Trip): Trip {
-  return withBudgets(trip)
 }
 
 function migrateExpense(raw: Expense | Record<string, unknown>): Expense | null {

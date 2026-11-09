@@ -1,22 +1,25 @@
 import type { WorkSheet } from 'xlsx'
-import { BUDGET_LABELS, type Activity, type BudgetId, type Day, type Expense, type SavedPlace, type Tip, type Trip } from '../types'
+import {
+  BUDGET_LABELS,
+  PLACE_CATEGORY_LABELS,
+  type BudgetId,
+  type Day,
+  type Expense,
+  type Place,
+  type PlaceCategory,
+  type Stop,
+  type Tip,
+  type Trip,
+} from '../types'
 import { brlToUsd, usdToBrl } from './currency'
 import { formatShortDate, formatWeekdayShort, parseAmount, uid } from './format'
 import { normalizeBudgetId } from './budgets'
-import {
-  activityTitleFromBlock,
-  locationForActivityText,
-  repairTripActivityLocations,
-  splitActivityBlocks,
-} from './activityLocation'
-import { periodFromActivityId } from './display'
 import {
   applyCanonicalHotel,
   CANONICAL_HOTEL,
   resolveHotelFromMeta,
 } from './hotel'
-import { collectTripLocations, inferPlaceCategory, normalizePlace } from './locations'
-import { parseDayMeta, toDayPlace } from './dayMeta'
+import { normalizePlaceCategory, normalizeStopStatus } from './places'
 
 type XLSXModule = typeof import('xlsx')
 const MAX_IMPORT_BYTES = 10 * 1024 * 1024
@@ -48,9 +51,10 @@ function clean(value: unknown): string {
     .trim()
 }
 
-function isEmptyPeriod(value: unknown): boolean {
-  const t = clean(value)
-  return !t || t === '—' || t === '-'
+function dashOrNull(value: unknown): string | null {
+  const text = clean(value)
+  if (!text || text === '—' || text === '-') return null
+  return text
 }
 
 function excelDateToIso(value: unknown, XLSX: XLSXModule, defaultYear = 2026): string | null {
@@ -78,20 +82,6 @@ function excelDateToIso(value: unknown, XLSX: XLSXModule, defaultYear = 2026): s
   return null
 }
 
-function formatTime(value: unknown): string | undefined {
-  if (value == null || value === '') return undefined
-  if (typeof value === 'number') {
-    const totalMinutes = Math.round(value * 24 * 60)
-    const h = Math.floor(totalMinutes / 60) % 24
-    const m = totalMinutes % 60
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
-  }
-  const text = String(value).trim()
-  const match = text.match(/^(\d{1,2}):(\d{2})/)
-  if (match) return `${match[1].padStart(2, '0')}:${match[2]}`
-  return text
-}
-
 function sheetToRows(XLSX: XLSXModule, sheet: WorkSheet): Row[] {
   return XLSX.utils.sheet_to_json<Row>(sheet, { defval: '' })
 }
@@ -105,150 +95,164 @@ function pick(row: Row, keys: string[]): unknown {
   return ''
 }
 
-function hasOrlandoColumns(rows: Row[]): boolean {
+function hasParadasColumns(rows: Row[]): boolean {
+  if (!rows.length) return false
+  const headers = Object.keys(rows[0]).map(normalizeHeader)
+  return (
+    headers.includes('seq') &&
+    headers.includes('ordem no dia') &&
+    headers.includes('local') &&
+    headers.includes('categoria') &&
+    headers.includes('status')
+  )
+}
+
+function hasLegacyPeriodColumns(rows: Row[]): boolean {
   if (!rows.length) return false
   const headers = Object.keys(rows[0]).map(normalizeHeader)
   return headers.includes('manha') && headers.includes('tarde') && headers.includes('noite')
 }
 
-function placesFromLocationColumn(location: string) {
-  if (!location || location === '—') return []
-  return location
-    .split('|')
-    .flatMap((chunk) => {
-      const piece = chunk.trim()
-      if (!piece) return []
-      const [name, ...rest] = piece.split(/\s+[–—-]\s+/)
-      const place = toDayPlace(name, rest.join(' – '))
-      return place ? [place] : []
-    })
+function placeIdForName(name: string): string {
+  let hash = 0
+  for (let i = 0; i < name.length; i += 1) {
+    hash = (hash * 31 + name.charCodeAt(i)) >>> 0
+  }
+  return `loc-${hash.toString(16).padStart(8, '0')}`
 }
 
-function buildOrlandoDays(rows: Row[], XLSX: XLSXModule): Day[] {
-  const days: Day[] = []
+type BuiltRoteiro = {
+  places: Place[]
+  days: Day[]
+}
 
-  for (const row of rows) {
+function buildFromParadas(
+  stopRows: Row[],
+  dayRows: Row[],
+  XLSX: XLSXModule,
+): BuiltRoteiro {
+  const placesByName = new Map<string, Place>()
+  const stopsByDate = new Map<string, Stop[]>()
+  const weekdayByDate = new Map<string, string>()
+
+  for (const row of stopRows) {
+    const seqRaw = pick(row, ['seq'])
+    const seq = Number(seqRaw)
+    if (!Number.isFinite(seq) || seq <= 0) continue
+
     const date = excelDateToIso(pick(row, ['data', 'date']), XLSX, 2026)
     if (!date) continue
 
-    const label =
-      clean(pick(row, ['tipo do dia', 'tipo'])) ||
-      clean(pick(row, ['dia', 'label'])) ||
-      `Dia ${days.length + 1}`
+    const name = clean(pick(row, ['local', 'nome', 'lugar']))
+    if (!name) continue
 
-    const location = clean(
-      pick(row, ['lugares e enderecos', 'lugares e endereços', 'local', 'endereco']),
-    )
-    const drive = clean(
-      Object.entries(row).find(([k]) => normalizeHeader(k).includes('carro'))?.[1],
-    )
-    const kid = clean(
-      Object.entries(row).find(([k]) => normalizeHeader(k).includes('crianca'))?.[1],
-    )
-    const obs = clean(
-      pick(row, ['observacoes / horarios', 'observacoes', 'obs', 'notas']),
-    )
-
-    const dayNotes = [
-      location && location !== '—' ? `📍 ${location}` : '',
-      drive && drive !== '—' ? `🚗 ${drive}` : '',
-      kid && kid !== '—' ? `👶 ${kid}` : '',
-      obs && obs !== '—' ? `📝 ${obs}` : '',
-    ]
-      .filter(Boolean)
-      .join('\n\n')
-
-    const periods: { key: string; keys: string[] }[] = [
-      { key: 'manha', keys: ['manha', 'manhã'] },
-      { key: 'tarde', keys: ['tarde'] },
-      { key: 'noite', keys: ['noite'] },
-    ]
-
-    const dayPlaces = placesFromLocationColumn(location)
-    const activities: Activity[] = []
-    for (const period of periods) {
-      const raw = pick(row, period.keys)
-      if (isEmptyPeriod(raw)) continue
-      const text = clean(raw)
-      const blocks = splitActivityBlocks(text)
-      blocks.forEach((block, index) => {
-        const matchedLocation = locationForActivityText(block, dayPlaces)
-        const id =
-          index === 0
-            ? `act-${date}-${period.key}`
-            : `act-${date}-${period.key}-${index}`
-        activities.push({
-          id,
-          title: activityTitleFromBlock(block),
-          ...(matchedLocation ? { location: matchedLocation } : {}),
-          notes: block,
-          done: false,
-        })
-      })
+    const category = normalizePlaceCategory(pick(row, ['categoria', 'category']))
+    if (!category) {
+      throw new Error(`Categoria inválida na seq ${seq}: ${String(pick(row, ['categoria']))}`)
     }
 
-    if (!activities.length) continue
+    const address = dashOrNull(pick(row, ['endereco', 'endereço', 'address']))
+    const weekday = clean(pick(row, ['dia'])) || formatWeekdayShort(date)
+    const orderInDay = Number(pick(row, ['ordem no dia', 'ordem'])) || 1
+    const status = normalizeStopStatus(pick(row, ['status']))
+    const note = dashOrNull(pick(row, ['observacao', 'observação', 'obs', 'nota']))
 
-    days.push({
-      id: `day-${date}`,
-      date,
-      label,
-      dayNotes: dayNotes || undefined,
-      activities,
-    })
-  }
+    weekdayByDate.set(date, weekday)
 
-  return days.sort((a, b) => a.date.localeCompare(b.date))
-}
-
-function buildDaysFromRows(rows: Row[], XLSX: XLSXModule): Day[] {
-  if (hasOrlandoColumns(rows)) return buildOrlandoDays(rows, XLSX)
-
-  const byDate = new Map<string, Day>()
-
-  for (const row of rows) {
-    const date = excelDateToIso(pick(row, ['data', 'date']), XLSX)
-    const title = clean(
-      pick(row, [
-        'atividade',
-        'atividade/programacao',
-        'programacao',
-        'titulo',
-        'title',
-        'item',
-      ]),
-    )
-    if (!date || !title) continue
-
-    if (!byDate.has(date)) {
-      const label =
-        clean(pick(row, ['dia', 'label', 'titulo do dia', 'nome do dia', 'tipo do dia'])) ||
-        `Dia ${byDate.size + 1}`
-      byDate.set(date, {
-        id: uid('day'),
-        date,
-        label,
-        activities: [],
+    const existing = placesByName.get(name)
+    if (!existing) {
+      placesByName.set(name, {
+        id: placeIdForName(name),
+        name,
+        address,
+        category,
+        lat: null,
+        lng: null,
       })
+    } else {
+      if (existing.category !== category) {
+        throw new Error(`Local “${name}” com categorias conflitantes.`)
+      }
+      if (!existing.address && address) existing.address = address
     }
 
-    const day = byDate.get(date)!
-    const diaCol = clean(pick(row, ['dia']))
-    if (diaCol && !excelDateToIso(diaCol, XLSX)) day.label = diaCol
-    const maybeLabel = clean(pick(row, ['label', 'titulo do dia', 'nome do dia', 'tipo do dia']))
-    if (maybeLabel) day.label = maybeLabel
-
-    day.activities.push({
-      id: uid('act'),
-      time: formatTime(pick(row, ['horario', 'hora', 'time'])),
-      title,
-      location: clean(pick(row, ['local', 'lugar', 'location', 'endereco'])) || undefined,
-      notes: clean(pick(row, ['observacoes', 'obs', 'notas', 'notes', 'detalhes'])) || undefined,
+    const place = placesByName.get(name)!
+    const list = stopsByDate.get(date) ?? []
+    list.push({
+      id: `stop-${String(seq).padStart(3, '0')}`,
+      seq,
+      orderInDay,
+      placeId: place.id,
+      status,
+      note,
       done: false,
     })
+    stopsByDate.set(date, list)
   }
 
-  return Array.from(byDate.values()).sort((a, b) => a.date.localeCompare(b.date))
+  const dayMeta = new Map<
+    string,
+    {
+      weekday: string
+      dayType: string
+      driveFromHotel: string | null
+      kidNotes: string | null
+      notes: string | null
+    }
+  >()
+
+  for (const row of dayRows) {
+    const date = excelDateToIso(pick(row, ['data', 'date']), XLSX, 2026)
+    if (!date) continue
+    const weekday =
+      clean(pick(row, ['dia'])) || weekdayByDate.get(date) || formatWeekdayShort(date)
+    const dayType =
+      clean(pick(row, ['tipo do dia', 'tipo'])) || weekday
+    const driveEntry = Object.entries(row).find(([k]) =>
+      normalizeHeader(k).includes('carro'),
+    )
+    const kidEntry = Object.entries(row).find(([k]) =>
+      normalizeHeader(k).includes('crianca'),
+    )
+    dayMeta.set(date, {
+      weekday,
+      dayType,
+      driveFromHotel: dashOrNull(driveEntry?.[1]),
+      kidNotes: dashOrNull(kidEntry?.[1]),
+      notes: dashOrNull(
+        pick(row, ['observacoes / horarios', 'observacoes', 'obs', 'notas']),
+      ),
+    })
+  }
+
+  const dates = [...new Set([...stopsByDate.keys(), ...dayMeta.keys()])].sort()
+  const days: Day[] = dates.map((date) => {
+    const meta = dayMeta.get(date)
+    const stops = [...(stopsByDate.get(date) ?? [])].sort(
+      (a, b) => a.orderInDay - b.orderInDay || a.seq - b.seq,
+    )
+    // Reindex ordem_no_dia without gaps
+    stops.forEach((stop, index) => {
+      stop.orderInDay = index + 1
+    })
+    return {
+      id: `day-${date}`,
+      date,
+      weekday: meta?.weekday || weekdayByDate.get(date) || formatWeekdayShort(date),
+      dayType: meta?.dayType || weekdayByDate.get(date) || formatWeekdayShort(date),
+      driveFromHotel: meta?.driveFromHotel ?? null,
+      kidNotes: meta?.kidNotes ?? null,
+      notes: meta?.notes ?? null,
+      stops,
+    }
+  })
+
+  return {
+    places: [...placesByName.values()].sort((a, b) =>
+      a.name.localeCompare(b.name, 'pt-BR'),
+    ),
+    days,
+  }
 }
 
 function buildExpensesFromRows(
@@ -264,7 +268,6 @@ function buildExpensesFromRows(
       const description = clean(
         pick(row, ['descricao', 'descrição', 'description', 'item', 'gasto']),
       ).slice(0, 500)
-      // Planilha de gastos: valores em USD → grava em BRL
       const amountUsd = parseAmount(
         pick(row, ['valor', 'amount', 'preco', 'preço', 'custo']),
       )
@@ -275,8 +278,9 @@ function buildExpensesFromRows(
         const newDay: Day = {
           id: uid('day'),
           date,
-          label: `Dia ${days.length + 1}`,
-          activities: [],
+          weekday: formatWeekdayShort(date),
+          dayType: `Dia ${days.length + 1}`,
+          stops: [],
         }
         days.push(newDay)
         dayByDate.set(date, newDay.id)
@@ -314,39 +318,34 @@ function buildTips(rows: Row[]): Tip[] {
     .filter((t) => t.tema && t.texto)
 }
 
-function buildLocations(rows: Row[], categoryKeys: string[]): SavedPlace[] {
-  const locations: SavedPlace[] = []
-  const hasExplicitCategory = categoryKeys.includes('categoria')
-  for (const row of rows) {
-    const name = clean(pick(row, ['nome / local', 'nome', 'lugar', 'local']))
-    const rawAddress = clean(pick(row, ['endereco', 'endereço']))
-    if (!rawAddress) continue
-
-    const categoryHint = clean(pick(row, categoryKeys))
-    const parsed = parseDayMeta(`📍 ${name ? `${name} – ${rawAddress}` : rawAddress}`).places
-    for (const place of parsed) {
-      const normalized = normalizePlace({
-        name: place.name,
-        address: place.addr,
-        category:
-          (hasExplicitCategory ? categoryHint : '') ||
-          inferPlaceCategory(place.name, categoryHint),
-      })
-      if (normalized) locations.push(normalized)
-    }
+function preserveDoneFlags(next: Trip, previous: Trip): Trip {
+  const prevDone = new Map<string, boolean>()
+  for (const day of previous.days) {
+    for (const stop of day.stops) prevDone.set(stop.id, stop.done)
   }
-  return locations
+  return {
+    ...next,
+    days: next.days.map((day) => ({
+      ...day,
+      stops: day.stops.map((stop) => ({
+        ...stop,
+        done: prevDone.get(stop.id) ?? stop.done,
+      })),
+    })),
+  }
 }
 
 export type ImportResult = {
   trip: Trip
   stats: {
     days: number
-    activities: number
+    stops: number
     expenses: number
     tips: number
-    locations: number
+    places: number
+    optionalStops: number
   }
+  warnings: string[]
 }
 
 export async function importTripFromFile(
@@ -370,88 +369,74 @@ export async function importTripFromFile(
 
   const sheetNames = workbook.SheetNames.slice(0, 30)
   const roteiroName =
-    sheetNames.find((n) =>
-      /roteiro|itinerario|programacao|agenda|plano|completo/i.test(n),
-    ) ?? sheetNames[0]
+    sheetNames.find((n) => /roteiro completo/i.test(n)) ??
+    sheetNames.find((n) => /roteiro|itinerario|programacao|agenda|plano/i.test(n))
+  const diasName = sheetNames.find((n) => /^dias$/i.test(n))
   const gastosName = sheetNames.find((n) =>
     /gasto|despesa|expense|custo|financeiro/i.test(n),
   )
   const tipsName = sheetNames.find((n) => /dica|ressalva/i.test(n))
   const metaName = sheetNames.find((n) => /viagem|trip|info|geral/i.test(n))
-  const childPlacesName = sheetNames.find((n) => /lugares.*crian/i.test(n))
-  const shoppingName = sheetNames.find((n) => /compras.*extra/i.test(n))
-  const locaisName = sheetNames.find((n) => /^locais$/i.test(n) || /^locations$/i.test(n))
 
   const roteiroSheet = roteiroName ? workbook.Sheets[roteiroName] : undefined
+  const diasSheet = diasName ? workbook.Sheets[diasName] : undefined
   const gastosSheet = gastosName ? workbook.Sheets[gastosName] : undefined
   const tipsSheet = tipsName ? workbook.Sheets[tipsName] : undefined
   const metaSheet = metaName ? workbook.Sheets[metaName] : undefined
-  const childPlacesSheet = childPlacesName
-    ? workbook.Sheets[childPlacesName]
-    : undefined
-  const shoppingSheet = shoppingName ? workbook.Sheets[shoppingName] : undefined
-  const locaisSheet = locaisName ? workbook.Sheets[locaisName] : undefined
 
   const roteiroRows = roteiroSheet ? sheetToRows(XLSX, roteiroSheet) : []
-  const days = buildDaysFromRows(roteiroRows, XLSX)
+  const warnings: string[] = []
 
-  if (!days.length) {
+  if (hasLegacyPeriodColumns(roteiroRows) && !hasParadasColumns(roteiroRows)) {
     throw new Error(
-      'Não encontrei o roteiro. Na planilha Orlando use a aba “Roteiro completo” (Data, Manhã, Tarde, Noite).',
+      'Esta planilha usa o formato antigo (Manhã / Tarde / Noite). Importe a planilha revisada com a aba “Roteiro completo” (Seq, Ordem no dia, Local, Categoria, Status).',
     )
   }
 
-  const expenseRows = gastosSheet
-    ? sheetToRows(XLSX, gastosSheet)
-    : roteiroRows.filter((row) => {
-        const valor = pick(row, ['valor', 'amount', 'preco', 'preço', 'custo'])
-        const desc = pick(row, ['descricao', 'descrição', 'gasto'])
-        return valor !== '' && desc !== ''
-      })
+  if (!hasParadasColumns(roteiroRows)) {
+    throw new Error(
+      'Não encontrei o roteiro. Use a aba “Roteiro completo” com as colunas Seq, Data, Ordem no dia, Local, Categoria e Status.',
+    )
+  }
 
+  const dayRows = diasSheet ? sheetToRows(XLSX, diasSheet) : []
+  const { places, days } = buildFromParadas(roteiroRows, dayRows, XLSX)
+
+  if (!days.length) {
+    throw new Error('Nenhuma parada encontrada na aba “Roteiro completo”.')
+  }
+
+  const expenseRows = gastosSheet ? sheetToRows(XLSX, gastosSheet) : []
   const expenses = buildExpensesFromRows(expenseRows, days, XLSX)
   const tips = tipsSheet ? buildTips(sheetToRows(XLSX, tipsSheet)) : current.tips
-  const importedLocations = [
-    ...(shoppingSheet
-      ? buildLocations(sheetToRows(XLSX, shoppingSheet), ['categoria'])
-      : []),
-    ...(locaisSheet
-      ? buildLocations(sheetToRows(XLSX, locaisSheet), ['categoria'])
-      : []),
-    ...(childPlacesSheet
-      ? buildLocations(sheetToRows(XLSX, childPlacesSheet), ['o que e', 'o que é'])
-      : []),
-  ]
 
   const metaRows = metaSheet ? sheetToRows(XLSX, metaSheet) : []
   const meta = metaRows[0] ?? {}
-  const looksOrlando = hasOrlandoColumns(roteiroRows)
+
+  const ulta = places.find((place) => /^ulta i-drive$/i.test(place.name))
+  if (ulta?.address && /international blvd/i.test(ulta.address)) {
+    warnings.push(
+      'Ulta I-Drive está com “International Blvd” (as lojas vizinhas usam “International Dr”) — importado como está.',
+    )
+  }
 
   const draft: Trip = {
-    name: looksOrlando
-      ? 'Orlando 2026'
-      : clean(pick(meta, ['nome', 'name', 'viagem'])) || current.name,
-    destination: looksOrlando
-      ? 'Orlando, Flórida · família'
-      : clean(pick(meta, ['destino', 'destination', 'cidade'])) ||
-        current.destination,
-    startDate: days[0].date,
-    endDate: days[days.length - 1].date,
+    name: clean(pick(meta, ['nome', 'name', 'viagem'])) || 'Orlando 2026',
+    destination:
+      clean(pick(meta, ['destino', 'destination', 'cidade'])) ||
+      'Orlando, Flórida · família',
+    startDate:
+      excelDateToIso(pick(meta, ['inicio', 'início', 'start']), XLSX, 2026) ||
+      days[0].date,
+    endDate:
+      excelDateToIso(pick(meta, ['fim', 'end']), XLSX, 2026) ||
+      days[days.length - 1].date,
     currency: 'BRL',
+    places,
     days,
     expenses,
     tips,
-    hotel: looksOrlando
-      ? resolveHotelFromMeta(meta as Record<string, unknown>, current.hotel)
-      : current.hotel ?? CANONICAL_HOTEL,
-    locations: collectTripLocations({
-      ...current,
-      days,
-      expenses,
-      tips,
-      hotel: looksOrlando ? CANONICAL_HOTEL : current.hotel,
-      locations: [...(current.locations ?? []), ...importedLocations],
-    }),
+    hotel: resolveHotelFromMeta(meta as Record<string, unknown>, current.hotel),
     budgetLimits: current.budgetLimits ?? {
       marcos: 5000,
       dielen: 5000,
@@ -461,68 +446,24 @@ export async function importTripFromFile(
     },
   }
 
-  const trip = applyCanonicalHotel(repairTripActivityLocations(draft))
+  const trip = preserveDoneFlags(applyCanonicalHotel(draft), current)
+  const optionalStops = trip.days.reduce(
+    (sum, day) => sum + day.stops.filter((stop) => stop.status === 'opcional').length,
+    0,
+  )
 
   return {
     trip,
     stats: {
       days: trip.days.length,
-      activities: trip.days.reduce((sum, d) => sum + d.activities.length, 0),
+      stops: trip.days.reduce((sum, day) => sum + day.stops.length, 0),
       expenses: expenses.length,
       tips: tips?.length ?? 0,
-      locations: trip.locations?.length ?? 0,
+      places: trip.places.length,
+      optionalStops,
     },
+    warnings,
   }
-}
-
-function activitiesForExportPeriod(
-  day: Day,
-  key: 'manha' | 'tarde' | 'noite',
-): Activity[] {
-  const tagged = day.activities.filter(
-    (activity) => periodFromActivityId(activity.id).key === key,
-  )
-  if (tagged.length) return tagged
-
-  const untagged = day.activities.filter(
-    (activity) => periodFromActivityId(activity.id).key == null,
-  )
-  if (!untagged.length) return []
-
-  return untagged.filter((activity) => {
-    if (!activity.time) {
-      const index = untagged.indexOf(activity)
-      if (key === 'manha') return index === 0
-      if (key === 'tarde') return index === 1
-      return index >= 2 || untagged.length === 1
-    }
-    const hour = Number(activity.time.slice(0, 2))
-    if (key === 'manha') return hour < 12
-    if (key === 'tarde') return hour < 18
-    return hour >= 18
-  })
-}
-
-function periodNotes(day: Day, key: 'manha' | 'tarde' | 'noite'): string {
-  return activitiesForExportPeriod(day, key)
-    .map((activity) => activity.notes?.trim() || activity.title)
-    .filter(Boolean)
-    .join('\n')
-}
-
-function exportPlaces(day: Day): string {
-  const fromNotes = parseDayMeta(day.dayNotes).places
-    .map((place) => (place.addr && place.addr !== 'Buscar pelo nome' ? `${place.name} – ${place.addr}` : place.name))
-    .filter(Boolean)
-  if (fromNotes.length) return fromNotes.join(' | ')
-  const fromActivities = [
-    ...new Set(day.activities.map((activity) => activity.location?.trim()).filter(Boolean)),
-  ]
-  return fromActivities.join(' | ')
-}
-
-function noteByLabel(day: Day, label: string): string {
-  return parseDayMeta(day.dayNotes).notes.find((note) => note.label === label)?.text ?? ''
 }
 
 export function buildExportSheets(trip: Trip): Record<string, (string | number)[][]> {
@@ -532,38 +473,64 @@ export function buildExportSheets(trip: Trip): Record<string, (string | number)[
 
   const roteiro: (string | number)[][] = [
     [
+      'Seq',
+      'Data',
+      'Dia',
+      'Ordem no dia',
+      'Local',
+      'Endereço',
+      'Categoria',
+      'Status',
+      'Observação',
+    ],
+    ...canonical.days.flatMap((day) =>
+      [...day.stops]
+        .sort((a, b) => a.orderInDay - b.orderInDay || a.seq - b.seq)
+        .map((stop) => {
+          const place = canonical.places.find((item) => item.id === stop.placeId)
+          return [
+            stop.seq,
+            day.date,
+            day.weekday,
+            stop.orderInDay,
+            place?.name ?? '',
+            place?.address ?? '',
+            place?.category ?? '',
+            stop.status === 'opcional' ? 'Opcional' : 'Fixo',
+            stop.note ?? '',
+          ]
+        }),
+    ),
+  ]
+
+  const dias: (string | number)[][] = [
+    [
       'Data',
       'Dia',
       'Tipo do dia',
-      'Manhã',
-      'Tarde',
-      'Noite',
-      'Lugares e endereços',
       hotelHeader,
       'Criança (soneca, carrinho, comida)',
       'Observações / horários',
     ],
     ...canonical.days.map((day) => [
-      formatShortDate(day.date),
-      formatWeekdayShort(day.date),
-      day.label,
-      periodNotes(day, 'manha') || '—',
-      periodNotes(day, 'tarde') || '—',
-      periodNotes(day, 'noite') || '—',
-      exportPlaces(day) || '—',
-      noteByLabel(day, 'Deslocamento') || '—',
-      noteByLabel(day, 'Com a criança') || '—',
-      noteByLabel(day, 'Observações') || '—',
+      day.date,
+      day.weekday,
+      day.dayType,
+      day.driveFromHotel ?? '—',
+      day.kidNotes ?? '—',
+      day.notes ?? '—',
     ]),
   ]
 
-  const tripLocations = collectTripLocations(canonical).filter(
-    (place) => !/^hotel\b/i.test(place.name) && !/10330\s+turkey\s+lake/i.test(place.address),
-  )
   const locais: (string | number)[][] = [
-    ['Categoria', 'Nome / Local', 'Endereço'],
-    ['Hospedagem', hotel.name, hotel.address],
-    ...tripLocations.map((place) => [place.category, place.name, place.address]),
+    ['Categoria', 'Nome', 'Endereço'],
+    ...[...canonical.places]
+      .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
+      .map((place) => [
+        PLACE_CATEGORY_LABELS[place.category as PlaceCategory] ?? place.category,
+        place.name,
+        place.address ?? '',
+      ]),
   ]
 
   const gastos: (string | number)[][] = [
@@ -599,13 +566,18 @@ export function buildExportSheets(trip: Trip): Record<string, (string | number)[
   return {
     Viagem: viagem,
     'Roteiro completo': roteiro,
+    Dias: dias,
     Locais: locais,
     Gastos: gastos,
     'Dicas e ressalvas': dicas,
   }
 }
 
-function downloadWorkbook(XLSX: XLSXModule, sheets: Record<string, (string | number)[][]>, filename: string) {
+function downloadWorkbook(
+  XLSX: XLSXModule,
+  sheets: Record<string, (string | number)[][]>,
+  filename: string,
+) {
   const wb = XLSX.utils.book_new()
   for (const [name, rows] of Object.entries(sheets)) {
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), name.slice(0, 31))

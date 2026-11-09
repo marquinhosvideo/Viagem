@@ -1,5 +1,4 @@
 import type { BudgetId, Expense, Trip } from '../types'
-import { repairTripActivityLocations } from './activityLocation'
 import { ensureCurrentHotel } from './dayMap'
 import { normalizeBudgetId } from './budgets'
 import { supabase } from './supabase'
@@ -25,12 +24,14 @@ type TripDocumentRow = {
   updated_at: string
 }
 
-function isValidTrip(value: unknown): value is Trip {
+export function isValidTrip(value: unknown): value is Trip {
   if (!value || typeof value !== 'object') return false
   const trip = value as Trip
   if (
     typeof trip.name !== 'string' ||
     trip.name.length > 200 ||
+    !Array.isArray(trip.places) ||
+    trip.places.length > 500 ||
     !Array.isArray(trip.days) ||
     trip.days.length === 0 ||
     trip.days.length > 100 ||
@@ -55,6 +56,9 @@ function isValidTrip(value: unknown): value is Trip {
     return false
   }
 
+  const placeIds = new Set(trip.places.map((place) => place.id))
+  if (placeIds.size !== trip.places.length) return false
+
   return trip.days.every(
     (day) =>
       day &&
@@ -62,15 +66,19 @@ function isValidTrip(value: unknown): value is Trip {
       day.id.length <= 200 &&
       typeof day.date === 'string' &&
       /^\d{4}-\d{2}-\d{2}$/.test(day.date) &&
-      Array.isArray(day.activities) &&
-      day.activities.length <= 100 &&
-      day.activities.every(
-        (activity) =>
-          activity &&
-          typeof activity.id === 'string' &&
-          activity.id.length <= 200 &&
-          typeof activity.title === 'string' &&
-          activity.title.length <= 1000,
+      typeof day.dayType === 'string' &&
+      Array.isArray(day.stops) &&
+      day.stops.length <= 100 &&
+      day.stops.every(
+        (stop) =>
+          stop &&
+          typeof stop.id === 'string' &&
+          stop.id.length <= 200 &&
+          typeof stop.placeId === 'string' &&
+          placeIds.has(stop.placeId) &&
+          typeof stop.seq === 'number' &&
+          typeof stop.orderInDay === 'number' &&
+          (stop.status === 'fixo' || stop.status === 'opcional'),
       ),
   )
 }
@@ -103,7 +111,6 @@ export async function fetchRemoteState(): Promise<{
     .map(rowToExpense)
     .filter((e): e is Expense => e != null)
 
-  // Projeto antigo sem trip_document: segue só com checks/gastos
   if (tripRes.error) {
     if (/trip_document|schema cache|does not exist/i.test(tripRes.error.message)) {
       return { checks, expenses, tripDocument: null, tripDocumentUpdatedAt: null }
@@ -114,9 +121,7 @@ export async function fetchRemoteState(): Promise<{
   const tripRow = tripRes.data as TripDocumentRow | null
   const tripDocument =
     tripRow && isValidTrip(tripRow.trip)
-      ? ensureCurrentHotel(
-          repairTripActivityLocations(ensureCurrentHotel(tripRow.trip)),
-        )
+      ? ensureCurrentHotel(tripRow.trip)
       : null
 
   return {
@@ -132,14 +137,14 @@ export function applyRemoteToTrip(
   checks: Record<string, boolean>,
   expenses: Expense[],
 ): Trip {
-  const repaired = ensureCurrentHotel(repairTripActivityLocations(ensureCurrentHotel(trip)))
+  const repaired = ensureCurrentHotel(trip)
   return {
     ...repaired,
     days: repaired.days.map((day) => ({
       ...day,
-      activities: day.activities.map((act) => ({
-        ...act,
-        done: checks[act.id] ?? act.done,
+      stops: day.stops.map((stop) => ({
+        ...stop,
+        done: checks[stop.id] ?? stop.done,
       })),
     })),
     expenses,
@@ -204,9 +209,9 @@ export async function restoreRemoteFromTrip(trip: Trip): Promise<void> {
   }
 
   const checks = trip.days.flatMap((day) =>
-    day.activities.map((act) => ({
-      activity_id: act.id,
-      done: Boolean(act.done),
+    day.stops.map((stop) => ({
+      activity_id: stop.id,
+      done: Boolean(stop.done),
       updated_at: new Date().toISOString(),
     })),
   )
@@ -217,10 +222,10 @@ export async function restoreRemoteFromTrip(trip: Trip): Promise<void> {
   }
 }
 
-export async function upsertCheck(activityId: string, done: boolean): Promise<void> {
+export async function upsertCheck(stopId: string, done: boolean): Promise<void> {
   if (!supabase) return
   const { error } = await supabase.from('activity_checks').upsert({
-    activity_id: activityId,
+    activity_id: stopId,
     done,
     updated_at: new Date().toISOString(),
   })

@@ -1,30 +1,85 @@
 import { useEffect, useMemo, useState, type DragEvent } from 'react'
 import { CalendarPlus, Pencil, Plus, Trash2 } from 'lucide-react'
-import type { Activity, Day, Trip } from '../types'
+import type { Day, Place, PlaceCategory, Stop, Trip } from '../types'
 import { ActivityItem } from '../components/ActivityItem'
 import { AddressCopyList } from '../components/AddressCopyList'
 import { DayMap } from '../components/DayMap'
 import { DayChips } from '../components/DayChips'
 import { DayHero } from '../components/DayHero'
 import { DayInfo } from '../components/DayInfo'
-import { ActivityForm, DayForm } from '../components/ItineraryEditor'
-import { parseDayMeta, replaceDayPlaces, type DayPlace } from '../lib/dayMeta'
-import { uid } from '../lib/format'
+import { DayForm, StopForm } from '../components/ItineraryEditor'
+import { dayHeaderNotes, dayPlaces } from '../lib/dayMeta'
+import { formatWeekdayShort, uid } from '../lib/format'
+import { placeOf, sortStops } from '../lib/places'
 
 type Props = {
   trip: Trip
   initialDayId?: string
   focusDayId?: string
-  onToggle: (dayId: string, activityId: string) => void
+  onToggle: (dayId: string, stopId: string) => void
   onChange: (trip: Trip) => void | Promise<void>
 }
 
 type Editor =
   | { type: 'day-add' }
   | { type: 'day-edit' }
-  | { type: 'activity-add' }
-  | { type: 'activity-edit'; activity: Activity }
+  | { type: 'stop-add' }
+  | { type: 'stop-edit'; stop: Stop }
   | null
+
+function upsertPlace(
+  places: Place[],
+  input: {
+    placeName: string
+    address?: string | null
+    category: PlaceCategory
+    existingId?: string
+  },
+): { places: Place[]; placeId: string } {
+  const byName = places.find(
+    (place) =>
+      place.name.toLocaleLowerCase('pt-BR') ===
+      input.placeName.toLocaleLowerCase('pt-BR'),
+  )
+  if (byName) {
+    return {
+      placeId: byName.id,
+      places: places.map((place) =>
+        place.id === byName.id
+          ? {
+              ...place,
+              address: input.address ?? place.address,
+              category: input.category,
+            }
+          : place,
+      ),
+    }
+  }
+  if (input.existingId) {
+    return {
+      placeId: input.existingId,
+      places: places.map((place) =>
+        place.id === input.existingId
+          ? {
+              ...place,
+              name: input.placeName,
+              address: input.address ?? null,
+              category: input.category,
+            }
+          : place,
+      ),
+    }
+  }
+  const place: Place = {
+    id: uid('loc'),
+    name: input.placeName,
+    address: input.address ?? null,
+    category: input.category,
+    lat: null,
+    lng: null,
+  }
+  return { places: [...places, place], placeId: place.id }
+}
 
 export function ItineraryView({
   trip,
@@ -35,7 +90,7 @@ export function ItineraryView({
 }: Props) {
   const [selectedId, setSelectedId] = useState(initialDayId ?? trip.days[0]?.id)
   const [editor, setEditor] = useState<Editor>(null)
-  const [dragActivityId, setDragActivityId] = useState<string | null>(null)
+  const [dragStopId, setDragStopId] = useState<string | null>(null)
 
   useEffect(() => {
     if (!focusDayId) return
@@ -43,24 +98,25 @@ export function ItineraryView({
     setSelectedId(focusDayId)
     setEditor(null)
   }, [focusDayId, trip.days])
+
   const dayIndex = Math.max(
     0,
     trip.days.findIndex((d) => d.id === selectedId),
   )
   const day = trip.days[dayIndex] ?? trip.days[0]
-  const { notes, places } = useMemo(
-    () => parseDayMeta(day?.dayNotes),
-    [day?.dayNotes],
-  )
+  const notes = useMemo(() => (day ? dayHeaderNotes(day) : []), [day])
+  const places = useMemo(() => (day ? dayPlaces(trip, day) : []), [trip, day])
+  const stops = useMemo(() => (day ? sortStops(day.stops) : []), [day])
 
   if (!day) {
     return <p className="empty-hint">Nenhum dia no roteiro. Importe seu Excel.</p>
   }
 
-  function withDays(days: Day[], expenses = trip.expenses): Trip {
+  function withDays(days: Day[], nextPlaces = trip.places, expenses = trip.expenses): Trip {
     const sorted = [...days].sort((a, b) => a.date.localeCompare(b.date))
     return {
       ...trip,
+      places: nextPlaces,
       days: sorted,
       expenses,
       startDate: sorted[0]?.date ?? trip.startDate,
@@ -68,13 +124,23 @@ export function ItineraryView({
     }
   }
 
-  function updateDay(nextDay: Day) {
+  function updateDay(nextDay: Day, nextPlaces = trip.places) {
     void onChange(
-      withDays(trip.days.map((candidate) => (candidate.id === day.id ? nextDay : candidate))),
+      withDays(
+        trip.days.map((candidate) => (candidate.id === day.id ? nextDay : candidate)),
+        nextPlaces,
+      ),
     )
   }
 
-  function saveDay(input: { date: string; label: string; dayNotes?: string }) {
+  function saveDay(input: {
+    date: string
+    dayType: string
+    weekday?: string
+    driveFromHotel?: string | null
+    kidNotes?: string | null
+    notes?: string | null
+  }) {
     if (editor?.type === 'day-add') {
       if (trip.days.some((candidate) => candidate.date === input.date)) {
         window.alert('Já existe um dia com essa data.')
@@ -82,13 +148,25 @@ export function ItineraryView({
       }
       const nextDay: Day = {
         id: uid('day'),
-        ...input,
-        activities: [],
+        date: input.date,
+        weekday: input.weekday || formatWeekdayShort(input.date),
+        dayType: input.dayType,
+        driveFromHotel: input.driveFromHotel,
+        kidNotes: input.kidNotes,
+        notes: input.notes,
+        stops: [],
       }
       setSelectedId(nextDay.id)
       void onChange(withDays([...trip.days, nextDay]))
     } else {
-      updateDay({ ...day, ...input })
+      updateDay({
+        ...day,
+        date: input.date,
+        dayType: input.dayType,
+        driveFromHotel: input.driveFromHotel,
+        kidNotes: input.kidNotes,
+        notes: input.notes,
+      })
     }
     setEditor(null)
   }
@@ -98,7 +176,7 @@ export function ItineraryView({
       window.alert('O roteiro precisa manter pelo menos um dia.')
       return
     }
-    if (!window.confirm(`Excluir ${day.label} e toda a programação desse dia?`)) return
+    if (!window.confirm(`Excluir ${day.dayType} e todas as paradas desse dia?`)) return
     const remaining = trip.days.filter((candidate) => candidate.id !== day.id)
     const nextSelected = remaining[Math.min(dayIndex, remaining.length - 1)]
     setSelectedId(nextSelected.id)
@@ -106,78 +184,92 @@ export function ItineraryView({
     void onChange(
       withDays(
         remaining,
+        trip.places,
         trip.expenses.filter((expense) => expense.dayId !== day.id),
       ),
     )
   }
 
-  function saveActivity(input: {
-    time?: string
-    title: string
-    location?: string
-    notes?: string
+  function saveStop(input: {
+    placeName: string
+    address?: string | null
+    category: PlaceCategory
+    status: 'fixo' | 'opcional'
+    note?: string | null
+    orderInDay: number
   }) {
-    const existing = editor?.type === 'activity-edit' ? editor.activity : null
-    const nextActivity: Activity = {
-      id: existing?.id ?? uid('act'),
-      time: input.time,
-      title: input.title,
-      location: input.location,
-      notes: input.notes,
+    const existing = editor?.type === 'stop-edit' ? editor.stop : null
+    const { places: nextPlaces, placeId } = upsertPlace(trip.places, {
+      placeName: input.placeName,
+      address: input.address,
+      category: input.category,
+      existingId: existing?.placeId,
+    })
+
+    const maxSeq = Math.max(0, ...trip.days.flatMap((item) => item.stops.map((s) => s.seq)))
+    const nextStop: Stop = {
+      id: existing?.id ?? uid('stop'),
+      seq: existing?.seq ?? maxSeq + 1,
+      orderInDay: input.orderInDay,
+      placeId,
+      status: input.status,
+      note: input.note,
       done: existing?.done ?? false,
     }
-    if (!nextActivity.location) delete nextActivity.location
-    if (!nextActivity.time) delete nextActivity.time
-    if (!nextActivity.notes) delete nextActivity.notes
 
-    const activities = existing
-      ? day.activities.map((activity) =>
-          activity.id === existing.id ? nextActivity : activity,
-        )
-      : [...day.activities, nextActivity]
-    updateDay({ ...day, activities })
+    let nextStops = existing
+      ? day.stops.map((stop) => (stop.id === existing.id ? nextStop : stop))
+      : [...day.stops, nextStop]
+
+    nextStops = sortStops(nextStops).map((stop, index) => ({
+      ...stop,
+      orderInDay: index + 1,
+    }))
+
+    updateDay({ ...day, stops: nextStops }, nextPlaces)
     setEditor(null)
   }
 
-  function deleteActivity(activity: Activity) {
-    if (!window.confirm(`Excluir “${activity.title}”?`)) return
-    updateDay({
-      ...day,
-      activities: day.activities.filter((item) => item.id !== activity.id),
-    })
+  function deleteStop(stop: Stop) {
+    const place = placeOf(trip, stop.placeId)
+    if (!window.confirm(`Excluir “${place?.name ?? 'parada'}”?`)) return
+    const nextStops = sortStops(day.stops.filter((item) => item.id !== stop.id)).map(
+      (item, index) => ({ ...item, orderInDay: index + 1 }),
+    )
+    updateDay({ ...day, stops: nextStops })
     setEditor(null)
   }
 
-  function reorderActivities(fromId: string, toId: string) {
+  function reorderStops(fromId: string, toId: string) {
     if (fromId === toId) return
-    const from = day.activities.findIndex((activity) => activity.id === fromId)
-    const to = day.activities.findIndex((activity) => activity.id === toId)
+    const ordered = sortStops(day.stops)
+    const from = ordered.findIndex((stop) => stop.id === fromId)
+    const to = ordered.findIndex((stop) => stop.id === toId)
     if (from < 0 || to < 0) return
-    const activities = [...day.activities]
-    const [moved] = activities.splice(from, 1)
-    activities.splice(to, 0, moved)
-    updateDay({ ...day, activities })
-  }
-
-  function handleActivityDragStart(activityId: string, event: DragEvent) {
-    setDragActivityId(activityId)
-    event.dataTransfer.effectAllowed = 'move'
-    event.dataTransfer.setData('text/plain', activityId)
-  }
-
-  function handleActivityDrop(activityId: string, event: DragEvent) {
-    event.preventDefault()
-    const fromId = event.dataTransfer.getData('text/plain') || dragActivityId
-    if (fromId) reorderActivities(fromId, activityId)
-    setDragActivityId(null)
-  }
-
-  function savePlaces(nextPlaces: DayPlace[]) {
+    const next = [...ordered]
+    const [moved] = next.splice(from, 1)
+    next.splice(to, 0, moved)
     updateDay({
       ...day,
-      dayNotes: replaceDayPlaces(day.dayNotes, nextPlaces),
+      stops: next.map((stop, index) => ({ ...stop, orderInDay: index + 1 })),
     })
   }
+
+  function handleStopDragStart(stopId: string, event: DragEvent) {
+    setDragStopId(stopId)
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.setData('text/plain', stopId)
+  }
+
+  function handleStopDrop(stopId: string, event: DragEvent) {
+    event.preventDefault()
+    const fromId = event.dataTransfer.getData('text/plain') || dragStopId
+    if (fromId) reorderStops(fromId, stopId)
+    setDragStopId(null)
+  }
+
+  const nextSeq =
+    Math.max(0, ...trip.days.flatMap((item) => item.stops.map((stop) => stop.seq))) + 1
 
   return (
     <section className="view">
@@ -185,7 +277,7 @@ export function ItineraryView({
         <div className="band__inner">
           <p className="eyebrow">Roteiro</p>
           <h1 className="display-lg">{trip.days.length} dias em Orlando.</h1>
-          <p className="lede">Eventos em sequência — arraste para ordenar.</p>
+          <p className="lede">Paradas em sequência — arraste para ordenar.</p>
           <button
             type="button"
             className="btn btn--ghost-pill itinerary-add-day"
@@ -217,7 +309,7 @@ export function ItineraryView({
       <section className="band">
         <div className="band__inner">
           <div className="itinerary-section-head">
-            <h2 className="section-title">Programação.</h2>
+            <h2 className="section-title">Paradas.</h2>
             <div className="itinerary-section-head__actions">
               <button
                 type="button"
@@ -246,50 +338,54 @@ export function ItineraryView({
             />
           ) : null}
           <div className="activity-stack">
-            {day.activities.map((activity) => (
+            {stops.map((stop) => (
               <ActivityItem
-                key={activity.id}
-                activity={activity}
+                key={stop.id}
+                stop={stop}
+                place={placeOf(trip, stop.placeId)}
                 draggable
-                dragging={dragActivityId === activity.id}
-                onDragStart={(event) => handleActivityDragStart(activity.id, event)}
+                dragging={dragStopId === stop.id}
+                onDragStart={(event) => handleStopDragStart(stop.id, event)}
                 onDragOver={(event) => {
                   event.preventDefault()
                   event.dataTransfer.dropEffect = 'move'
                 }}
-                onDrop={(event) => handleActivityDrop(activity.id, event)}
-                onDragEnd={() => setDragActivityId(null)}
-                onToggle={() => onToggle(day.id, activity.id)}
-                onEdit={() => setEditor({ type: 'activity-edit', activity })}
-                onDelete={() => deleteActivity(activity)}
+                onDrop={(event) => handleStopDrop(stop.id, event)}
+                onDragEnd={() => setDragStopId(null)}
+                onToggle={() => onToggle(day.id, stop.id)}
+                onEdit={() => setEditor({ type: 'stop-edit', stop })}
+                onDelete={() => deleteStop(stop)}
               />
             ))}
           </div>
-          {day.activities.length === 0 ? (
-            <p className="empty-hint">Nenhum evento neste dia.</p>
+          {stops.length === 0 ? (
+            <p className="empty-hint">Nenhuma parada neste dia.</p>
           ) : null}
-          {editor?.type === 'activity-add' ||
-          editor?.type === 'activity-edit' ? (
-            <ActivityForm
+          {editor?.type === 'stop-add' || editor?.type === 'stop-edit' ? (
+            <StopForm
               key={
-                editor.type === 'activity-edit'
-                  ? editor.activity.id
-                  : `new-${day.id}`
+                editor.type === 'stop-edit' ? editor.stop.id : `new-${day.id}`
               }
-              activity={
-                editor.type === 'activity-edit' ? editor.activity : undefined
+              trip={trip}
+              stop={editor.type === 'stop-edit' ? editor.stop : undefined}
+              place={
+                editor.type === 'stop-edit'
+                  ? placeOf(trip, editor.stop.placeId)
+                  : undefined
               }
-              onSave={saveActivity}
+              nextOrder={stops.length + 1}
+              nextSeq={nextSeq}
+              onSave={saveStop}
               onCancel={() => setEditor(null)}
             />
           ) : (
             <button
               type="button"
               className="btn btn--primary itinerary-add-activity"
-              onClick={() => setEditor({ type: 'activity-add' })}
+              onClick={() => setEditor({ type: 'stop-add' })}
             >
               <Plus size={18} aria-hidden />
-              Adicionar evento
+              Adicionar parada
             </button>
           )}
         </div>
@@ -297,7 +393,7 @@ export function ItineraryView({
 
       <DayInfo notes={notes} />
       <DayMap trip={trip} day={day} />
-      <AddressCopyList places={places} onChange={savePlaces} />
+      <AddressCopyList places={places} />
     </section>
   )
 }

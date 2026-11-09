@@ -1,178 +1,29 @@
 import assert from 'node:assert/strict'
-import { EXTRA_CHAIN_STORES } from '../data/chainStores'
 import { sampleTrip } from '../data/sampleTrip'
-import type { Trip } from '../types'
-import { splitPlaceChunks } from './dayMeta'
-import {
-  collectLocatedPlaces,
-  withBranchName,
-} from './locations'
+import { collectLocatedPlaces, groupTripLocations } from './locations'
 
-function tripWith(days: Trip['days'], locations: Trip['locations'] = []): Trip {
-  return {
-    name: 'Test',
-    destination: 'Orlando',
-    startDate: days[0]?.date ?? '2026-11-28',
-    endDate: days.at(-1)?.date ?? '2026-11-28',
-    currency: 'BRL',
-    days,
-    expenses: [],
-    locations,
-  }
+{
+  const places = collectLocatedPlaces(sampleTrip)
+  assert.equal(places.length, 46)
+  assert.equal(new Set(places.map((place) => place.name)).size, 46)
+  assert.ok(places.every((place) => place.id && place.category))
 }
 
 {
-  const chunks = splitPlaceChunks(
-    'Walmart Supercenter – 8990 Turkey Lake Rd, Orlando, FL 32819 (alternativa: Target Millenia – 4750 Millenia Plaza Way, Orlando, FL 32839)',
+  const groups = groupTripLocations(sampleTrip)
+  const labels = groups.map((group) => group.category)
+  assert.deepEqual(
+    labels.sort(),
+    ['alimentacao', 'compras', 'hotel', 'lazer', 'transporte'].sort(),
   )
-  assert.equal(chunks.length, 2)
-  assert.match(chunks[0], /Walmart Supercenter/)
-  assert.match(chunks[1], /Target Millenia/)
+  const hotel = groups.find((group) => group.category === 'hotel')
+  assert.equal(hotel?.places.length, 1)
+  assert.equal(hotel?.places[0]?.name, 'Hotel')
 }
 
 {
-  assert.equal(
-    withBranchName('Walmart', '8990 Turkey Lake Rd, Orlando, FL 32819'),
-    'Walmart Turkey Lake',
-  )
-  assert.equal(
-    withBranchName('Walmart Supercenter', '8101 S John Young Pkwy, Orlando, FL 32819'),
-    'Walmart Supercenter John Young',
-  )
-  assert.equal(
-    withBranchName('Target', '4750 Millenia Plaza Way, Orlando, FL 32839'),
-    'Target Millenia',
-  )
-}
-
-{
-  const trip = tripWith(
-    [
-      {
-        id: 'day-2026-11-28',
-        date: '2026-11-28',
-        label: 'Chegada',
-        dayNotes: '📍 Walmart Supercenter – 8990 Turkey Lake Rd, Orlando, FL 32819',
-        activities: [],
-      },
-      {
-        id: 'day-2026-12-07',
-        date: '2026-12-07',
-        label: 'Descanso',
-        dayNotes: '📍 Walmart – 8101 S John Young Pkwy, Orlando, FL 32819',
-        activities: [],
-      },
-      {
-        id: 'day-2026-12-11',
-        date: '2026-12-11',
-        label: 'Outlets',
-        dayNotes: '📍 Walmart – 3250 Vineland Rd, Kissimmee, FL 34746',
-        activities: [],
-      },
-    ],
-    [
-      { name: 'Walmart', address: '8990 Turkey Lake Rd, Orlando, FL 32819', category: 'Compras' },
-      {
-        name: 'Walmart Supercenter',
-        address:
-          '8990 Turkey Lake Rd, Orlando, FL 32819 (alternativa: Target Millenia – 4750 Millenia Plaza Way, Orlando, FL 32839)',
-        category: 'Compras',
-      },
-    ],
-  )
-
-  const walmarts = collectLocatedPlaces(trip).filter((place) => /walmart/i.test(place.name))
-  const addresses = new Set(walmarts.map((place) => place.address.replace(/\s*\(.*$/, '')))
-  assert.ok(walmarts.length >= 3, `expected several Walmarts, got ${walmarts.map((p) => p.name).join(', ')}`)
-  assert.ok(
-    walmarts.some((place) => /turkey lake/i.test(place.name) && place.days.some((day) => day.date === '2026-11-28')),
-  )
-  assert.ok(
-    walmarts.some((place) => /john young/i.test(place.name) && place.days.some((day) => day.date === '2026-12-07')),
-  )
-  assert.ok(
-    walmarts.some(
-      (place) => /lake buena vista|vineland/i.test(place.name) && place.days.some((day) => day.date === '2026-12-11'),
-    ),
-  )
-  assert.equal(
-    walmarts.filter((place) => /8990 turkey lake/i.test(place.address)).length,
-    1,
-    'duplicate Turkey Lake strings should merge into one card',
-  )
-  assert.ok(
-    !walmarts.some((place) => /alternativa/i.test(place.address)),
-    'alternative stores must not stay glued to the Walmart address',
-  )
-  assert.ok(addresses.size >= 3)
-}
-
-{
-  const trip = tripWith(
-    [
-      {
-        id: 'day-a',
-        date: '2026-12-01',
-        label: 'Outlets',
-        dayNotes: '📍 Ross – 5295 International Dr',
-        activities: [],
-      },
-      {
-        id: 'day-b',
-        date: '2026-12-04',
-        label: 'Leve',
-        dayNotes: '📍 Ross – 7603 Turkey Lake Rd, Orlando, FL 32819',
-        activities: [],
-      },
-      {
-        id: 'day-c',
-        date: '2026-12-08',
-        label: 'Millenia',
-        dayNotes: '📍 Ross – 4661 Millenia Plaza Way',
-        activities: [],
-      },
-    ],
-    EXTRA_CHAIN_STORES,
-  )
-  const ross = collectLocatedPlaces(trip).filter((place) => /^Ross/.test(place.name))
-  assert.ok(ross.length >= 6, ross.map((place) => `${place.name} ${place.address}`).join(' | '))
-  const targets = collectLocatedPlaces(trip).filter((place) => /^Target/.test(place.name))
-  assert.ok(targets.length >= 4, `expected extra Target branches, got ${targets.map((p) => p.name).join(', ')}`)
-  const bestBuy = collectLocatedPlaces(trip).filter((place) => /^Best Buy/.test(place.name))
-  const burlington = collectLocatedPlaces(trip).filter((place) => /^Burlington/.test(place.name))
-  const tjMaxx = collectLocatedPlaces(trip).filter((place) => /^T\.J\. Maxx/.test(place.name))
-  const fiveBelow = collectLocatedPlaces(trip).filter((place) => /^Five Below/.test(place.name))
-  const ulta = collectLocatedPlaces(trip).filter((place) => /^Ulta/.test(place.name))
-  assert.ok(bestBuy.length >= 3, `expected extra Best Buy branches, got ${bestBuy.map((p) => p.name).join(', ')}`)
-  assert.ok(burlington.length >= 3, `expected extra Burlington branches, got ${burlington.map((p) => p.name).join(', ')}`)
-  assert.ok(tjMaxx.length >= 4, `expected extra T.J. Maxx branches, got ${tjMaxx.map((p) => p.name).join(', ')}`)
-  assert.ok(fiveBelow.length >= 2, `expected extra Five Below branches, got ${fiveBelow.map((p) => p.name).join(', ')}`)
-  assert.ok(ulta.length >= 3, `expected extra Ulta branches, got ${ulta.map((p) => p.name).join(', ')}`)
-}
-
-{
-  const nordstrom = collectLocatedPlaces(sampleTrip).filter((place) => /nordstrom/i.test(place.name))
-  assert.ok(
-    nordstrom.some((place) => /eastgate/i.test(place.name) && /4036 eastgate/i.test(place.address)),
-  )
-  assert.ok(!nordstrom.some((place) => /aval/i.test(place.address)))
-}
-
-{
-  const chainReuse = collectLocatedPlaces(sampleTrip).filter(
-    (place) =>
-      place.days.length > 1 &&
-      /^(Walmart|Target|Ross|Best Buy|Burlington|Marshalls|T\.J\. Maxx|Five Below|Ulta|Beauty Master|Nordstrom)/.test(
-        place.name,
-      ),
-  )
-  assert.equal(
-    chainReuse.length,
-    0,
-    chainReuse
-      .map((place) => `${place.name} on ${place.days.map((day) => day.date).join(', ')}`)
-      .join(' | '),
-  )
+  const noAddr = collectLocatedPlaces(sampleTrip).filter((place) => !place.address)
+  assert.equal(noAddr.length, 7)
 }
 
 console.log('locations.test.ts ok')

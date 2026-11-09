@@ -1,6 +1,7 @@
 import type { Day } from '../types'
 import { stripEmoji } from '../lib/display'
 import { formatShortDate } from '../lib/format'
+import { fixedStops } from '../lib/places'
 
 type Props = {
   days: Day[]
@@ -36,10 +37,11 @@ export function DayChips({
         </button>
       ) : null}
       {days.map((day, index) => {
-        const done = day.activities.filter((a) => a.done).length
-        const total = day.activities.length
+        const visit = fixedStops(day.stops)
+        const done = visit.filter((stop) => stop.done).length
+        const total = visit.length
         const selected = day.id === selectedId
-        const firstLabel = stripEmoji(day.label.split('+')[0] || day.label)
+        const firstLabel = stripEmoji(day.dayType.split('+')[0] || day.dayType)
         const meta =
           metaForDay?.(day, index) ?? `${firstLabel} · ${done}/${total}`
         return (

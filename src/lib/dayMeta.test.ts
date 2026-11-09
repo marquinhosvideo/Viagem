@@ -1,29 +1,26 @@
 import assert from 'node:assert/strict'
-import { parseDayMeta, replaceDayPlaces, toDayPlace } from './dayMeta'
+import { sampleTrip } from '../data/sampleTrip'
+import { dayHeaderNotes, dayPlaces } from './dayMeta'
 
 {
-  const original =
-    '📍 Disney Springs – Lake Buena Vista, FL 32830 | Ross – 5295 International Dr\n\n🚗 ~20 min\n\n📝 Ir cedo'
-  const { places, notes } = parseDayMeta(original)
-  assert.equal(places.length, 2)
-  assert.equal(places[0].name, 'Disney Springs')
-  assert.equal(places[1].name, 'Ross')
-  assert.equal(places[1].addr, '5295 International Dr')
+  const day = sampleTrip.days.find((item) => item.date === '2026-11-29')
+  assert.ok(day)
+  const notes = dayHeaderNotes(day)
   assert.ok(notes.some((note) => note.label === 'Deslocamento'))
-
-  const reordered = [places[1], places[0]]
-  const next = replaceDayPlaces(original, reordered)
-  const parsed = parseDayMeta(next)
-  assert.equal(parsed.places[0].name, 'Ross')
-  assert.equal(parsed.places[1].name, 'Disney Springs')
-  assert.ok(parsed.notes.some((note) => /20 min/.test(note.text)))
+  assert.ok(notes.some((note) => note.label === 'Com a criança'))
+  assert.equal(
+    notes.some((note) => /\|/.test(note.text) && note.label === 'Onde'),
+    false,
+  )
 }
 
 {
-  const place = toDayPlace('Walmart', '8990 Turkey Lake Rd')
-  assert.equal(place?.copyText, 'Walmart – 8990 Turkey Lake Rd')
-  const added = replaceDayPlaces(undefined, [place!])
-  assert.equal(parseDayMeta(added).places[0].name, 'Walmart')
+  const day = sampleTrip.days.find((item) => item.date === '2026-12-01')
+  assert.ok(day)
+  const places = dayPlaces(sampleTrip, day)
+  assert.equal(places[0]?.name, 'Hotel')
+  assert.ok(places.some((place) => place.name === 'Ross I-Drive'))
+  assert.ok(places.every((place) => !place.copyText.includes(' | ')))
 }
 
 console.log('dayMeta.test.ts ok')

@@ -102,8 +102,15 @@ export function AddressCopyList({ places, onChange }: Props) {
                     <MapPin size={18} aria-hidden className="address-card__pin" />
                   )}
                   <div className="address-card__text">
-                    <p className="address-card__name">{place.name}</p>
-                    <p className="address-card__addr">{place.addr}</p>
+                    <p className="address-card__name">
+                      {place.name}
+                      {place.optional ? (
+                        <span className="stop__badge stop__badge--inline">Opcional</span>
+                      ) : null}
+                    </p>
+                    <p className="address-card__addr">
+                      {place.addr || 'Endereço a completar'}
+                    </p>
                   </div>
                   <div className="address-card__actions">
                     <button
