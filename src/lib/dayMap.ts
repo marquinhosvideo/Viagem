@@ -58,12 +58,17 @@ export function mapsQuery(name: string, address?: string | null): string {
 export function stopKey(name: string, address?: string | null): string {
   const text = fold(sanitizeAddress(address || name))
     .replace(/[.,#]/g, ' ')
-    .replace(/\b(ste|suite|unit|apt)\b.*$/, ' ')
+    .replace(/\b(ste|suite|unit|apt)\b.*$/g, ' ')
+    .replace(/\bfl\b\s*\d{5}(?:-\d{4})?\b/g, ' ')
+    .replace(/\borlando\b|\bkissimmee\b|\bwinter garden\b|\bcelebration\b|\blake buena vista\b/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()
-  const match = text.match(/(\d+)\s+((?:[a-z0-9]+\s+){0,3}[a-z0-9]+)/)
+  const match = text.match(/(\d+)\s+((?:[a-z0-9]+\s+){0,4}[a-z0-9]+)/)
   if (match) {
-    const street = match[2].replace(/\s+\b(rd|dr|ave|blvd|way|pkwy|trl|st|hwy|plaza)\b.*$/, ' $1')
+    const street = match[2].replace(
+      /\s+\b(rd|road|dr|drive|ave|avenue|blvd|way|pkwy|trl|trail|st|street|hwy|plaza)\b.*$/,
+      ' $1',
+    )
     return `${match[1]} ${street}`.trim()
   }
   return fold(name)
@@ -128,17 +133,70 @@ function isPlausible(query: string, coords: Coords): boolean {
 }
 
 export function coordsForStop(stop: MapStop): Coords | undefined {
+  const primary = stopKey(stop.label, stop.query)
   const keys = [
-    stopKey(stop.label, stop.query),
+    primary,
     stopKey('', stop.query),
     fold(stop.query),
     fold(stop.label),
+    // aliases curtos (ex.: "10330 turkey lake road" sem cidade)
+    primary.replace(/\s+\b(road|drive|avenue|trail|street)\b/g, (_, kind: string) => {
+      const short: Record<string, string> = {
+        road: 'rd',
+        drive: 'dr',
+        avenue: 'ave',
+        trail: 'trl',
+        street: 'st',
+      }
+      return ` ${short[kind] ?? kind}`
+    }),
   ]
   for (const key of keys) {
     const coords = PLACE_COORDS[key]
     if (coords && isPlausible(stop.query, coords)) return coords
   }
   return undefined
+}
+
+const OVERLAP_EPS = 0.00008 // ~9 m — trata o mesmo prédio / suite como um cluster
+
+function coordBucket(point: Coords): string {
+  return `${point.lat.toFixed(5)},${point.lng.toFixed(5)}`
+}
+
+/**
+ * Espalha pins que caem no mesmo ponto (várias lojas no mesmo endereço)
+ * para que cada parada da sequência fique visível no mapa.
+ */
+export function spreadOverlappingCoords(
+  items: Array<{ id: string; point: Coords }>,
+): Record<string, Coords> {
+  const groups = new Map<string, Array<{ id: string; point: Coords }>>()
+  for (const item of items) {
+    const key = coordBucket(item.point)
+    const list = groups.get(key) ?? []
+    list.push(item)
+    groups.set(key, list)
+  }
+
+  const next: Record<string, Coords> = {}
+  for (const group of groups.values()) {
+    if (group.length === 1) {
+      next[group[0].id] = group[0].point
+      continue
+    }
+    const center = group[0].point
+    // raio ~35–55 m, cresce um pouco com o tamanho do cluster
+    const radius = OVERLAP_EPS * (1.8 + Math.min(group.length, 8) * 0.35)
+    group.forEach((item, index) => {
+      const angle = (Math.PI * 2 * index) / group.length - Math.PI / 2
+      next[item.id] = {
+        lat: center.lat + Math.cos(angle) * radius,
+        lng: center.lng + Math.sin(angle) * radius,
+      }
+    })
+  }
+  return next
 }
 
 const geocodeMemory = new Map<string, Coords | null>()

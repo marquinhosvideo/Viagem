@@ -3,10 +3,12 @@ import { sampleTrip } from '../data/sampleTrip'
 import { dayPlaces } from './dayMeta'
 import {
   buildDayMapStops,
+  coordsForStop,
   DEFAULT_HOTEL,
   googleMapsDirUrl,
   hotelOf,
   mapsQuery,
+  spreadOverlappingCoords,
   stopKey,
 } from './dayMap'
 
@@ -89,6 +91,23 @@ function assertMapMatchesFooter(date: string) {
     stopKey('Five Below I-Drive', '5295 International Dr, Ste 660, Orlando, FL 32819'),
   )
   assert.match(mapsQuery('Hotel', DEFAULT_HOTEL.address), /10330 Turkey Lake Road/)
+}
+
+{
+  const outlets = sampleTrip.days.find((day) => day.date === '2026-12-01')
+  assert.ok(outlets)
+  const stops = buildDayMapStops(sampleTrip, outlets)
+  const resolved = stops.flatMap((stop) => {
+    const point = coordsForStop(stop)
+    return point ? [{ id: stop.id, point }] : []
+  })
+  assert.ok(resolved.length >= 6, 'most Dec 1 stops should resolve coords')
+  const spread = spreadOverlappingCoords(resolved)
+  const unique = new Set(
+    Object.values(spread).map((point) => `${point.lat.toFixed(6)},${point.lng.toFixed(6)}`),
+  )
+  assert.equal(unique.size, resolved.length, 'overlapping plaza pins must be spread apart')
+  assert.equal(Object.keys(spread).length, resolved.length)
 }
 
 console.log('dayMap.test.ts ok')

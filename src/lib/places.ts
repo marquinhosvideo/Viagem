@@ -93,6 +93,12 @@ export function hasAddress(place: Pick<Place, 'address'> | undefined): boolean {
 export function mapsSearchQuery(place: Pick<Place, 'name' | 'address'>): string {
   const address = place.address?.trim()
   if (address) return `${place.name}, ${address}`
+  if (/\bgig\b|gale[aã]o/i.test(place.name)) {
+    return `${place.name}, Rio de Janeiro, Brasil`
+  }
+  if (/\bmia\b|miami international/i.test(place.name)) {
+    return `${place.name}, Miami, FL`
+  }
   return `${place.name}, Orlando, FL`
 }
 

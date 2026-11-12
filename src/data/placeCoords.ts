@@ -42,4 +42,10 @@ export const PLACE_COORDS: Record<string, { lat: number; lng: number }> = {
   '6716 grand national dr': { lat: 28.4649439, lng: -81.4563595 },
   '6870 grand national dr': { lat: 28.4630087, lng: -81.4563605 },
   'miami international airport (mia)': { lat: 25.7949789, lng: -80.2867234 },
+  '2500 s kirkman rd': { lat: 28.5082, lng: -81.4589 },
+  '11625 regency village dr': { lat: 28.3859, lng: -81.4921 },
+  '11619 daryl carter pkwy': { lat: 28.3864, lng: -81.4908 },
+  '7445 w colonial dr': { lat: 28.5528, lng: -81.4532 },
+  'aeroporto do galeao (gig)': { lat: -22.809, lng: -43.2505 },
+  'aeroporto internacional do galeao': { lat: -22.809, lng: -43.2505 },
 }

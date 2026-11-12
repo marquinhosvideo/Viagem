@@ -8,6 +8,7 @@ import {
   coordsForStop,
   geocodeQuery,
   googleMapsDirUrl,
+  spreadOverlappingCoords,
   type Coords,
   type MapStop,
 } from '../lib/dayMap'
@@ -68,7 +69,8 @@ export function DayMap({ trip, day }: Props) {
         <h2 className="section-title">Mapa do dia.</h2>
         <p className="section-sub">
           Mesma sequência do rodapé de endereços
-          {sequenceMatchesFooter ? '' : ' (na ordem das paradas)'} — um ponto por local.
+          {sequenceMatchesFooter ? '' : ' (na ordem das paradas)'} — um ponto por
+          parada ({stops.length}). Lojas no mesmo prédio aparecem lado a lado.
         </p>
         <DayLeafletMap stops={stops} coords={coords} />
         {mapsUrl ? (
@@ -115,12 +117,20 @@ function DayLeafletMap({
 }) {
   const hostRef = useRef<HTMLDivElement>(null)
 
+  const displayCoords = useMemo(() => {
+    const items = stops.flatMap((stop) => {
+      const point = coords[stop.id]
+      return point ? [{ id: stop.id, point }] : []
+    })
+    return spreadOverlappingCoords(items)
+  }, [stops, coords])
+
   useEffect(() => {
     const host = hostRef.current
     if (!host) return
     const points = stops
       .map((stop) => {
-        const point = coords[stop.id]
+        const point = displayCoords[stop.id]
         if (!point) return null
         return { stop, point }
       })
@@ -154,21 +164,22 @@ function DayLeafletMap({
           iconAnchor: [14, 14],
         }),
         title: stop.label,
+        zIndexOffset: stop.orderInDay * 10,
       })
         .bindPopup(`${stop.orderInDay}. ${stop.label}`)
         .addTo(map)
     })
 
     if (latLngs.length === 1) map.setView(latLngs[0], 13)
-    else map.fitBounds(L.latLngBounds(latLngs), { padding: [36, 36], maxZoom: 13 })
+    else map.fitBounds(L.latLngBounds(latLngs), { padding: [36, 36], maxZoom: 15 })
     window.setTimeout(() => map.invalidateSize(), 80)
 
     return () => {
       map.remove()
     }
-  }, [stops, coords])
+  }, [stops, displayCoords])
 
-  const ready = stops.some((stop) => coords[stop.id])
+  const ready = stops.some((stop) => displayCoords[stop.id])
 
   return (
     <div className="day-map">
