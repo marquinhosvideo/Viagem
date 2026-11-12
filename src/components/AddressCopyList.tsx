@@ -103,6 +103,9 @@ export function AddressCopyList({ places, onChange }: Props) {
                   )}
                   <div className="address-card__text">
                     <p className="address-card__name">
+                      <span className="address-card__order" aria-hidden>
+                        {index + 1}.
+                      </span>{' '}
                       {place.name}
                       {place.optional ? (
                         <span className="stop__badge stop__badge--inline">Opcional</span>

@@ -969,6 +969,11 @@ html[data-device='mobile'][data-aspect='landscape'] .day-hero__progress-row,
   font-weight: 600;
 }
 
+.address-card__order {
+  font-variant-numeric: tabular-nums;
+  color: var(--color-ink-muted-48, #78716c);
+}
+
 .address-card__addr {
   margin: 2px 0 0;
   font-size: 14px;
@@ -1082,6 +1087,15 @@ html[data-device='mobile'][data-aspect='landscape'] .day-hero__progress-row,
   background: #fff;
   color: var(--color-ink);
   border: 1px solid var(--color-ink);
+}
+
+.day-map__legend-item--optional {
+  opacity: 0.72;
+}
+
+.day-map__marker--optional span {
+  background: #78716c;
+  border-style: dashed;
 }
 
 /* Tips */

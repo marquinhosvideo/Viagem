@@ -11,6 +11,7 @@ import {
   type Coords,
   type MapStop,
 } from '../lib/dayMap'
+import { dayPlaces } from '../lib/dayMeta'
 
 type Props = {
   trip: Trip
@@ -19,6 +20,7 @@ type Props = {
 
 export function DayMap({ trip, day }: Props) {
   const stops = useMemo(() => buildDayMapStops(trip, day), [trip, day])
+  const footerPlaces = useMemo(() => dayPlaces(trip, day), [trip, day])
   const mapsUrl = useMemo(() => (stops.length ? googleMapsDirUrl(stops) : ''), [stops])
   const knownCoords = useMemo(() => {
     const next: Record<string, Coords> = {}
@@ -54,37 +56,47 @@ export function DayMap({ trip, day }: Props) {
     }
   }, [stops, knownCoords, extraCoords])
 
-  if (stops.length < 2) return null
+  if (!stops.length) return null
+
+  const sequenceMatchesFooter =
+    stops.length === footerPlaces.length &&
+    stops.every((stop, index) => stop.label === footerPlaces[index]?.name)
 
   return (
     <section className="band">
       <div className="band__inner">
         <h2 className="section-title">Mapa do dia.</h2>
         <p className="section-sub">
-          Percurso saindo do hotel, na ordem dos endereços — para ver a distância entre os
-          pontos.
+          Mesma sequência do rodapé de endereços
+          {sequenceMatchesFooter ? '' : ' (na ordem das paradas)'} — um ponto por local.
         </p>
         <DayLeafletMap stops={stops} coords={coords} />
-        <a
-          className="btn btn--primary day-map__open"
-          href={mapsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <ExternalLink size={18} aria-hidden />
-          Abrir rota no Google Maps
-        </a>
+        {mapsUrl ? (
+          <a
+            className="btn btn--primary day-map__open"
+            href={mapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ExternalLink size={18} aria-hidden />
+            Abrir rota no Google Maps
+          </a>
+        ) : null}
         <ol className="day-map__legend">
-          {stops.map((stop, index) => (
-            <li key={stop.id} className="day-map__legend-item">
+          {stops.map((stop) => (
+            <li
+              key={stop.id}
+              className={`day-map__legend-item ${stop.optional ? 'day-map__legend-item--optional' : ''}`}
+            >
               <span
                 className={`day-map__badge ${stop.kind === 'hotel' ? 'day-map__badge--hotel' : ''}`}
               >
-                {stop.kind === 'hotel' ? 'H' : index}
+                {stop.orderInDay}
               </span>
               <span>
                 <strong>{stop.label}</strong>
-                {stop.kind === 'hotel' ? ' · ponto de partida' : null}
+                {stop.optional ? ' · opcional' : null}
+                {stop.kind === 'hotel' ? ' · hotel' : null}
               </span>
             </li>
           ))}
@@ -134,17 +146,16 @@ function DayLeafletMap({
 
     points.forEach(({ stop, point }) => {
       const hotel = stop.kind === 'hotel'
-      const number = stops.findIndex((item) => item.id === stop.id)
       L.marker([point.lat, point.lng], {
         icon: L.divIcon({
-          className: `day-map__marker ${hotel ? 'day-map__marker--hotel' : ''}`,
-          html: `<span>${hotel ? 'H' : number}</span>`,
+          className: `day-map__marker ${hotel ? 'day-map__marker--hotel' : ''} ${stop.optional ? 'day-map__marker--optional' : ''}`,
+          html: `<span>${stop.orderInDay}</span>`,
           iconSize: [28, 28],
           iconAnchor: [14, 14],
         }),
         title: stop.label,
       })
-        .bindPopup(stop.label)
+        .bindPopup(`${stop.orderInDay}. ${stop.label}`)
         .addTo(map)
     })
 

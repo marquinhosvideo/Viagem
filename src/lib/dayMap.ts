@@ -1,5 +1,5 @@
 import { PLACE_COORDS } from '../data/placeCoords'
-import type { Day, Hotel, Place, Trip } from '../types'
+import type { Day, Hotel, Trip } from '../types'
 import { applyCanonicalHotel, CANONICAL_HOTEL } from './hotel'
 import { mapsSearchQuery, placeOf, sortStops } from './places'
 
@@ -10,17 +10,14 @@ export function ensureCurrentHotel(trip: Trip): Trip {
   return applyCanonicalHotel(trip)
 }
 
-const SKIP_PLACE =
-  /\b(galeao|galeão|\bgig\b|rio de janeiro|aeroporto do gale[aã]o)\b/i
-const ORLANDO_AREA =
-  /\b(orlando|kissimmee|winter garden|celebration|lake buena vista|florida|\bfl\b|miami|\bmia\b|disney|universal|epic universe|magic kingdom|animal kingdom|hollywood studios|icon park)\b/i
-
 export type MapStop = {
   id: string
   label: string
   query: string
   kind: 'hotel' | 'place'
   optional?: boolean
+  /** Ordem no dia (1..n), alinhada ao rodapé de endereços. */
+  orderInDay: number
 }
 
 export type Coords = { lat: number; lng: number }
@@ -54,7 +51,8 @@ export function hotelOf(trip: Pick<Trip, 'hotel'>): Hotel {
 }
 
 export function mapsQuery(name: string, address?: string | null): string {
-  return mapsSearchQuery({ name, address })
+  const cleaned = address ? sanitizeAddress(address) : ''
+  return mapsSearchQuery({ name, address: cleaned || address })
 }
 
 export function stopKey(name: string, address?: string | null): string {
@@ -71,80 +69,37 @@ export function stopKey(name: string, address?: string | null): string {
   return fold(name)
 }
 
-function isMappablePlace(place: Place): boolean {
-  const blob = `${place.name} ${place.address ?? ''}`
-  if (SKIP_PLACE.test(blob)) return false
-  const addr = sanitizeAddress(place.address ?? '')
-  return ORLANDO_AREA.test(blob) || /^\d+\s/.test(addr)
-}
-
-function joinLabels(names: string[]): string {
-  const unique = [...new Set(names.map((name) => name.replace(/\s+/g, ' ').trim()).filter(Boolean))]
-  if (unique.length <= 3) return unique.join(' · ')
-  return `${unique.slice(0, 2).join(' · ')} +${unique.length - 2}`
-}
-
 /**
- * Rota principal do dia: hotel + paradas fixas (opcionais ficam de fora).
+ * Mesma sequência do rodapé de endereços: uma entrada por parada,
+ * na ordem `ordem_no_dia`, sem colapsar lojas nem reinventar o hotel.
  */
 export function buildDayMapStops(
   trip: Pick<Trip, 'hotel' | 'places'>,
   day: Pick<Day, 'stops'>,
 ): MapStop[] {
-  const hotel = hotelOf(trip)
-  const grouped = new Map<string, { names: string[]; query: string }>()
-
-  const rawPlaces = sortStops(day.stops)
-    .filter((stop) => stop.status === 'fixo')
-    .map((stop) => placeOf(trip, stop.placeId))
-    .filter((place): place is Place => place != null && isMappablePlace(place))
-
-  const hasDisneySprings = rawPlaces.some((place) => /disney springs/i.test(place.name))
-
-  for (const place of rawPlaces) {
-    if (hasDisneySprings && /ticket center/i.test(place.name)) continue
-    if (/^hotel\b/i.test(place.name)) continue
-    const key = stopKey(place.name, place.address)
-    const query = mapsQuery(place.name, place.address)
-    const existing = grouped.get(key)
-    if (existing) {
-      existing.names.push(place.name)
-      continue
-    }
-    grouped.set(key, { names: [place.name], query })
-  }
-
-  if (!grouped.size) return []
-
-  const hotelKey = stopKey(hotel.name, hotel.address)
-  const stops: MapStop[] = [
-    {
-      id: 'hotel',
-      label: hotel.name,
-      query: mapsQuery(hotel.name, hotel.address),
-      kind: 'hotel',
-    },
-  ]
-
-  let index = 1
-  for (const [key, group] of grouped) {
-    if (key === hotelKey) continue
-    stops.push({
-      id: `stop-${index}`,
-      label: joinLabels(group.names),
-      query: group.query,
-      kind: 'place',
-    })
-    index += 1
-  }
-
-  return stops
+  return sortStops(day.stops).flatMap((stop) => {
+    const place = placeOf(trip, stop.placeId)
+    if (!place) return []
+    const isHotel =
+      place.category === 'hotel' || /^hotel\b/i.test(place.name.trim())
+    return [
+      {
+        id: stop.id,
+        label: place.name,
+        query: mapsQuery(place.name, place.address),
+        kind: isHotel ? ('hotel' as const) : ('place' as const),
+        optional: stop.status === 'opcional',
+        orderInDay: stop.orderInDay,
+      },
+    ]
+  })
 }
 
 const GOOGLE_MAX_STOPS = 10
 
 export function googleMapsDirUrl(stops: MapStop[]): string {
   const route = stops.slice(0, GOOGLE_MAX_STOPS)
+  if (!route.length) return ''
   if (route.length === 1) {
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(route[0].query)}`
   }
@@ -163,6 +118,9 @@ export function googleMapsDirUrl(stops: MapStop[]): string {
 }
 
 function isPlausible(query: string, coords: Coords): boolean {
+  if (/galeao|galeão|\bgig\b|rio de janeiro/i.test(query)) {
+    return coords.lat > -23.5 && coords.lat < -22.5 && coords.lng > -43.8 && coords.lng < -42.8
+  }
   if (/miami|\bmia\b/i.test(query)) {
     return coords.lat > 25.2 && coords.lat < 26.5 && coords.lng > -80.7 && coords.lng < -80.0
   }
@@ -171,7 +129,7 @@ function isPlausible(query: string, coords: Coords): boolean {
 
 export function coordsForStop(stop: MapStop): Coords | undefined {
   const keys = [
-    stopKey(stop.label.split(' · ')[0], stop.query),
+    stopKey(stop.label, stop.query),
     stopKey('', stop.query),
     fold(stop.query),
     fold(stop.label),
