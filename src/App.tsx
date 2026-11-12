@@ -133,6 +133,7 @@ export default function App() {
               setRoteiroDayId(dayId)
               selectTab('roteiro')
             }}
+            onChange={restoreTripSnapshot}
           />
         ) : null}
         {tab === 'parques' ? <ParksView trip={trip} /> : null}

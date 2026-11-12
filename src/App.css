@@ -1125,6 +1125,19 @@ html[data-device='mobile'][data-aspect='landscape'] .day-hero__progress-row,
 }
 
 /* Locations */
+.locations-add-btn {
+  margin-top: 1rem;
+}
+
+.locations-add-form {
+  margin-top: 1.25rem;
+}
+
+.location-card__orphan {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+}
+
 .locations-group + .locations-group {
   border-top: 1px solid var(--color-divider-soft);
 }
