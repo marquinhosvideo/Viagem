@@ -2,13 +2,12 @@ import { useEffect, useMemo, useState, type DragEvent } from 'react'
 import { CalendarPlus, Pencil, Plus, Trash2 } from 'lucide-react'
 import type { Day, Place, PlaceCategory, Stop, Trip } from '../types'
 import { ActivityItem } from '../components/ActivityItem'
-import { AddressCopyList } from '../components/AddressCopyList'
 import { DayMap } from '../components/DayMap'
 import { DayChips } from '../components/DayChips'
 import { DayHero } from '../components/DayHero'
 import { DayInfo } from '../components/DayInfo'
 import { DayForm, StopForm } from '../components/ItineraryEditor'
-import { dayHeaderNotes, dayPlaces } from '../lib/dayMeta'
+import { dayHeaderNotes } from '../lib/dayMeta'
 import { formatWeekdayShort, uid } from '../lib/format'
 import { placeOf, sortStops } from '../lib/places'
 
@@ -105,7 +104,6 @@ export function ItineraryView({
   )
   const day = trip.days[dayIndex] ?? trip.days[0]
   const notes = useMemo(() => (day ? dayHeaderNotes(day) : []), [day])
-  const places = useMemo(() => (day ? dayPlaces(trip, day) : []), [trip, day])
   const stops = useMemo(() => (day ? sortStops(day.stops) : []), [day])
 
   if (!day) {
@@ -304,7 +302,7 @@ export function ItineraryView({
         />
       </section>
 
-      <DayHero day={day} dayIndex={dayIndex} dayCount={trip.days.length} />
+      <DayHero trip={trip} day={day} dayIndex={dayIndex} dayCount={trip.days.length} />
 
       <section className="band">
         <div className="band__inner">
@@ -393,7 +391,6 @@ export function ItineraryView({
 
       <DayInfo notes={notes} />
       <DayMap trip={trip} day={day} />
-      <AddressCopyList places={places} />
     </section>
   )
 }

@@ -1,13 +1,12 @@
 import { useMemo } from 'react'
 import type { Day, Trip } from '../types'
 import { ActivityItem } from '../components/ActivityItem'
-import { AddressCopyList } from '../components/AddressCopyList'
 import { DayMap } from '../components/DayMap'
 import { BudgetWidgets } from '../components/BudgetWidgets'
 import { DayHero } from '../components/DayHero'
 import { DayInfo } from '../components/DayInfo'
 import { FxRatesBand } from '../components/FxRatesBand'
-import { dayHeaderNotes, dayPlaces } from '../lib/dayMeta'
+import { dayHeaderNotes } from '../lib/dayMeta'
 import { formatMoneyPair } from '../lib/format'
 import { spentByBudget } from '../lib/budgets'
 import { placeOf, sortStops } from '../lib/places'
@@ -29,12 +28,11 @@ export function TodayView({ trip, day, onToggle }: Props) {
   const dayTotal = dayExpenses.reduce((s, e) => s + e.amount, 0)
   const byBudget = spentByBudget(dayExpenses)
   const notes = useMemo(() => dayHeaderNotes(day), [day])
-  const places = useMemo(() => dayPlaces(trip, day), [trip, day])
   const stops = useMemo(() => sortStops(day.stops), [day.stops])
 
   return (
     <section className="view today-view">
-      <DayHero day={day} dayIndex={dayIndex} dayCount={trip.days.length} />
+      <DayHero trip={trip} day={day} dayIndex={dayIndex} dayCount={trip.days.length} />
 
       <FxRatesBand />
 
@@ -77,7 +75,6 @@ export function TodayView({ trip, day, onToggle }: Props) {
 
       <DayInfo notes={notes} />
       <DayMap trip={trip} day={day} />
-      <AddressCopyList places={places} />
     </section>
   )
 }

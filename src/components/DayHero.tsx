@@ -1,21 +1,26 @@
-import type { Day } from '../types'
+import { useMemo } from 'react'
+import type { Day, Trip } from '../types'
+import { dayRouteDistance, formatDayKm } from '../lib/dayMap'
 import { dayTitleParts } from '../lib/display'
 import { formatDayLabel } from '../lib/format'
 import { fixedStops } from '../lib/places'
 
 type Props = {
+  trip: Trip
   day: Day
   dayIndex: number
   dayCount: number
 }
 
-export function DayHero({ day, dayIndex, dayCount }: Props) {
+export function DayHero({ trip, day, dayIndex, dayCount }: Props) {
   const visitStops = fixedStops(day.stops)
   const done = visitStops.filter((stop) => stop.done).length
   const total = visitStops.length
   const pct = total ? Math.round((done / total) * 100) : 0
   const tags = dayTitleParts(day.dayType)
   const title = tags.map((t) => t.text).join(' + ')
+  const route = useMemo(() => dayRouteDistance(trip, day), [trip, day])
+  const kmLabel = formatDayKm(route.km)
 
   return (
     <section className="day-hero">
@@ -47,9 +52,14 @@ export function DayHero({ day, dayIndex, dayCount }: Props) {
               .
             </p>
           </div>
-          <p className="day-hero__index">
-            Dia {dayIndex + 1} de {dayCount}
-          </p>
+          <div className="day-hero__side">
+            <p className="day-hero__km" title="Distância estimada na ordem das paradas">
+              {kmLabel}
+            </p>
+            <p className="day-hero__index">
+              Dia {dayIndex + 1} de {dayCount}
+            </p>
+          </div>
         </div>
         <div className="day-hero__track" aria-hidden>
           <div className="day-hero__fill" style={{ width: `${pct}%` }} />

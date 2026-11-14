@@ -4,7 +4,9 @@ import { dayPlaces } from './dayMeta'
 import {
   buildDayMapStops,
   coordsForStop,
+  dayRouteDistance,
   DEFAULT_HOTEL,
+  formatDayKm,
   googleMapsDirUrl,
   hotelOf,
   mapsQuery,
@@ -108,6 +110,22 @@ function assertMapMatchesFooter(date: string) {
   )
   assert.equal(unique.size, resolved.length, 'overlapping plaza pins must be spread apart')
   assert.equal(Object.keys(spread).length, resolved.length)
+}
+
+{
+  const outlets = sampleTrip.days.find((day) => day.date === '2026-12-01')
+  assert.ok(outlets)
+  const route = dayRouteDistance(sampleTrip, outlets)
+  assert.equal(route.totalStops, 7)
+  assert.equal(route.resolvedStops, 7)
+  assert.ok(route.km > 5, `expected meaningful km, got ${route.km}`)
+  assert.ok(route.km < 80, `Dec 1 should stay local, got ${route.km}`)
+  assert.match(formatDayKm(route.km), /km/)
+
+  const gig = sampleTrip.days.find((day) => day.date === '2026-11-27')
+  assert.ok(gig)
+  assert.equal(dayRouteDistance(sampleTrip, gig).km, 0)
+  assert.equal(formatDayKm(0), '—')
 }
 
 console.log('dayMap.test.ts ok')

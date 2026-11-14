@@ -199,6 +199,68 @@ export function spreadOverlappingCoords(
   return next
 }
 
+const EARTH_KM = 6371
+
+/** Distância em linha reta entre dois pontos (km). */
+export function haversineKm(a: Coords, b: Coords): number {
+  const toRad = (deg: number) => (deg * Math.PI) / 180
+  const dLat = toRad(b.lat - a.lat)
+  const dLng = toRad(b.lng - a.lng)
+  const lat1 = toRad(a.lat)
+  const lat2 = toRad(b.lat)
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2
+  return 2 * EARTH_KM * Math.asin(Math.min(1, Math.sqrt(h)))
+}
+
+export type DayRouteDistance = {
+  /** Soma dos trechos com coordenadas conhecidas (km). */
+  km: number
+  /** Quantos trechos entraram no cálculo. */
+  segments: number
+  /** Quantas paradas tinham coordenada. */
+  resolvedStops: number
+  /** Total de paradas do dia. */
+  totalStops: number
+}
+
+/**
+ * Km esperado do dia na sequência das paradas (endereços do roteiro).
+ * Usa coordenadas conhecidas; trechos sem GPS são ignorados.
+ * Fator 1,25 aproxima deslocamento de carro vs linha reta.
+ */
+export function dayRouteDistance(
+  trip: Pick<Trip, 'hotel' | 'places'>,
+  day: Pick<Day, 'stops'>,
+): DayRouteDistance {
+  const stops = buildDayMapStops(trip, day)
+  const points = stops.map((stop) => coordsForStop(stop) ?? null)
+  const resolvedStops = points.filter(Boolean).length
+  let km = 0
+  let segments = 0
+  for (let i = 1; i < points.length; i += 1) {
+    const prev = points[i - 1]
+    const curr = points[i]
+    if (!prev || !curr) continue
+    // Mesmo prédio / suite: despreza ruído de coordenadas idênticas
+    if (haversineKm(prev, curr) < 0.05) continue
+    km += haversineKm(prev, curr)
+    segments += 1
+  }
+  return {
+    km: Math.round(km * 1.25 * 10) / 10,
+    segments,
+    resolvedStops,
+    totalStops: stops.length,
+  }
+}
+
+export function formatDayKm(km: number): string {
+  if (!Number.isFinite(km) || km <= 0) return '—'
+  return km < 10 ? `${km.toFixed(1).replace('.', ',')} km` : `${Math.round(km)} km`
+}
+
 const geocodeMemory = new Map<string, Coords | null>()
 
 export async function geocodeQuery(query: string): Promise<Coords | null> {
