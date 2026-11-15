@@ -1118,43 +1118,130 @@ html[data-device='mobile'][data-aspect='landscape'] .day-hero__progress-row,
 }
 
 /* Tips */
+.tips-add-btn {
+  margin-top: 1rem;
+}
+
+.tips-form {
+  margin-top: 1.25rem;
+}
+
 .tips-stack {
   display: flex;
   flex-direction: column;
+  gap: 28px;
 }
 
-.tip-row {
+.tip-card {
   display: flex;
+  flex-direction: column;
   gap: 16px;
-  padding: 24px 0;
+  padding-bottom: 28px;
   border-bottom: 1px solid var(--color-hairline);
 }
 
-.tip-row__icon {
-  flex: 0 0 auto;
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
+.tip-card:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.tip-card__media {
+  margin: 0 -20px;
+  overflow: hidden;
   background: var(--color-canvas-parchment);
+  aspect-ratio: 16 / 10;
+}
+
+.tip-card__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tip-card__head {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-.tip-row h2 {
+.tip-card__head h2 {
   margin: 0;
-  font-size: 17px;
+  font-size: 22px;
   font-weight: 600;
-  letter-spacing: -0.374px;
+  letter-spacing: -0.4px;
+  line-height: 1.25;
 }
 
-.tip-row p {
-  margin: 6px 0 0;
+.tip-card__body p {
+  margin: 10px 0 0;
   font-size: 17px;
   line-height: 1.47;
   letter-spacing: -0.374px;
   color: var(--color-ink-muted-80);
   text-wrap: pretty;
+}
+
+.tip-card__actions {
+  display: flex;
+  gap: 4px;
+  flex: 0 0 auto;
+}
+
+.tip-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.tip-card__link:hover {
+  text-decoration: underline;
+}
+
+.tip-form__preview {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.tip-form__preview img {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: var(--color-canvas-parchment);
+}
+
+.tip-form__error {
+  color: var(--color-danger, #b42318);
+}
+
+@media (min-width: 720px) {
+  .tip-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+  }
+
+  .tip-card__media {
+    margin: 0;
+    border-radius: 12px;
+  }
+
+  .tip-card:not(:has(.tip-card__media)) {
+    display: block;
+  }
 }
 
 /* Locations */

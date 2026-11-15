@@ -310,12 +310,27 @@ function buildExpensesFromRows(
 }
 
 function buildTips(rows: Row[]): Tip[] {
-  return rows
-    .map((row) => ({
-      tema: clean(pick(row, ['tema', 'titulo', 'title'])),
-      texto: clean(pick(row, ['dica / ressalva', 'dica', 'ressalva', 'texto', 'nota'])),
-    }))
-    .filter((t) => t.tema && t.texto)
+  const tips: Tip[] = []
+  for (const row of rows) {
+    const tema = clean(pick(row, ['tema', 'titulo', 'title']))
+    const texto = clean(pick(row, ['dica / ressalva', 'dica', 'ressalva', 'texto', 'nota']))
+    if (!tema || !texto) continue
+    const photoRaw = clean(pick(row, ['foto', 'photo', 'photoUrl', 'imagem', 'image']))
+    const linkRaw = clean(pick(row, ['link', 'url', 'site']))
+    const photoUrl =
+      photoRaw &&
+      (photoRaw.startsWith('http://') ||
+        photoRaw.startsWith('https://') ||
+        photoRaw.startsWith('data:image/'))
+        ? photoRaw
+        : null
+    const link =
+      linkRaw && (linkRaw.startsWith('http://') || linkRaw.startsWith('https://'))
+        ? linkRaw
+        : null
+    tips.push({ id: uid('tip'), tema, texto, photoUrl, link })
+  }
+  return tips
 }
 
 function preserveDoneFlags(next: Trip, previous: Trip): Trip {
@@ -547,8 +562,13 @@ export function buildExportSheets(trip: Trip): Record<string, (string | number)[
   ]
 
   const dicas: (string | number)[][] = [
-    ['Tema', 'Dica / ressalva'],
-    ...(canonical.tips ?? []).map((tip) => [tip.tema, tip.texto]),
+    ['Tema', 'Dica / ressalva', 'Foto', 'Link'],
+    ...(canonical.tips ?? []).map((tip) => [
+      tip.tema,
+      tip.texto,
+      tip.photoUrl && !tip.photoUrl.startsWith('data:') ? tip.photoUrl : '',
+      tip.link ?? '',
+    ]),
   ]
 
   const viagem: (string | number)[][] = [

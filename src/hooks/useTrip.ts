@@ -4,6 +4,7 @@ import { ensureCurrentHotel } from '../lib/dayMap'
 import { loadTrip, resetTrip, saveTrip } from '../lib/storage'
 import { uid } from '../lib/format'
 import { isSupabaseConfigured } from '../lib/supabase'
+import { normalizeTips } from '../lib/tips'
 import {
   applyRemoteToTrip,
   deleteExpenseRemote,
@@ -59,7 +60,10 @@ export function useTrip(enabled = true) {
     const unsubscribe = subscribeRemote((change) => {
       setTrip((prev) => {
         if (change.type === 'trip_document') {
-          const incoming = ensureCurrentHotel(change.trip)
+          const incoming = {
+            ...ensureCurrentHotel(change.trip),
+            tips: normalizeTips(change.trip.tips),
+          }
           return {
             ...incoming,
             expenses: incoming.expenses?.length ? incoming.expenses : prev.expenses,

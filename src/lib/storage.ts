@@ -2,6 +2,7 @@ import type { Expense, Trip } from '../types'
 import { sampleTrip } from '../data/sampleTrip'
 import { ensureCurrentHotel } from './dayMap'
 import { normalizeBudgetId } from './budgets'
+import { normalizeTips } from './tips'
 
 const STORAGE_KEY = 'roteiro-orlando-2026-v4-paradas'
 const LEGACY_KEYS = [
@@ -51,6 +52,7 @@ function withBudgets(trip: Trip): Trip {
     ...repaired,
     currency: 'BRL',
     places: repaired.places ?? [],
+    tips: normalizeTips(repaired.tips),
     budgetLimits: repaired.budgetLimits ?? {
       marcos: 5000,
       dielen: 5000,

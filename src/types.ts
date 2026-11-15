@@ -89,9 +89,15 @@ export type Expense = {
   createdAt: string
 }
 
+/** Dica de produto ou serviço para pesquisar/consumir na viagem. */
 export type Tip = {
+  id: string
   tema: string
   texto: string
+  /** URL https ou data: — foto opcional do produto/serviço */
+  photoUrl?: string | null
+  /** Link para pesquisar (loja, site, Maps…) */
+  link?: string | null
 }
 
 export type Hotel = {
@@ -116,7 +122,14 @@ export type Trip = {
   budgetLimits?: Partial<Record<BudgetId, number>>
 }
 
-export type TabId = 'hoje' | 'roteiro' | 'gastos' | 'locais' | 'parques' | 'importar'
+export type TabId =
+  | 'hoje'
+  | 'roteiro'
+  | 'gastos'
+  | 'locais'
+  | 'dicas'
+  | 'parques'
+  | 'importar'
 
 /** Compat: labels antigos de categoria → orçamento */
 export const CATEGORY_LABELS = BUDGET_LABELS
