@@ -2,6 +2,12 @@ import type { BudgetId, Expense, Trip } from '../types'
 import { ensureCurrentHotel } from './dayMap'
 import { normalizeBudgetId } from './budgets'
 import { supabase } from './supabase'
+import { normalizeTips } from './tips'
+
+function repairTrip(trip: Trip): Trip {
+  const repaired = ensureCurrentHotel(trip)
+  return { ...repaired, tips: normalizeTips(repaired.tips) }
+}
 
 type CheckRow = {
   activity_id: string
@@ -120,9 +126,7 @@ export async function fetchRemoteState(): Promise<{
 
   const tripRow = tripRes.data as TripDocumentRow | null
   const tripDocument =
-    tripRow && isValidTrip(tripRow.trip)
-      ? ensureCurrentHotel(tripRow.trip)
-      : null
+    tripRow && isValidTrip(tripRow.trip) ? repairTrip(tripRow.trip) : null
 
   return {
     checks,
@@ -137,7 +141,7 @@ export function applyRemoteToTrip(
   checks: Record<string, boolean>,
   expenses: Expense[],
 ): Trip {
-  const repaired = ensureCurrentHotel(trip)
+  const repaired = repairTrip(trip)
   return {
     ...repaired,
     days: repaired.days.map((day) => ({
@@ -315,7 +319,7 @@ export function subscribeRemote(
         if (payload.eventType === 'DELETE') return
         const row = payload.new as TripDocumentRow
         if (row?.id === 'current' && isValidTrip(row.trip)) {
-          onChange({ type: 'trip_document', trip: row.trip })
+          onChange({ type: 'trip_document', trip: repairTrip(row.trip) })
         }
       },
     )

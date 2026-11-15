@@ -29,6 +29,7 @@ Passo a passo: **[SYNC.md](./SYNC.md)** (também compara Excel/OneDrive vs Supab
 - **Roteiro** — todos os dias com paradas e checks
 - **Gastos** — Marcos / Dielen / Helena / Alimentação / Outros
 - **Locais** — catálogo único por categoria
+- **Dicas** — produtos e serviços com texto + foto (editáveis no app)
 - **Parques** — filas ao vivo
 - **Excel** — baixar/reimportar o roteiro (formato Seq / Ordem no dia / Local / Status)
 
